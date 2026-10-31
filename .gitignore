@@ -1,0 +1,44 @@
+# Never commit real bank data
+*.pdf
+*.zip
+*.csv
+*.ofx
+*.qfx
+# Anonymized copies of real statements stay local: committed fixtures are synthetic (packages/demo).
+# A reviewed one for a bank demo can't write yet: git add -f (docs/10-adding-a-bank.md).
+*.anon.*
+# Written next to the statements by bank-tools\*.bat (personal data)
+reveal.txt
+anonymize-extra.txt
+*.dump.txt
+*.shape.txt
+anonymized/
+data/
+private/
+.env
+# Databases (real ones, copies, demo and anonymized developer copies): never committed
+*.sqlite
+*.sqlite-wal
+*.sqlite-shm
+*.sqlite-journal
+*.sqlite.restore
+*.db
+dev-data/
+
+# Personal agent notes of the machine owner
+CLAUDE.local.md
+
+# Dart / Flutter
+.dart_tool/
+build/
+
+# Packaged app to share
+dist/
+
+# Editor settings of each machine (SDK paths)
+.vscode/
+# Widget Preview related
+.widget_preview/
+
+# Claude Code personal settings (machine paths)
+.claude/settings.local.json

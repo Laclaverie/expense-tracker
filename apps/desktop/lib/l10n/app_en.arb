@@ -1,0 +1,939 @@
+{
+  "@@locale": "en",
+  "appTitle": "Expenses",
+  "navDashboard": "Dashboard",
+  "navTransactions": "Transactions",
+  "navReview": "Review",
+  "navImport": "Import",
+  "navAccounts": "Accounts",
+  "navCategories": "Categories & rules",
+  "scopeCash": "Cash {currency}",
+  "@scopeCash": {
+    "placeholders": {
+      "currency": {
+        "type": "String"
+      }
+    }
+  },
+  "noData": "No data yet. Import a statement to start.",
+  "spentIn": "Spent in {month}",
+  "@spentIn": {
+    "placeholders": {
+      "month": {
+        "type": "String"
+      }
+    }
+  },
+  "incomeIn": "Income in {month}",
+  "@incomeIn": {
+    "placeholders": {
+      "month": {
+        "type": "String"
+      }
+    }
+  },
+  "average6": "6-month average",
+  "vsAverage": "{percent} vs 6-month average",
+  "@vsAverage": {
+    "placeholders": {
+      "percent": {
+        "type": "String"
+      }
+    }
+  },
+  "monthlyByGroup": "Monthly spending by group",
+  "byCategory": "By category",
+  "topMerchants": "Top merchants",
+  "other": "Other",
+  "uncategorized": "Uncategorized",
+  "transfersExcluded": "Transfers between your own accounts and card payments are not counted as spending.",
+  "search": "Search",
+  "allCategories": "All categories",
+  "allAccounts": "All accounts",
+  "allDates": "All dates",
+  "colDate": "Date",
+  "colAccount": "Account",
+  "colMerchant": "Merchant",
+  "colCategory": "Category",
+  "colAmount": "Amount",
+  "transactionCount": "{count, plural, =0{No transactions} =1{1 transaction} other{{count} transactions}}",
+  "@transactionCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "categorySearchHint": "Search (e.g. gas, rent, Costco) — Enter to pick",
+  "frequentCategories": "Frequent",
+  "sortDate": "Date",
+  "sortAmount": "Amount",
+  "sortMerchant": "By merchant",
+  "selectUnder": "Select under {amount}",
+  "@selectUnder": { "placeholders": { "amount": { "type": "String" } } },
+  "selectedCount": "{count, plural, =1{1 selected} other{{count} selected}}",
+  "@selectedCount": { "placeholders": { "count": { "type": "int" } } },
+  "clearSelection": "Clear selection",
+  "bulkSetQuestion": "Set “{category}” on {count, plural, =1{1 line} other{{count} lines}}?",
+  "@bulkSetQuestion": { "placeholders": { "category": { "type": "String" }, "count": { "type": "int" } } },
+  "bulkConfirmQuestion": "Accept the suggested category for {count, plural, =1{1 line} other{{count} lines}}?",
+  "@bulkConfirmQuestion": { "placeholders": { "count": { "type": "int" } } },
+  "bulkConfirmSkipped": "{count, plural, =1{1 line without a precise category stays} other{{count} lines without a precise category stay}} in review.",
+  "@bulkConfirmSkipped": { "placeholders": { "count": { "type": "int" } } },
+  "reasonRule": "Rule",
+  "reasonMerchant": "Chosen before for this merchant",
+  "reasonBank": "Bank hint → {category}",
+  "@reasonBank": { "placeholders": { "category": { "type": "String" } } },
+  "reasonSeed": "Known merchant",
+  "reasonKeyword": "Keyword “{word}”",
+  "@reasonKeyword": { "placeholders": { "word": { "type": "String" } } },
+  "reasonHint": "Bonidollars {rate} % → {category}",
+  "@reasonHint": { "placeholders": { "rate": { "type": "String" }, "category": { "type": "String" } } },
+  "reasonLearned": "Like {count, plural, =1{1 line} other{{count} lines}} with “{word}”",
+  "@reasonLearned": { "placeholders": { "count": { "type": "int" }, "word": { "type": "String" } } },
+  "reasonNone": "No clue: pick one",
+  "anomalyHigh": "Very large expense: {merchant}",
+  "@anomalyHigh": { "placeholders": { "merchant": { "type": "String" } } },
+  "anomalyHighBody": "{amount} on {date}",
+  "@anomalyHighBody": { "placeholders": { "amount": { "type": "String" }, "date": { "type": "String" } } },
+  "anomalyRegular": "Regular payment changed: {merchant}",
+  "@anomalyRegular": { "placeholders": { "merchant": { "type": "String" } } },
+  "anomalyRegularBody": "{amount} on {date} — usually {usual}",
+  "@anomalyRegularBody": { "placeholders": { "amount": { "type": "String" }, "date": { "type": "String" }, "usual": { "type": "String" } } },
+  "anomalyMissing": "Regular payment missing: {merchant}",
+  "@anomalyMissing": { "placeholders": { "merchant": { "type": "String" } } },
+  "anomalyMissingBody": "{usual} expected around {date}, not found",
+  "@anomalyMissingBody": { "placeholders": { "usual": { "type": "String" }, "date": { "type": "String" } } },
+  "markNormal": "This payment is normal",
+  "markedNormal": "{date} · {amount} — marked normal",
+  "@markedNormal": { "placeholders": { "date": { "type": "String" }, "amount": { "type": "String" } } },
+  "undo": "Undo",
+  "expectedOn": "expected {date}",
+  "@expectedOn": { "placeholders": { "date": { "type": "String" } } },
+  "whyRegularAmount": "On {date}, {amount}: {diff} ({pct}) compared with the usual {usual} (median of the {count} payments before; ±{spread} % is normal).",
+  "@whyRegularAmount": { "placeholders": { "date": { "type": "String" }, "amount": { "type": "String" }, "diff": { "type": "String" }, "pct": { "type": "String" }, "usual": { "type": "String" }, "count": { "type": "int" }, "spread": { "type": "int" } } },
+  "whyRegularMissing": "{usual} expected around {date} (± {days} days): no payment found, though the account has lines until {until}. A statement missing, or the payment stopped?",
+  "@whyRegularMissing": { "placeholders": { "usual": { "type": "String" }, "date": { "type": "String" }, "days": { "type": "int" }, "until": { "type": "String" } } },
+  "whyHigh": "On {date}, {amount}: among your top {share} % expenses of the year (from {threshold}).",
+  "@whyHigh": { "placeholders": { "date": { "type": "String" }, "amount": { "type": "String" }, "share": { "type": "int" }, "threshold": { "type": "String" } } },
+  "whyNewFee": "On {date}, {amount}: the first fee of this kind.",
+  "@whyNewFee": { "placeholders": { "date": { "type": "String" }, "amount": { "type": "String" } } },
+  "pastUnusual": "Past unusual payment (no alert)",
+  "anomalyNewFee": "New fee: {merchant}",
+  "@anomalyNewFee": { "placeholders": { "merchant": { "type": "String" } } },
+  "anomalyNewFeeBody": "{amount} on {date}",
+  "@anomalyNewFeeBody": { "placeholders": { "amount": { "type": "String" }, "date": { "type": "String" } } },
+  "copyForSearch": "Copy name and location (to search online)",
+  "copied": "Copied: {text}",
+  "@copied": { "placeholders": { "text": { "type": "String" } } },
+  "reviewEmpty": "Nothing to review.",
+  "reviewHint": "Check the suggested category, or pick another. Your choice can be remembered for the merchant.",
+  "confirm": "Confirm",
+  "chooseCategory": "Choose a category",
+  "rememberMerchant": "Always use this category for {merchant}",
+  "@rememberMerchant": {
+    "placeholders": {
+      "merchant": {
+        "type": "String"
+      }
+    }
+  },
+  "updatedCount": "{count, plural, =1{1 transaction updated} other{{count} transactions updated}}",
+  "@updatedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "importTitle": "Import statements",
+  "notifications": "Notifications",
+  "noNotifications": "Nothing to report",
+  "goImport": "Import",
+  "statementDue": "{statement}: new statement to download",
+  "@statementDue": {
+    "placeholders": {
+      "statement": {
+        "type": "String"
+      }
+    }
+  },
+  "statementDueBody": "Last imported: up to {last}. The next one (to {next}) should be available.",
+  "@statementDueBody": {
+    "placeholders": {
+      "last": {
+        "type": "String"
+      },
+      "next": {
+        "type": "String"
+      }
+    }
+  },
+  "statementsDue": "{count, plural, =1{1 statement to download} other{{count} statements to download}}",
+  "@statementsDue": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "exportTransactions": "Export…",
+  "exportHint": "Save these transactions (this month or all dates, with the filters) as Excel or CSV",
+  "exportFileName": "transactions",
+  "exportedLines": "{count, plural, =1{1 line exported} other{{count} lines exported}}",
+  "@exportedLines": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "openFile": "Open",
+  "splitPart": "part",
+  "hdrBank": "Bank",
+  "hdrDescription": "Description",
+  "hdrGroup": "Group",
+  "hdrType": "Type",
+  "hdrCurrency": "Currency",
+  "hdrForeignAmount": "Original amount",
+  "hdrForeignCurrency": "Original currency",
+  "hdrNote": "Note",
+  "importDrop": "Drop your bank statements here (PDF, CSV, OFX…)",
+  "importChoose": "Choose files…",
+  "importReading": "Reading…",
+  "importDone": "{count} new · {duplicates} already known · {review} to review · {transfers} transfers matched",
+  "@importDone": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "duplicates": {
+        "type": "int"
+      },
+      "review": {
+        "type": "int"
+      },
+      "transfers": {
+        "type": "int"
+      }
+    }
+  },
+  "importUnmatched": "{count} new lines on days already imported from another file (PDF or CSV) were not found there: check them in Transactions",
+  "@importUnmatched": {"placeholders": {"count": {"type": "int"}}},
+  "importNotVerified": "Not verified: this file has no balance or total to check its lines against",
+  "guideTitle": "{bank}: download your transactions ({fileType})",
+  "@guideTitle": {"placeholders": {"bank": {"type": "String"}, "fileType": {"type": "String"}}},
+  "guideButton": "How to get your {fileType} files",
+  "@guideButton": {"placeholders": {"fileType": {"type": "String"}}},
+  "importExportHint": "{bank} also exports your transactions as {fileType}: more reliable than reading PDFs.",
+  "@importExportHint": {"placeholders": {"bank": {"type": "String"}, "fileType": {"type": "String"}}},
+  "guideOpen": "How?",
+  "importAlready": "Already imported",
+  "importInvalid": "Not imported: the statement's own totals don't match",
+  "importUnknown": "Statement not recognized. Supported banks: {banks}",
+  "@importUnknown": {
+    "placeholders": {
+      "banks": {
+        "type": "String"
+      }
+    }
+  },
+  "importError": "Could not read the file: {message}",
+  "@importError": {
+    "placeholders": {
+      "message": {
+        "type": "String"
+      }
+    }
+  },
+  "importHistory": "Imported statements",
+  "importPrivacy": "PDFs are read and then discarded. Only their content fingerprint is kept to detect re-imports.",
+  "deleteStatementConfirm": "Delete this statement and its {count} transactions?",
+  "@deleteStatementConfirm": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "cancel": "Cancel",
+  "delete": "Delete",
+  "save": "Save",
+  "balanceEndOf": "Balance at end of {month}",
+  "@balanceEndOf": {
+    "placeholders": {
+      "month": {
+        "type": "String"
+      }
+    }
+  },
+  "balanceAsOf": "Balance on {date}",
+  "@balanceAsOf": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "addCashExpense": "Add cash expense",
+  "amount": "Amount",
+  "merchantOptional": "Merchant (optional)",
+  "note": "Note",
+  "date": "Date",
+  "rules": "Rules",
+  "addRule": "Add rule",
+  "ruleContains": "Description contains",
+  "ruleSummary": "“{text}” → {category}",
+  "@ruleSummary": {
+    "placeholders": {
+      "text": {
+        "type": "String"
+      },
+      "category": {
+        "type": "String"
+      }
+    }
+  },
+  "merchantRule": "{merchant} → {category}",
+  "@merchantRule": {
+    "placeholders": {
+      "merchant": {
+        "type": "String"
+      },
+      "category": {
+        "type": "String"
+      }
+    }
+  },
+  "noRules": "No rules yet. Choosing “always” when reviewing remembers a merchant; rules here match description text.",
+  "rememberedMerchants": "Remembered merchants",
+  "categories": "Categories",
+  "details": "Details",
+  "statementText": "Statement text",
+  "location": "Location",
+  "originalAmount": "Original amount",
+  "kind": "Type",
+  "card": "Card",
+  "kind_expense": "Expense",
+  "kind_income": "Income",
+  "kind_refund": "Refund",
+  "kind_fee": "Fee",
+  "kind_interest": "Interest",
+  "kind_transfer": "Transfer between my accounts",
+  "kind_externalTransfer": "Transfer to another bank",
+  "language": "Language",
+  "notCounted": "Not counted in spending",
+  "navTargets": "Targets",
+  "addTarget": "Add target",
+  "editTarget": "Edit target",
+  "allSpending": "All spending",
+  "period_week": "Weekly",
+  "period_month": "Monthly",
+  "period_year": "Yearly",
+  "targetSpent": "{spent} of {target}",
+  "@targetSpent": {
+    "placeholders": {
+      "spent": {
+        "type": "String"
+      },
+      "target": {
+        "type": "String"
+      }
+    }
+  },
+  "targetProjected": "Projected: {amount}",
+  "@targetProjected": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "status_onTrack": "On track",
+  "status_atRisk": "At risk",
+  "status_over": "Over target",
+  "targetSuggestion": "Suggestion: {amount} (average of the last 3 periods)",
+  "@targetSuggestion": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "noTargets": "No targets yet. Set a limit per week, month or year for all spending, a group or a category.",
+  "targetsHint": "Targets are indicators only: nothing is blocked or moved.",
+  "history": "History",
+  "withinTarget": "Within target",
+  "split": "Split",
+  "splitTitle": "Split across categories",
+  "splitAddPart": "Add a part",
+  "splitRemaining": "Remaining: {amount}",
+  "@splitRemaining": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "splitRemove": "Remove split",
+  "splitLabel": "Split · {count}",
+  "@splitLabel": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "edit": "Edit",
+  "importAlreadySameFile": "Already imported: same file as “{file}” (imported {date})",
+  "@importAlreadySameFile": {
+    "placeholders": {
+      "file": {
+        "type": "String"
+      },
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "importAlreadySameStatement": "Already imported: same statement as “{file}” (imported {date}), from another file",
+  "@importAlreadySameStatement": {
+    "placeholders": {
+      "file": {
+        "type": "String"
+      },
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "importAlreadySameLines": "Already imported: every line of this file is already known",
+  "noDuplicates": "No statement imported twice",
+  "duplicatesFound": "{count} files are the same statement imported more than once. Delete the extra copies:",
+  "@duplicatesFound": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "importedOn": "imported {date}",
+  "@importedOn": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "emptyMonth": "No transactions in {month} yet: statements arrive after the month ends.",
+  "@emptyMonth": {
+    "placeholders": {
+      "month": {
+        "type": "String"
+      }
+    }
+  },
+  "goToMonth": "Go to {month}",
+  "@goToMonth": {
+    "placeholders": {
+      "month": {
+        "type": "String"
+      }
+    }
+  },
+  "noSpendingThisMonth": "No spending this month.",
+  "dataLocation": "Data is saved on this computer: {path}",
+  "@dataLocation": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "addCategory": "Add category",
+  "addGroup": "Add group",
+  "editCategory": "Edit category",
+  "archive": "Archive",
+  "nameFr": "Name (French)",
+  "nameEn": "Name (English, optional)",
+  "archiveConfirm": "Archive “{name}”? It will no longer be offered; past reports keep their numbers.",
+  "@archiveConfirm": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "archiveMove": "{count, plural, =1{1 transaction uses it.} other{{count} transactions use it.}} Choose where to move them.",
+  "@archiveMove": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "categoriesHint": "Click a category to rename or archive it.",
+  "newCategory": "New category",
+  "createNamed": "Create “{name}”",
+  "@createNamed": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "group": "Group",
+  "addToGroup": "Add a category to {group}",
+  "@addToGroup": {
+    "placeholders": {
+      "group": {
+        "type": "String"
+      }
+    }
+  },
+  "navStats": "Statistics",
+  "range6": "6 months",
+  "range12": "12 months",
+  "rangeThisYear": "This year",
+  "rangeLastYear": "Last year",
+  "rangeAll": "Everything",
+  "tabTrends": "Trends",
+  "tabCategories": "Categories",
+  "tabMerchants": "Merchants",
+  "tabCompare": "Compare",
+  "tabRecurring": "Recurring",
+  "allAccounts": "All accounts",
+  "tabBalances": "Balances",
+  "chartBalances": "Month-end balance",
+  "balancesHint": "Rebuilt from the latest statement balance and the transactions before it. Transfers between your accounts count as deposits and withdrawals.",
+  "balancesNone": "No balance to follow here: pick a checking or savings account (or All accounts).",
+  "balance": "Balance",
+  "balanceChange": "Change over the period",
+  "colYear": "Year",
+  "colDeposits": "Deposits",
+  "colWithdrawals": "Withdrawals",
+  "colInterest": "Interest",
+  "colChange": "Change",
+  "colYearEnd": "Balance at end",
+  "interestOf": "incl. {amount} interest",
+  "globalSince": "All accounts from {month} only: before that there is no {label} statement, so spending would look lower. Pick one account at the top to see its whole history.",
+  "@globalSince": {
+    "placeholders": {
+      "month": {
+        "type": "String"
+      },
+      "label": {
+        "type": "String"
+      }
+    }
+  },
+  "@interestOf": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "recurringPerMonth": "Recurring per month",
+  "recurringCount": "{count, plural, =1{1 recurring payment} other{{count} recurring payments}}",
+  "recurringHint": "Found automatically in all imported history: same merchant, regular interval, similar amount, even when the date varies (a bill paid by hand). Needs at least 3 payments.",
+  "recurringNone": "No recurring payment found yet: import a few months of statements.",
+  "recurringStopped": "Not seen lately (probably stopped)",
+  "cadenceWeekly": "Weekly",
+  "cadenceBiweekly": "Every 2 weeks",
+  "cadenceMonthly": "Monthly",
+  "cadenceQuarterly": "Quarterly",
+  "cadenceYearly": "Yearly",
+  "onDay": "on day {day}",
+  "dayBetween": "between day {from} and {to}",
+  "colFrequency": "Frequency",
+  "colPerMonth": "Per month",
+  "colPayments": "Payments",
+  "colNext": "Next expected",
+  "@recurringCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@onDay": {
+    "placeholders": {
+      "day": {
+        "type": "int"
+      }
+    }
+  },
+  "@dayBetween": {
+    "placeholders": {
+      "from": {
+        "type": "int"
+      },
+      "to": {
+        "type": "int"
+      }
+    }
+  },
+  "statTotal": "Total",
+  "statAverage": "Monthly average",
+  "statVsPrevious": "vs previous period",
+  "statMostExpensive": "Most expensive month",
+  "statLeastExpensive": "Least expensive month",
+  "chartMonthlySpending": "Monthly spending",
+  "chartIncomeSpending": "Income and spending",
+  "legendSpending": "Spending",
+  "legendIncome": "Income",
+  "showEverything": "Show everything",
+  "chartSpendingByStore": "Spending by store",
+  "byStore": "By store",
+  "byCategoryTrend": "By category",
+  "purchasesPerMonth": "{count} purchases / month",
+  "@purchasesPerMonth": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "analyzeOnly": "Analyze {name} only",
+  "@analyzeOnly": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "byGroupTrend": "Trend by group",
+  "perMonth": "per month",
+  "trend": "Trend",
+  "share": "Share",
+  "visits": "Purchases",
+  "averageTicket": "Average ticket",
+  "lastVisit": "Last",
+  "merchantsHint": "Businesses only: transfers to people count in their category.",
+  "cmpPreviousMonth": "vs previous month",
+  "cmpSameMonthLastYear": "vs same month last year",
+  "cmpYearToDate": "Year to date vs last year",
+  "yearToDate": "Jan – this month {year}",
+  "@yearToDate": {
+    "placeholders": {
+      "year": {
+        "type": "int",
+        "format": "compact"
+      }
+    }
+  },
+  "difference": "Difference",
+  "lessSpent": "less",
+  "moreSpent": "more",
+  "unspecified": "unspecified",
+  "close": "Close",
+  "partOf": "part of {amount}",
+  "@partOf": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "gapMissing": "{label} statement missing",
+  "@gapMissing": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      }
+    }
+  },
+  "gapUntil": "{label} only until {date}",
+  "@gapUntil": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      },
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "incompleteMonths": "Incomplete months — counted in totals, left out of averages and comparisons:",
+  "incomplete": "incomplete",
+  "overCompleteMonths": "over {count, plural, =1{1 complete month} other{{count} complete months}}",
+  "@overCompleteMonths": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "previousIncomplete": "previous period incomplete",
+  "coverageTitle": "Statement coverage",
+  "coverageHint": "A gap means a statement to import (or a month not yet closed).",
+  "gapPartial": "{label} statement partial",
+  "@gapPartial": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      }
+    }
+  },
+  "exportCategories": "Export…",
+  "importCategories": "Import…",
+  "exportTitle": "Export my categories",
+  "exportRules": "Description-text rules ({count})",
+  "exportMerchants": "Remembered merchants: your “Always use this category for …” choices ({count}, businesses only)",
+  "exportPrivacy": "The file only holds category names, rules and business names: no transactions, amounts, accounts or people.",
+  "exportDone": "Exported to {path}",
+  "@exportDone": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "importDoneCategories": "Added: {categories} categories, {rules} rules, {merchants} merchants · {moved} transactions recategorized",
+  "@importDoneCategories": {
+    "placeholders": {
+      "categories": {
+        "type": "int"
+      },
+      "rules": {
+        "type": "int"
+      },
+      "merchants": {
+        "type": "int"
+      },
+      "moved": {
+        "type": "int"
+      }
+    }
+  },
+  "importBadFile": "This file is not a categories export.",
+  "exportCategoriesCount": "Your categories and groups ({count})",
+  "@exportCategoriesCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@exportRules": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@exportMerchants": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "supportedTitle": "Banks the app can read",
+  "addBankLink": "My bank or card isn't listed",
+  "addBankTitle": "Add a bank",
+  "addBankIntro": "To read a new bank, someone writes a small reader for it. They need to see how your statements are laid out, not what is in them. This page makes a masked copy: letters become X, digits 9. Nothing leaves your computer: you choose where the copy is saved and who you send it to.",
+  "addBankStep1": "1. Choose a few statements of that bank: 3 to 6 months, of every type you have (account, card…).",
+  "addBankDrop": "Drop the statements here",
+  "addBankReading": "Reading {count} files…",
+  "@addBankReading": {"placeholders": {"count": {"type": "int"}}},
+  "addBankFiles": "{count} statements read",
+  "@addBankFiles": {"placeholders": {"count": {"type": "int"}}},
+  "addBankStep2": "2. Words that may stay readable. All are hidden to begin with. Tick the statement's own words: column titles, sections, transaction codes, months. Never tick a personal word: your name, your family, street, city, employer, people you pay, shops you'd rather keep private.",
+  "addBankKept": "{kept} of {total} words readable",
+  "@addBankKept": {"placeholders": {"kept": {"type": "int"}, "total": {"type": "int"}}},
+  "addBankKeepAll": "Keep all",
+  "addBankHideAll": "Hide all",
+  "addBankSearch": "Find a word",
+  "addBankInFiles": "In {count} statements",
+  "@addBankInFiles": {"placeholders": {"count": {"type": "int"}}},
+  "addBankNoWords": "No word appears in more than one statement: everything will be masked.",
+  "addBankStep3": "3. What will be shared (first page of the first statement)",
+  "addBankNotesLabel": "Notes for whoever writes the reader (optional, saved as notes.txt)",
+  "addBankNotesHint": "Which account or card is each file? What do the account codes mean (e.g. EOP = checking)? What dates did you download? Does the export show pending card transactions?",
+  "addBankStep4": "4. Save the masked copy, look at it, then send the folder to whoever adds your bank.",
+  "addBankSave": "Save to a folder…",
+  "addBankSaved": "Saved in {folder}: {count} files",
+  "@addBankSaved": {"placeholders": {"folder": {"type": "String"}, "count": {"type": "int"}}},
+  "addBankReadme": "Masked copy of bank statements, made by the expense tracker (Import > My bank or card isn't listed).\nLetters are replaced by X, digits by 9; only the words listed in reveal.txt stay readable. File names are numbered so they don't show the original names.\n\nstatement-N.shape.txt: the layout of each statement, line by line, with each word's position.\nstatement-N.shape.json: the same for PDF files, as data a program can read.\nreveal.txt: the words the statements' owner approved.\nnotes.txt: what the owner wrote about the files, if anything.\n\nFor whoever writes the reader: docs/10-adding-a-bank.md in the expense tracker's repository.",
+  "backupTitle": "Backups",
+  "backupHint": "A copy is made automatically before each import, before an app update changes the database and before a restore; the last {count} are kept. Save a copy elsewhere (USB key, another disk) from time to time.",
+  "@backupHint": {"placeholders": {"count": {"type": "int"}}},
+  "backupNone": "No automatic copy yet.",
+  "backupSave": "Save a copy…",
+  "backupSaved": "Copy saved: {path}",
+  "@backupSaved": {"placeholders": {"path": {"type": "String"}}},
+  "backupFailed": "Could not make a backup copy, nothing was changed: {message}",
+  "@backupFailed": {"placeholders": {"message": {"type": "String"}}},
+  "backupOpenFolder": "Copies folder",
+  "backupRestoreFile": "Restore a file…",
+  "backupRestore": "Restore",
+  "backupRestoreConfirm": "Go back to the data of {date}? The app restarts. Your current data is copied first, so this can be undone.",
+  "@backupRestoreConfirm": {"placeholders": {"date": {"type": "String"}}},
+  "backupRestoreAction": "Restore and restart",
+  "backupReasonImport": "before an import",
+  "backupReasonUpdate": "before an app update",
+  "backupReasonRestore": "before a restore",
+  "backupReasonCategories": "before a categories import",
+  "restoreNotDatabase": "This file is not a database.",
+  "restoreNewer": "This copy comes from a newer version of the app: update the app first.",
+  "restoreNotExpenses": "This database doesn't come from this app.",
+  "savingsRate": "Savings rate",
+  "savingsRateIs": "Savings rate: {rate}",
+  "@savingsRateIs": {
+    "placeholders": {
+      "rate": {
+        "type": "String"
+      }
+    }
+  },
+  "savingsRateOver": "Savings rate {rate} · {months, plural, =1{1 complete month} other{{months} complete months}}",
+  "@savingsRateOver": {
+    "placeholders": {
+      "rate": {
+        "type": "String"
+      },
+      "months": {
+        "type": "int"
+      }
+    }
+  },
+  "globalSearchTooltip": "Search all transactions (Ctrl+K)",
+  "globalSearchHint": "Merchant, amount (42,50), date (2026-10 or 12/10), note…",
+  "globalSearchNone": "No transaction found.",
+  "globalSearchMore": "First {count} shown: add a word to narrow.",
+  "@globalSearchMore": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "passwordShow": "Show the password",
+  "passwordHide": "Hide the password",
+  "passwordLabel": "Password",
+  "passwordNew": "New password",
+  "passwordConfirm": "Type it again",
+  "passwordCurrent": "Current password",
+  "passwordMismatch": "The two entries differ.",
+  "passwordRule": "At least {min} characters. A sentence of a few words is the easiest to remember.",
+  "@passwordRule": {
+    "placeholders": {
+      "min": {
+        "type": "int"
+      }
+    }
+  },
+  "passwordTooShort": "Too short: {count, plural, =1{1 character} other{{count} characters}}, at least {min} needed ({missing} more).",
+  "@passwordTooShort": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "min": {
+        "type": "int"
+      },
+      "missing": {
+        "type": "int"
+      }
+    }
+  },
+  "passwordLengthOk": "{count} characters: long enough",
+  "@passwordLengthOk": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "unlockTitle": "Unlock your data",
+  "unlockAction": "Unlock",
+  "unlockWrong": "Wrong password.",
+  "unlockOpening": "Opening…",
+  "unlockSetupTitle": "Choose a password",
+  "unlockSetupWhy": "Your data is encrypted on this computer: without this password, no program and no one with a copy of the file can read it. Use a sentence of a few words: more than 16 characters.",
+  "unlockSetupForget": "The password is never saved. If you forget it, your data cannot be recovered: statements can be imported again, but your categories and choices are lost. Keep it in a password manager or on paper.",
+  "unlockSetupExisting": "Your existing data and the app's automatic copies are encrypted now. Copies you saved yourself elsewhere stay readable: delete them, or restore one once to make an encrypted copy.",
+  "unlockSetupAction": "Encrypt and open",
+  "unlockEncrypting": "Encrypting… (a few seconds)",
+  "passwordChange": "Change password",
+  "passwordChangeHint": "Copies made before keep the old password: restoring one will ask for it.",
+  "passwordChanged": "Password changed.",
+  "restorePasswordTitle": "Password of this copy",
+  "restorePasswordHint": "This copy doesn't open with your current password. Type the password it was made with: it will be restored with your current one.",
+  "restoreWrongPassword": "This file doesn't open with that password, or it is not a copy of this app.",
+  "devCopyButton": "Anonymized copy for a developer",
+  "devCopyTitle": "Anonymized copy for a developer",
+  "devCopyWhat": "A copy of the whole database where every shop becomes MARCHAND 001, MARCHAND 002… (big chains like Costco or IGA too), people PERSONNE01…, cities VILLE01…, notes, cards, account names and numbers are hidden, and every amount is multiplied by a hidden factor. Categories, rules, targets and dates are kept, so a developer can work on data shaped like yours. Habits still show (when you travel, how your spending is split).",
+  "devCopyNotBackup": "This is not a backup: it cannot be restored, and it never replaces your data.",
+  "devCopyExtra": "Other words to hide (optional)",
+  "devCopyExtraHint": "Your name, your street…: checked as well. Words not on a public list are already replaced.",
+  "devCopyAction": "Choose a folder and create",
+  "devCopyWorking": "Anonymizing and checking… (a few seconds)",
+  "devCopySamePassword": "Choose another password than yours: you will give this one to the developer.",
+  "devCopyDone": "Copy created and checked: nothing of your data was found in it.",
+  "devCopySummary": "{merchants} shops replaced (big chains included), {people} people, {cities} cities, {notes} notes hidden. {cells} texts checked against {words} words of your data.",
+  "@devCopySummary": {
+    "placeholders": {
+      "merchants": {
+        "type": "int"
+      },
+      "people": {
+        "type": "int"
+      },
+      "cities": {
+        "type": "int"
+      },
+      "notes": {
+        "type": "int"
+      },
+      "cells": {
+        "type": "int"
+      },
+      "words": {
+        "type": "int"
+      }
+    }
+  },
+  "devCopyGive": "Give the developer this folder and the password you chose. To open it: EXPENSES_DB_DIR=<folder> and the password.",
+  "devCopyLeak": "Words of your data were still in the copy: nothing was written. Please report it (without these words):",
+  "restoreDevCopy": "This is an anonymized developer copy: it can't replace your data.",
+  "databaseHome": "Your data",
+  "databaseChange": "Change file",
+  "databaseChooseTitle": "Open a data file",
+  "databaseChooseHint": "Each file has its own password: an anonymized copy, a copy someone shared with you… The file stays where it is: keep it on the computer's disk, not on a USB key.",
+  "databaseMissing": "Not found: {path}",
+  "@databaseMissing": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "databaseForget": "Remove from the list (the file is not deleted)",
+  "databaseMakeMain": "Use as my data",
+  "databaseMakeMainTitle": "Make “{name}” your data?",
+  "@databaseMakeMainTitle": {"placeholders": {"name": {"type": "String"}}},
+  "databaseMakeMainNew": "It is copied into the app's folder and opens at every start, with its own password. The original file stays where it is.",
+  "databaseMakeMainReplace": "It is copied into the app's folder and opens at every start, with its own password. Your current data is kept as a copy (Backups). The original file stays where it is.",
+  "databaseMakeMainAction": "Use this file",
+  "databaseMakeMainFailed": "The copy failed: {error}",
+  "@databaseMakeMainFailed": {"placeholders": {"error": {"type": "String"}}},
+  "databaseBrowse": "Browse…",
+  "databaseNotFound": "This file doesn't exist.",
+  "databasePlaintext": "This file isn't encrypted: it's a copy from before the password. To get its data back, open your data, then Backups → Restore a file.",
+  "lockTooltip": "Lock (or switch file)",
+  "lockConfirmTitle": "Lock?",
+  "lockConfirm": "The file closes. You'll need its password to open it again.",
+  "lockAction": "Lock",
+  "backupDatabaseFile": "Open file: {path}",
+  "@backupDatabaseFile": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "backupShowFile": "Show the file in Explorer"
+}

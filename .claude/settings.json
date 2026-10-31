@@ -1,0 +1,28 @@
+{
+  "permissions": {
+    "deny": [
+      "Read(**/*.pdf)",
+      "Read(**/*.PDF)",
+      "Read(**/*.csv)",
+      "Read(**/*.CSV)",
+      "Read(**/*.ofx)",
+      "Read(**/*.OFX)",
+      "Read(**/*.qfx)",
+      "Read(**/*.QFX)",
+      "Read(**/*.qif)",
+      "Read(**/*.QIF)",
+      "Read(**/*.dump.txt)",
+      "Read(**/reveal.txt)",
+      "Read(**/anonymize-extra.txt)",
+      "Read(**/extra.txt)",
+      "Bash(dart run banks:dump*)",
+      "Bash(*dart run banks:dump*)",
+      "Bash(dart run banks:parse*-v*)",
+      "Bash(*dart run banks:parse*-v*)",
+      "PowerShell(dart run banks:dump*)",
+      "PowerShell(*dart run banks:dump*)",
+      "PowerShell(dart run banks:parse*-v*)",
+      "PowerShell(*dart run banks:parse*-v*)"
+    ]
+  }
+}

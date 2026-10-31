@@ -1,0 +1,40 @@
+name: expense_desktop
+description: Expense tracker desktop app - statement import, review, analysis.
+publish_to: 'none'
+version: 0.1.0+1
+resolution: workspace
+
+environment:
+  sdk: ^3.13.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  core: any
+  crypto: ^3.0.6
+  desktop_drop: any
+  drift: any
+  file_selector: any
+  fl_chart: any
+  banks: any
+  intl: any
+  path: any
+  path_provider: any
+  pdf_words: any
+  provider: ^6.1.5
+  storage: any
+  excel: ^4.0.6
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true
+  generate: true
+  assets:
+    # Export guides of the bank plug-ins (BankImporter.exportGuide), no personal data.
+    - assets/guides/desjardins/

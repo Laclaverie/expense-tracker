@@ -1,0 +1,20 @@
+name: storage
+description: Local SQLite database (drift) - accounts, transactions, categories, merchants, rules, imports, stats.
+publish_to: none
+resolution: workspace
+
+environment:
+  sdk: ^3.13.0
+
+dependencies:
+  core: any
+  drift: any
+  sqlite3: any
+  uuid: ^4.5.0
+
+dev_dependencies:
+  build_runner: any
+  drift_dev: any
+  banks: any
+  pdf_words: any
+  test: ^1.26.0

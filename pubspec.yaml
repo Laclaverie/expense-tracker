@@ -1,0 +1,24 @@
+name: expense_tracker_workspace
+publish_to: none
+
+environment:
+  sdk: ^3.13.0
+
+workspace:
+  - packages/core
+  - packages/pdf_words
+  - packages/banks
+  - packages/storage
+  - packages/demo
+  - apps/desktop
+
+dev_dependencies:
+  lints: ^6.0.0
+
+# SQLite with encryption (SQLite3MultipleCiphers), used in SQLCipher 4 mode:
+# the database opens in DB Browser for SQLite (SQLCipher) or `sqlcipher` with
+# the owner's password, on Windows, Linux and Android. B11, doc 08.
+hooks:
+  user_defines:
+    sqlite3:
+      source: sqlite3mc

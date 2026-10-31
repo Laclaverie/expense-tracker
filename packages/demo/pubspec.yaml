@@ -1,0 +1,19 @@
+name: demo
+description: >-
+  A made-up household lived month by month (no real data), written as bank statements in each bank's
+  layout: the synthetic test fixtures of the bank plug-ins and the demo database.
+publish_to: none
+resolution: workspace
+
+environment:
+  sdk: ^3.13.0
+
+dependencies:
+  banks: any
+  core: any
+  drift: any
+  pdf_words: any
+  storage: any
+
+dev_dependencies:
+  test: ^1.26.0

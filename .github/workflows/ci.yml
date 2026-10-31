@@ -1,0 +1,41 @@
+name: checks
+
+# Pushes to main and pull requests: formatting, analysis and tests of every package and of the desktop app
+# (tools/test-all.ps1, the same script as test-all.bat). A pull request is merged only when this is green.
+# Windows runners are expensive, so:
+# - a push of several commits runs once, on the last one (GitHub's default);
+# - a new push cancels the run still going for the same branch / pull request;
+# - changes touching only documentation don't run it;
+# - "Run workflow" (Actions tab) starts it by hand.
+on:
+  push:
+    branches: [main]
+    paths-ignore: ['**.md', 'docs/**', 'LICENSE', '.gitignore']
+  pull_request:
+    paths-ignore: ['**.md', 'docs/**', 'LICENSE', '.gitignore']
+  workflow_dispatch:
+
+concurrency:
+  group: checks-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: windows-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Flutter version
+        shell: pwsh
+        run: echo "FLUTTER_VERSION=$((Get-Content .flutter-version -Raw).Trim())" >> $env:GITHUB_ENV
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+
+      - name: Format, analyze, test
+        shell: pwsh
+        run: ./tools/test-all.ps1

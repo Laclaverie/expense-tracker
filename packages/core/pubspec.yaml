@@ -1,0 +1,13 @@
+name: core
+description: Expense tracker domain model - categories, merchants, kinds, rules, categorization, transfers.
+publish_to: none
+resolution: workspace
+
+environment:
+  sdk: ^3.13.0
+
+dependencies:
+  crypto: ^3.0.6
+
+dev_dependencies:
+  test: ^1.26.0

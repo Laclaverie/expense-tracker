@@ -1,0 +1,78 @@
+Dépenses — suivi des dépenses (Windows)
+=========================================
+
+Démarrer
+  1. Décompressez le dossier où vous voulez (par exemple Documents\Depenses).
+  2. Lancez expense_desktop.exe.
+     Windows peut afficher « Windows a protégé votre ordinateur » (application non signée) :
+     cliquez « Informations complémentaires » puis « Exécuter quand même ».
+
+Importer vos transactions
+  Page « Importer » : cliquez « Obtenir vos fichiers CSV » pour voir comment télécharger vos
+  transactions dans AccèsD (18 derniers mois), puis glissez les fichiers sur la page.
+  Téléchargez de nouveau quand vous voulez : les lignes déjà importées sont reconnues.
+  Pour les mois plus anciens, glissez les relevés PDF : un mois présent dans un PDF et dans
+  un CSV ne compte qu'une fois.
+  Reconnus pour l'instant : Desjardins — comptes et carte Mastercard Odyssée (la liste est sur
+  la page « Importer »). Les fichiers sont vérifiés avec leurs soldes ou totaux quand ils en
+  ont, puis oubliés : seule leur empreinte est gardée.
+
+Votre banque n'est pas dans la liste ?
+  Page « Importer » → « Ma banque ou ma carte n'est pas dans la liste ». L'app fait une copie
+  masquée de quelques relevés (lettres → X, chiffres → 9) ; cochez seulement les mots du relevé
+  lui-même, jamais votre nom ni votre adresse. Envoyez le dossier enregistré à la personne qui
+  ajoute votre banque.
+
+Analyser
+  En haut : la banque, puis « Tous les comptes » ou un seul compte.
+  Un compte seul montre tout son historique. Tous les comptes ensemble ne sont analysés
+  qu'à partir du mois où chaque type de relevé existe (sinon les mois sans relevé de carte
+  paraîtraient moins chers).
+  Statistiques → Tendances : cliquez un groupe (ex. Alimentation) pour n'analyser que lui :
+  dépenses par magasin, et une fiche par magasin (achats par mois, panier moyen).
+  Statistiques → Soldes : solde de chaque compte mois par mois, dépôts, retraits, intérêts.
+  Statistiques → Récurrents : abonnements, factures et loyer trouvés automatiquement,
+  même si la date de paiement varie.
+
+Exporter
+  Page « Transactions » → « Exporter… » : ce qui est affiché (mois ou toutes les dates, filtres)
+  en Excel (.xlsx) ou CSV.
+
+Vos données
+  Tout reste sur votre ordinateur, dans :
+    %APPDATA%\dev.lasagna\expense-tracker\expenses.sqlite
+  Rien n'est envoyé sur Internet.
+  Nouvel ordinateur : copiez ce fichier (clé USB…), puis sur l'écran du mot de passe
+  « Changer de fichier » → « Parcourir… » → choisissez-le → icône maison « Utiliser comme mes
+  données ». Il est copié au bon endroit et garde son mot de passe.
+
+Sauvegardes
+  Une copie est faite automatiquement avant chaque import et avant chaque mise à jour de l'app
+  (les 15 dernières sont gardées). Bouton « Sauvegardes » en haut à droite : liste des copies,
+  « Restaurer », « Enregistrer une copie… » sur une clé USB.
+  Nouvel ordinateur : sur l'ancien, « Enregistrer une copie… » sur une clé USB ; sur le nouveau,
+  lancez l'app puis « Sauvegardes » → « Restaurer un fichier… » et choisissez cette copie.
+
+Catégories d'un ami
+  Page « Catégories et règles » → « Importer… » : choisissez le fichier .json reçu.
+  Seules les catégories, règles et noms de commerces sont ajoutés ; vos choix sont conservés.
+
+Langue
+  Bouton 文A en haut à droite : français ou anglais.
+
+----------------------------------------------------------------------
+Expenses — expense tracker (Windows)
+
+Unzip anywhere and run expense_desktop.exe (if Windows SmartScreen warns, choose
+"More info" > "Run anyway"). Import Desjardins account or Odyssée Mastercard
+files on the Import page. Data stays on this computer in
+%APPDATA%\dev.lasagna\expense-tracker\expenses.sqlite. Categories shared by a
+friend: Categories & rules > Import….
+Import page: "How to get your CSV files" shows how to download your transactions
+from AccesD (last 18 months); PDF statements for older months, the same month from
+a PDF and a CSV counts once.
+Bank not listed: Import > "My bank or card isn't listed" saves a masked copy of your
+statements (tick only the statement's own words) to send to whoever adds your bank.
+Backups: automatic copies before each import and app update; top-right "Backups"
+button to restore, or to save a copy (USB key). New computer: save a copy on the old
+one, then "Backups" > "Restore a file…" on the new one.

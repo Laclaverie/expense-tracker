@@ -1,0 +1,13 @@
+name: banks
+description: Bank plug-ins (one folder per bank in lib/src), their contract and helpers, the registry, and the dump / parse / anonymize / shape / check command-line tools.
+publish_to: none
+resolution: workspace
+
+environment:
+  sdk: ^3.13.0
+
+dependencies:
+  core: any
+  pdf_words: any
+  # testing.dart (fixture tests every plug-in runs) builds on it.
+  test: ^1.26.0
