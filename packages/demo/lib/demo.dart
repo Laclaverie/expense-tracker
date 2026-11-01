@@ -4,6 +4,7 @@
 library;
 
 export 'src/couple.dart';
+export 'src/desjardins/card_csv.dart';
 export 'src/desjardins/card_statement.dart' show newCardLayoutFrom;
 export 'src/desjardins/statements.dart';
 export 'src/household.dart';
