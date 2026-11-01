@@ -31,9 +31,23 @@ void main() {
             fileType: 'csv',
           );
 
-      test('nothing to review before the drop but the merchants left to review', () async {
+      test('nothing to review before the drop', () async {
         final pending = await (db.select(db.transactions)..where((t) => t.needsReview)).get();
-        expect(pending.every((t) => persona.show.leftToReview.any(t.description.contains)), isTrue);
+        expect(pending, isEmpty);
+      });
+
+      test('the dropped lines of merchants left to review wait for review', () async {
+        for (final name in csvs.keys) {
+          await drop(name);
+        }
+        final pending = await (db.select(db.transactions)..where((t) => t.needsReview)).get();
+        final left = pending.where((t) => persona.show.leftToReview.any(t.description.contains));
+        final dropped = {
+          for (final text in csvs.values)
+            for (final m in persona.show.leftToReview)
+              if (text.contains(m)) m,
+        };
+        expect({for (final t in left) persona.show.leftToReview.firstWhere(t.description.contains)}, dropped);
       });
 
       test('the held-back card period is not imported', () async {

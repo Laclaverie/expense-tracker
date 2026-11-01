@@ -39,14 +39,16 @@ class ImportScreen extends StatefulWidget {
   final VoidCallback onImported;
 
   @override
-  State<ImportScreen> createState() => _ImportScreenState();
+  State<ImportScreen> createState() => ImportScreenState();
 }
 
-class _ImportScreenState extends State<ImportScreen> {
+class ImportScreenState extends State<ImportScreen> {
   final _results = <_FileResult>[];
   bool _hovering = false;
 
-  Future<void> _import(List<String> paths) async {
+  /// Imports the statement files at [paths], as a drop on the page does.
+  @visibleForTesting
+  Future<void> importPaths(List<String> paths) async {
     final l = AppLocalizations.of(context);
     final importer = context.read<ImportService>();
     final repo = context.read<ExpenseRepository>();
@@ -108,7 +110,7 @@ class _ImportScreenState extends State<ImportScreen> {
         XTypeGroup(label: 'PDF, CSV, OFX…', extensions: [...statementFileTypes]),
       ],
     );
-    if (files.isNotEmpty) await _import([for (final f in files) f.path]);
+    if (files.isNotEmpty) await importPaths([for (final f in files) f.path]);
   }
 
   @override
@@ -125,7 +127,7 @@ class _ImportScreenState extends State<ImportScreen> {
           onDragExited: (_) => setState(() => _hovering = false),
           onDragDone: (d) {
             setState(() => _hovering = false);
-            _import([for (final f in d.files) f.path]);
+            importPaths([for (final f in d.files) f.path]);
           },
           child: Container(
             height: 180,

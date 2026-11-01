@@ -21,6 +21,6 @@ Future<Map<String, String>> fillShowcaseDatabase(ExpenseDatabase db, Persona per
     for (final s in desjardinsStatements(life))
       if (!(s.closing == last && s.name.startsWith('desjardins-card'))) s,
   ];
-  await importAndReview(db, life, statements, lifeEnd);
+  await importAndReview(db, life, statements, lifeEnd, reviewEverything: true);
   return writeCardCsvs(life, last);
 }

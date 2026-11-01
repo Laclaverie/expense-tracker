@@ -59,7 +59,7 @@ final freelancer = Persona(
   atmCaisse: 'CAISSE DE VILLE-MARIE',
   accountCategories: const {'Revenu Québec': 'government.taxes', 'Revenu Canada': 'government.taxes'},
   show: const ShowState(
-    leftToReview: {'BIXI MONTREAL'},
+    leftToReview: {'RAMEN DU CENTRE'},
     targets: [('food.restaurants', TargetPeriod.month, 20000), (null, TargetPeriod.year, 4500000)],
   ),
 );

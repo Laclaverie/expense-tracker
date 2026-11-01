@@ -29,8 +29,16 @@ Future<void> fillDemoDatabase(ExpenseDatabase db, {Life? life}) async {
 
 /// Imports [statements] of [life] into [db] (skipping its persona's missing
 /// statement), confirms a category for every merchant seen up to [until]
-/// (except those left to review) and saves its targets.
-Future<void> importAndReview(ExpenseDatabase db, Life life, List<SyntheticStatement> statements, DateTime until) async {
+/// (except those left to review) and saves its targets. With [reviewEverything],
+/// the lines of the merchants left to review are categorized one by one too,
+/// without remembering the merchant: their next lines still wait for review.
+Future<void> importAndReview(
+  ExpenseDatabase db,
+  Life life,
+  List<SyntheticStatement> statements,
+  DateTime until, {
+  bool reviewEverything = false,
+}) async {
   final show = life.persona.show;
   final importer = ImportService(db, clock: () => importDay);
   for (final s in statements) {
@@ -57,6 +65,17 @@ Future<void> importAndReview(ExpenseDatabase db, Life life, List<SyntheticStatem
               ..limit(1))
             .getSingleOrNull();
     if (first != null) await repo.setCategory(first.id, category, rememberForMerchant: true);
+  }
+  if (reviewEverything) {
+    for (final merchant in show.leftToReview) {
+      final category = life.cardEntries.firstWhere((e) => e.merchant == merchant).category!;
+      final lines = await (db.select(
+        db.transactions,
+      )..where((t) => t.description.contains(merchant) & t.date.isSmallerOrEqualValue(until))).get();
+      for (final t in lines) {
+        await repo.setCategory(t.id, category, rememberForMerchant: false);
+      }
+    }
   }
   final reviewed = await (db.select(
     db.transactions,

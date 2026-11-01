@@ -1,8 +1,11 @@
 import '../life.dart';
 
-/// The card lines of the statement period ending [closing] (one of
-/// [Life.cardStatementDates]) as AccèsD card exports ("Télécharger les
-/// transactions"): one file per card, as the bank gives them, named
+/// The card lines bought after the statement before [closing] (one of
+/// [Life.cardStatementDates]) up to it, as AccèsD card exports ("Télécharger
+/// les transactions" for that date range). By purchase date, not posting
+/// date: a purchase made on the previous closing day but posted after it is
+/// on no file (the statements list by posting date, the export by purchase
+/// date). One file per card, as the bank gives them, named
 /// `releve-carte-<last 4>.csv`. Layout: `banks/lib/src/desjardins/csv/reader.dart`
 /// (13 columns, no header, empty columns `""`, merchant in 25 characters then
 /// city in 13 and province, oldest day first). Payments and fees go with the
@@ -14,7 +17,7 @@ Map<String, String> writeCardCsvs(Life life, DateTime closing) {
   final p = life.persona;
   final byCard = <String, List<CardEntry>>{};
   for (final e in life.cardEntries) {
-    if (!e.posted.isAfter(from) || e.posted.isAfter(closing)) continue;
+    if (!e.date.isAfter(from) || e.date.isAfter(closing)) continue;
     byCard.putIfAbsent(e.operation ? p.holderCard : e.card, () => []).add(e);
   }
   return {
