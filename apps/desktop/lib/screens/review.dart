@@ -296,6 +296,10 @@ class _ReviewReason extends StatelessWidget {
     final index = context.watch<CategoryIndex>();
     final category = index.name(context, v.txn.categoryId);
     final rate = v.txn.bonusRate;
+    // Nothing to explain on an uncategorized line: its "Uncategorized" chip says it.
+    if (v.txn.categoryId == null && !const {'rule', 'merchant', 'bank', 'seed', 'keyword'}.contains(v.txn.confidence)) {
+      return const SizedBox.shrink();
+    }
     final (icon, text) = switch (v.txn.confidence) {
       'rule' => (Icons.rule, l.reasonRule),
       'merchant' => (Icons.history, l.reasonMerchant),

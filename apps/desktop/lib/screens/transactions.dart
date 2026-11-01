@@ -255,10 +255,15 @@ class _Row extends StatelessWidget {
             SizedBox(width: 80, child: Text(shortDate(context, v.txn.date))),
             SizedBox(
               width: 170,
-              child: Text(
-                v.account.name,
-                overflow: TextOverflow.ellipsis,
-                style: t.bodySmall?.copyWith(color: muted),
+              // Card names are long ("… World Elite Mastercard"): the full name on hover.
+              child: Tooltip(
+                message: v.account.name,
+                waitDuration: const Duration(milliseconds: 500),
+                child: Text(
+                  accountName(v.account),
+                  overflow: TextOverflow.ellipsis,
+                  style: t.bodySmall?.copyWith(color: muted),
+                ),
               ),
             ),
             Expanded(

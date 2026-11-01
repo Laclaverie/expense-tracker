@@ -154,8 +154,11 @@ class _ShellState extends State<Shell> {
           Expanded(
             child: Column(
               children: [
-                // Statistics have their own periods: no month there.
-                _TopBar(showMonth: _page != 1, onImport: () => setState(() => _page = _importPage)),
+                // Only the dashboard, transactions and targets follow the selected month.
+                _TopBar(
+                  showMonth: const {0, 2, 4}.contains(_page),
+                  onImport: () => setState(() => _page = _importPage),
+                ),
                 const Divider(height: 1),
                 Expanded(child: pages[_page]),
               ],

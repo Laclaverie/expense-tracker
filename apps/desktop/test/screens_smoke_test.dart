@@ -116,8 +116,9 @@ void main() {
         expect(copied, isNotEmpty);
         expect(find.textContaining('Copied: $copied'), findsOneWidget);
 
-        // Each line says why it is in review; the queue sorts by amount and merchant.
-        expect(find.textContaining(RegExp('Bonidollars|No clue|Keyword|Bank hint|Known merchant')), findsWidgets);
+        // An uncategorized line has nothing to explain (its chip says it); the queue sorts by amount and merchant.
+        expect(find.textContaining('No clue'), findsNothing);
+        expect(find.text('Uncategorized'), findsWidgets);
         await open('Amount');
         await open('By merchant');
 

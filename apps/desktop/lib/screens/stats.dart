@@ -30,16 +30,22 @@ class StatsScreen extends StatefulWidget {
 }
 
 class _StatsScreenState extends State<StatsScreen> with SingleTickerProviderStateMixin {
+  // From the big picture to the detail: where the money goes, what comes back
+  // every month, then one shop; then history (trends, comparisons, balances).
   late final _tabs = TabController(length: 6, vsync: this);
-  static const _recurringTab = 5;
+  static const _recurringTab = 1, _trendsTab = 3, _compareTab = 4, _balancesTab = 5;
   StatsRange _range = StatsRange.twelve;
+
+  /// Compare and recurring payments have their own periods: the range buttons
+  /// and the notices about the range don't apply there.
+  bool get _usesRange => _tabs.index != _compareTab && _tabs.index != _recurringTab;
 
   /// Group or category the whole page is narrowed to ('' = uncategorized).
   String? _focus;
 
   void _focusOn(String key) {
     setState(() => _focus = key);
-    _tabs.animateTo(0);
+    _tabs.animateTo(_trendsTab);
   }
 
   @override
@@ -79,17 +85,20 @@ class _StatsScreenState extends State<StatsScreen> with SingleTickerProviderStat
             children: [
               Text(l.navStats, style: Theme.of(context).textTheme.headlineSmall),
               const SizedBox(width: 24),
-              SegmentedButton<StatsRange>(
-                segments: [
-                  ButtonSegment(value: StatsRange.six, label: Text(l.range6)),
-                  ButtonSegment(value: StatsRange.twelve, label: Text(l.range12)),
-                  ButtonSegment(value: StatsRange.thisYear, label: Text(l.rangeThisYear)),
-                  ButtonSegment(value: StatsRange.lastYear, label: Text(l.rangeLastYear)),
-                  ButtonSegment(value: StatsRange.all, label: Text(l.rangeAll)),
-                ],
-                selected: {_range},
-                showSelectedIcon: false,
-                onSelectionChanged: (s) => setState(() => _range = s.first),
+              ListenableBuilder(
+                listenable: _tabs,
+                builder: (context, _) => SegmentedButton<StatsRange>(
+                  segments: [
+                    ButtonSegment(value: StatsRange.six, label: Text(l.range6)),
+                    ButtonSegment(value: StatsRange.twelve, label: Text(l.range12)),
+                    ButtonSegment(value: StatsRange.thisYear, label: Text(l.rangeThisYear)),
+                    ButtonSegment(value: StatsRange.lastYear, label: Text(l.rangeLastYear)),
+                    ButtonSegment(value: StatsRange.all, label: Text(l.rangeAll)),
+                  ],
+                  selected: {_range},
+                  showSelectedIcon: false,
+                  onSelectionChanged: _usesRange ? (s) => setState(() => _range = s.first) : null,
+                ),
               ),
               if (_focus != null) ...[
                 const SizedBox(width: 16),
@@ -108,12 +117,12 @@ class _StatsScreenState extends State<StatsScreen> with SingleTickerProviderStat
           isScrollable: true,
           tabAlignment: TabAlignment.start,
           tabs: [
-            Tab(text: l.tabTrends),
             Tab(text: l.tabCategories),
+            Tab(text: l.tabRecurring),
             Tab(text: l.tabMerchants),
+            Tab(text: l.tabTrends),
             Tab(text: l.tabCompare),
             Tab(text: l.tabBalances),
-            Tab(text: l.tabRecurring),
           ],
         ),
         Expanded(
@@ -146,11 +155,10 @@ class _StatsScreenState extends State<StatsScreen> with SingleTickerProviderStat
                   );
                   return Column(
                     children: [
-                      // Compare, balances and recurring payments have their own periods: notices about
-                      // the spending range don't apply there.
+                      // Balances follow the range but not the spending coverage rules.
                       ListenableBuilder(
                         listenable: _tabs,
-                        builder: (context, _) => _tabs.index >= 3
+                        builder: (context, _) => !_usesRange || _tabs.index == _balancesTab
                             ? const SizedBox.shrink()
                             : Column(
                                 children: [
@@ -177,12 +185,12 @@ class _StatsScreenState extends State<StatsScreen> with SingleTickerProviderStat
                         child: TabBarView(
                           controller: _tabs,
                           children: [
-                            TrendsTab(data, onFocus: _focusOn),
                             CategoriesTab(data, onFocus: _focusOn, onNarrow: (key) => setState(() => _focus = key)),
+                            RecurringTab(data),
                             MerchantsTab(data),
+                            TrendsTab(data, onFocus: _focusOn),
                             CompareTab(data, month: anchor, coverage: cov),
                             BalancesTab(scope, period),
-                            RecurringTab(data),
                           ],
                         ),
                       ),
