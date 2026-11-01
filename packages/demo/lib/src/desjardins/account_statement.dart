@@ -1,7 +1,6 @@
 import 'package:pdf_words/pdf_words.dart';
 
 import '../life.dart';
-import '../persona.dart';
 import 'page.dart';
 
 const _rowStep = 11.95, _lastRow = 745.0;
@@ -46,7 +45,7 @@ DocumentWords writeAccountStatement(Life life, DateTime month) {
   void newPage() {
     page = PageBuilder();
     pages.add(page);
-    _header(page, period);
+    _header(page, period, life.persona.holder);
     y = 223.3;
   }
 
@@ -68,7 +67,10 @@ DocumentWords writeAccountStatement(Life life, DateTime month) {
       for (final e in life.accountEntries)
         if (e.account == s.id && !e.date.isBefore(month) && !e.date.isAfter(end)) e,
     ];
-    if (s.id == 'ET 2' && month.isBefore(DateTime.utc(tfsaOpened.year, tfsaOpened.month))) continue;
+    final tfsaOpened = life.persona.tfsaOpened;
+    if (s.id == 'ET 2' && (tfsaOpened == null || month.isBefore(DateTime.utc(tfsaOpened.year, tfsaOpened.month)))) {
+      continue;
+    }
     if (y > 650) newPage();
     if (s.title.isNotEmpty) {
       if (y > 223.3) y += 24;
@@ -122,7 +124,7 @@ DocumentWords writeAccountStatement(Life life, DateTime month) {
   return DocumentWords([for (final p in pages) p.build()]);
 }
 
-void _header(PageBuilder page, String period) {
+void _header(PageBuilder page, String period, String holder) {
   page
     ..text('CAISSE', 107, 20)
     ..text('Pour la période', 458, 25.5)

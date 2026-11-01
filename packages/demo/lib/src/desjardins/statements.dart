@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:pdf_words/pdf_words.dart';
 
 import '../life.dart';
@@ -34,4 +36,10 @@ List<SyntheticStatement> desjardinsStatements(Life life) {
       SyntheticStatement('desjardins-card-${ym(c)}', c, writeCardStatement(life, c)),
   ]..sort((a, b) => a.closing.compareTo(b.closing));
   return out;
+}
+
+/// [s] as a fixture file's text (`<name>.synthetic.json`).
+String fixtureJson(SyntheticStatement s) {
+  final format = s.name.substring(0, s.name.lastIndexOf('-', s.name.lastIndexOf('-') - 1));
+  return '${jsonEncode({'format': format, 'synthetic': true, ...s.words.toJson()})}\n';
 }

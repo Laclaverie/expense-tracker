@@ -1,9 +1,10 @@
-/// The made-up household: two adults renting in Montréal, one checking
-/// account, savings, a TFSA from January 2026 and a credit card with two
-/// cards. Everything here is invented or a public chain with an invented store
-/// number; amounts follow public averages for a Québec household, never anyone's
-/// statements. Edit freely: tests check what the app must find, not exact values.
+/// What a made-up persona is made of ([Persona]), and the shops they visit.
+/// Everything here is invented or a public chain with an invented store
+/// number; amounts follow public averages for Québec, never anyone's
+/// statements. The personas: `couple.dart`, `freelancer.dart`.
 library;
+
+import 'package:core/core.dart' show TargetPeriod;
 
 /// A place that takes the card.
 class Shop {
@@ -136,120 +137,136 @@ const ticketmaster = Shop('TICKETMASTER CANADA', 'TORONTO', 'ON', 'leisure.conce
 const bestBuy = Shop('BEST BUY #940', _mtl, 'QC', 'shopping.electronics');
 const librairie = Shop('LIBRAIRIE DU PLATEAU', _mtl, 'QC', 'shopping.gifts');
 
-// ------------------------------------------------------------- the household
+// ------------------------------------------------------------------ a persona
 
-/// Spending from the first to the last day.
+/// Spending from the first to the last day (every persona).
 final DateTime lifeStart = _d(2024, 10, 21);
 
 /// Last card statement. Account statements stop at the end of the month before.
 final DateTime lifeEnd = _d(2026, 10, 20);
 
-const habits = [
-  Habit([iga, metro, iga, fruiterie], 5.5, 9500),
-  Habit([cafe, boulangerie, timHortons], 4, 1150, partner: .4),
-  Habit([bistro, pizzeria, sushi, tablee], 3, 6400, december: 1.6),
-  Habit([aw, subway], 1.5, 1450),
-  Habit([saq], 1.6, 3600, december: 2),
-  Habit([pharmacie], 1.2, 2800),
-  Habit([amazon, dollarama, canadianTire, simons], 2.2, 4800, spread: .6, december: 2.5),
-  Habit([communauto, uber], 1.2, 3100, spread: .5),
-  Habit([cinema, ticketmaster, librairie], .9, 4200, spread: .5, december: 2),
-];
+/// Where the money comes from.
+sealed class Income {
+  const Income();
+}
 
-/// Once a month, at Costco.
-const costcoRun = Habit([costco], 1, 21000, spread: .25, partner: .5);
+/// Net pay every other Thursday from [firstPayday].
+class Salary extends Income {
+  const Salary(this.firstPayday, this.pay, this.employer);
 
-final bills = [
-  Bill(stm, (1, 3), [(_d(2024, 1, 1), 9700), (_d(2026, 7, 1), 10000)]),
-  Bill(videotron, (8, 8), [(_d(2024, 1, 1), 7500)]),
-  Bill(apple, (5, 5), [(_d(2024, 1, 1), 399)]),
-  // Price change in March 2026: the recurring payment follows it.
-  Bill(netflix, (14, 14), [(_d(2024, 1, 1), 1899), (_d(2026, 3, 1), 2099)]),
-  Bill(spotify, (22, 22), [(_d(2024, 1, 1), 1199)]),
-  // Paid by hand somewhere between the 12th and the 18th; roaming made two bills higher:
-  // May (before the alert window: "past unusual payment") and September (an alert).
-  Bill(
-    virgin,
-    (12, 18),
-    [
-      (_d(2024, 1, 1), 4500),
-      (_d(2026, 5, 1), 5928),
-      (_d(2026, 6, 1), 4500),
-      (_d(2026, 9, 1), 7248),
-      (_d(2026, 10, 1), 4500),
-    ],
-  ),
-  // Cancelled in spring 2026: shows as a stopped recurring payment.
-  Bill(gym, (1, 1), [(_d(2024, 1, 1), 3999)], until: _d(2026, 4, 30)),
-];
+  final DateTime firstPayday;
 
-final trips = [
-  Trip(_d(2025, 7, 5), 6, const Shop('AUBERGE DU PHARE', 'GASPE', 'QC', 'travel.lodging'), 16900, const [
-    (Shop('RESTAURANT LE MARIN', 'GASPE', 'QC', 'food.restaurants', bonus: 300), 7400),
-    (Shop('PARC NATIONAL FORILL', 'GASPE', 'QC', 'travel.activities'), 2400),
-    (Shop('PETRO-CANADA 4410', 'MATANE', 'QC', 'transport.fuel', bonus: 200), 6200),
-    (Shop('CAFE DU QUAI', 'PERCE', 'QC', 'food.coffee', bonus: 300), 1300),
-  ]),
-  Trip(
-    _d(2026, 5, 14),
-    4,
-    const Shop('HARBOR VIEW HOTEL', 'BOSTON', 'MA', 'travel.lodging'),
-    21900,
-    const [
-      (Shop('NORTH END TRATTORIA', 'BOSTON', 'MA', 'food.restaurants', bonus: 300), 6800),
-      (Shop('MBTA CHARLIECARD', 'BOSTON', 'MA', 'travel.transport'), 1100),
-      (Shop('AQUARIUM GIFT SHOP', 'BOSTON', 'MA', 'travel.activities'), 3400),
-    ],
-    currency: 'USD',
-    rate: 1.3712,
-  ),
-];
+  /// Net pay from each date on, oldest first.
+  final List<(DateTime, int)> pay;
+  final String employer;
+}
 
-final oneOffs = [
-  OneOff(_d(2025, 3, 22), dentiste, 18500),
-  OneOff(_d(2025, 9, 27), dentiste, 21000),
-  OneOff(_d(2025, 12, 13), bestBuy, 32999),
-  OneOff(_d(2026, 1, 30), amazon, -4799), // refund of a return
-  OneOff(_d(2026, 3, 21), dentiste, 19500),
-  OneOff(_d(2026, 10, 3), bestBuy, 149999), // a new laptop: a very large expense
-  OneOff(
-    _d(2026, 10, 6),
-    const Shop('KICKSTARTER.COM', 'BROOKLYN', 'NY', 'shopping.online'),
-    2500,
-    currency: 'USD',
-    rate: 1.3891,
-  ),
-];
+/// What the demo databases do with a persona after importing its statements.
+class ShowState {
+  const ShowState({this.leftToReview = const {}, this.missingAccountStatement, this.targets = const []});
 
-/// Every other Thursday from this date, net pay.
-final DateTime firstPayday = _d(2024, 10, 24);
-final List<(DateTime, int)> pay = [(_d(2024, 1, 1), 196000), (_d(2026, 4, 1), 203000)];
-const employer = 'LOGICIELS BOREAL INC';
+  /// Merchants never categorized: they stay to review.
+  final Set<String> leftToReview;
 
-final List<(DateTime, int)> rent = [(_d(2024, 1, 1), 145000), (_d(2026, 7, 1), 149500)];
-const landlord = 'Martin Lavoie';
+  /// Account statement left out, so coverage notices have something to show.
+  final DateTime? missingAccountStatement;
 
-/// Friends paid back or paying back by Interac.
-const friends = ['JULIE TREMBLAY', 'MARC GAGNON', 'SOPHIE ROY'];
+  /// Targets on the whole Desjardins CAD scope: category (null = everything),
+  /// period, cents.
+  final List<(String?, TargetPeriod, int)> targets;
+}
 
-/// Home insurance, taken by the insurer each month.
-const insurer = 'ASSURANCES BOREALE';
-final List<(DateTime, int)> insurance = [(_d(2024, 1, 1), 3180), (_d(2026, 1, 1), 3340)];
+/// Someone who lives two years of money: habits, bills, income, accounts.
+/// Everything invented or a public chain with an invented store number.
+class Persona {
+  const Persona({
+    required this.id,
+    required this.seed,
+    required this.habits,
+    required this.bills,
+    this.trips = const [],
+    this.oneOffs = const [],
+    required this.income,
+    required this.rent,
+    required this.landlord,
+    this.friends = const [],
+    this.insurer,
+    this.insurance = const [],
+    this.utility,
+    this.taxRefund = false,
+    this.cancelledTransfer,
+    this.toSavings = 0,
+    this.toTfsa = 0,
+    this.tfsaOpened,
+    this.savingsRate = .025,
+    this.tfsaRate = .03,
+    required this.openings,
+    required this.cardAccount,
+    required this.holderCard,
+    this.partnerCard,
+    required this.holder,
+    this.partner,
+    this.cardAnnualFee = 13000,
+    required this.atmCaisse,
+    this.accountCategories = const {},
+    this.show = const ShowState(),
+  });
 
-/// Electricity every second month (higher in winter).
-const utility = 'Hydro-Québec';
+  /// `couple`, `freelancer`: the name `demo:showcase --persona` takes.
+  final String id;
 
-/// To savings on the 2nd, to the TFSA on the 3rd from January 2026.
-const toSavings = 55000, toTfsa = 40000;
-final DateTime tfsaOpened = _d(2026, 1, 3);
+  /// Seed of its [Dice]: the same seed lives the same life.
+  final int seed;
 
-/// Annual savings interest rates.
-const savingsRate = .025, tfsaRate = .03;
+  /// Everyday spending, in the order the dice roll them.
+  final List<Habit> habits;
+  final List<Bill> bills;
+  final List<Trip> trips;
+  final List<OneOff> oneOffs;
+  final Income income;
 
-/// Opening balances (cents).
-const openings = {'EOP': 240000, 'ET 1': 850000, 'ET 2': 0, 'CS': 500};
+  /// Rent from each date on, paid by Interac to [landlord] on the 1st.
+  final List<(DateTime, int)> rent;
+  final String landlord;
 
-/// The card account and its two cards.
-const cardAccount = '0001', holderCard = '0011', partnerCard = '0022';
-const holder = 'ALEX EXEMPLE', partner = 'SAM EXEMPLE';
-const cardAnnualFee = 13000;
+  /// People paid back or paying back by Interac on Saturdays.
+  final List<String> friends;
+
+  /// Home insurance taken on the 25th; null: none.
+  final String? insurer;
+  final List<(DateTime, int)> insurance;
+
+  /// Electricity paid every second month (odd months, the 10th), about twice
+  /// as high in winter; null: in the rent.
+  final String? utility;
+
+  /// A Québec tax refund every May 8.
+  final bool taxRefund;
+
+  /// An Interac transfer to the first friend, cancelled the same day.
+  final DateTime? cancelledTransfer;
+
+  /// To savings (`ET 1`) on the 2nd, to the TFSA (`ET 2`) on the 3rd from [tfsaOpened].
+  final int toSavings, toTfsa;
+  final DateTime? tfsaOpened;
+
+  /// Annual interest rates.
+  final double savingsRate, tfsaRate;
+
+  /// Balance of each account (`EOP`, `ET 1`, `ET 2`, `CS`) before the first entry.
+  final Map<String, int> openings;
+
+  /// The card account and its cards (last 4 digits).
+  final String cardAccount, holderCard;
+  final String? partnerCard;
+  final String holder;
+  final String? partner;
+  final int cardAnnualFee;
+
+  /// Caisse printed on ATM withdrawals.
+  final String atmCaisse;
+
+  /// Category given to account lines, by counterparty (`Hydro-Québec`).
+  final Map<String, String> accountCategories;
+  final ShowState show;
+}

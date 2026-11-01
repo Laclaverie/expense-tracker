@@ -16,12 +16,14 @@ DocumentWords writeCardStatement(Life life, DateTime closing) {
   bool inPeriod(CardEntry e) => e.posted.isAfter(from) && !e.posted.isAfter(closing);
   final previous = -life.cardEntries.where((e) => !e.posted.isAfter(from)).fold(0, (s, e) => s + e.amount);
   final period = life.cardEntries.where(inPeriod).toList();
-  final s = _Statement(closing, previous, period);
+  final s = _Statement(life.persona, closing, previous, period);
   return closing.isBefore(newCardLayoutFrom) ? _original(s) : _layout2026(s);
 }
 
 class _Statement {
-  _Statement(this.closing, this.previous, this.entries);
+  _Statement(this.persona, this.closing, this.previous, this.entries);
+
+  final Persona persona;
 
   final DateTime closing;
 
@@ -37,7 +39,7 @@ class _Statement {
     for (final e in entries)
       if (e.operation) e,
   ];
-  Iterable<String> get cards => [holderCard, partnerCard].where((c) => purchases(c).isNotEmpty);
+  Iterable<String> get cards => [persona.holderCard, ?persona.partnerCard].where((c) => purchases(c).isNotEmpty);
 
   int get debits => -entries.where((e) => e.amount < 0).fold(0, (s, e) => s + e.amount);
   int get payments =>
@@ -47,7 +49,7 @@ class _Statement {
   int get newBalance => previous + debits - payments - otherCredits;
   int get minimum => newBalance <= 0 ? 0 : (newBalance * .05).round().clamp(1000, newBalance);
   DateTime get due => DateTime.utc(closing.year, closing.month, closing.day + 21);
-  String cardHolder(String card) => card == partnerCard ? partner : holder;
+  String cardHolder(String card) => card == persona.partnerCard ? persona.partner! : persona.holder;
 }
 
 String _total(List<CardEntry> lines) => money(-lines.fold(0, (s, e) => s + e.amount));
@@ -135,7 +137,7 @@ DocumentWords _original(_Statement s) {
     if (y + 60 > _bottom) newPage();
     page
       ..text('Opérations au compte', 77, y)
-      ..text('5555 55** **** $cardAccount', 211, y);
+      ..text('5555 55** **** ${s.persona.cardAccount}', 211, y);
     columns();
     s.operations.forEach(line);
     y += 20;
@@ -156,12 +158,12 @@ void _originalHeader(PageBuilder page, _Statement s) {
   page
     ..text('Relevé de compte', 457, 22)
     ..text('Numéro de compte', 419, 61.6)
-    ..text('5555 55** **** $cardAccount', 382, 75.3)
+    ..text('5555 55** **** ${s.persona.cardAccount}', 382, 75.3)
     ..text('Date du', 82, 88.6)
     ..text('Jour Mois Année', 117, 88.6)
     ..text('relevé', 82, 97.6)
     ..text('${two(d.day)} ${two(d.month)} ${d.year}', 119, 102.3)
-    ..text(holder, 72, 157.4)
+    ..text(s.persona.holder, 72, 157.4)
     ..text('456 AVENUE DU MODELE APP. 7', 72, 166.4)
     ..text('MONTREAL QC H0H 0H0', 72, 175.4)
     ..text('DATE DU RELEVÉ Jour ${two(d.day)} Mois ${two(d.month)} Année ${d.year}', 72, 256.6)
@@ -274,7 +276,7 @@ DocumentWords _layout2026(_Statement s) {
     y += 17;
     page
       ..text('Opérations au compte', 40, y)
-      ..text('XXXX XXXX XXXX $cardAccount', 497, y);
+      ..text('XXXX XXXX XXXX ${s.persona.cardAccount}', 497, y);
     columns();
     s.operations.forEach(line);
   }
@@ -296,11 +298,11 @@ void _summary2026(PageBuilder page, _Statement s, String dateRow) {
   page
     ..text('Relevé de compte', 499, 26.6)
     ..text('Numéro de compte', 447, 47.5)
-    ..text('XXXX XXXX XXXX $cardAccount', 413, 64.1)
+    ..text('XXXX XXXX XXXX ${s.persona.cardAccount}', 413, 64.1)
     ..text('Odyssée World Elite Mastercard', 36, 71.8)
     ..text('Date du Jour Mois Année', 40, 83.5)
     ..text("Date d'échéance Jour ${two(due.day)} Mois ${two(due.month)} Année ${due.year}", 191, 83.5)
-    ..text(holder, 72, 157.2)
+    ..text(s.persona.holder, 72, 157.2)
     ..text('456 AVENUE DU MODELE APP. 7', 72, 168.5)
     ..text('MONTREAL QC H0H 0H0', 72, 179.8)
     ..text(dateRow, 36, 276.5)

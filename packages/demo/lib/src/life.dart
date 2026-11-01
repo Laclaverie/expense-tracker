@@ -1,6 +1,8 @@
-/// What the made-up household did, bank-neutral: money moves on accounts
+/// What a made-up persona did, bank-neutral: money moves on accounts
 /// and card lines. Bank writers (`desjardins/`) lay it out as statements.
 library;
+
+import 'persona.dart';
 
 /// A line on a bank account (checking, savings, TFSA).
 class AccountEntry {
@@ -70,9 +72,10 @@ class CardEntry {
   final String? category;
 }
 
-/// Two years of the household's money, plus what the writers need around it.
+/// Two years of a persona's money, plus what the writers need around it.
 class Life {
   Life({
+    required this.persona,
     required this.accountEntries,
     required this.cardEntries,
     required this.openings,
@@ -80,6 +83,8 @@ class Life {
     required this.accountCategories,
   });
 
+  /// Who lived it: names and card numbers the statements print.
+  final Persona persona;
   final List<AccountEntry> accountEntries;
   final List<CardEntry> cardEntries;
 
