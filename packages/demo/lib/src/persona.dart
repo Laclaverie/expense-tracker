@@ -161,6 +161,30 @@ class Salary extends Income {
   final String employer;
 }
 
+/// Client invoices paid into checking (`DI`, `Dépôt direct / <client>`): a few
+/// a month, on weekdays, some months none.
+class Clients extends Income {
+  const Clients(this.names, this.typical, {this.spread = .5, this.invoicesInMonth = const {}});
+
+  final List<String> names;
+
+  /// Cents of a typical invoice.
+  final int typical;
+  final double spread;
+
+  /// Invoices paid in a month (key: its first day, UTC), instead of the dice.
+  final Map<DateTime, int> invoicesInMonth;
+}
+
+/// A tax installment paid from checking on the 15th of March, June,
+/// September and December.
+class TaxInstallment {
+  const TaxInstallment(this.payee, this.cents);
+
+  final String payee;
+  final int cents;
+}
+
 /// What the demo databases do with a persona after importing its statements.
 class ShowState {
   const ShowState({this.leftToReview = const {}, this.missingAccountStatement, this.targets = const []});
@@ -195,6 +219,8 @@ class Persona {
     this.utility,
     this.taxRefund = false,
     this.cancelledTransfer,
+    this.taxInstallments = const [],
+    this.sweepAbove,
     this.toSavings = 0,
     this.toTfsa = 0,
     this.tfsaOpened,
@@ -245,6 +271,12 @@ class Persona {
 
   /// An Interac transfer to the first friend, cancelled the same day.
   final DateTime? cancelledTransfer;
+
+  /// Paid every quarter (self-employed).
+  final List<TaxInstallment> taxInstallments;
+
+  /// At month end, checking above this many cents moves to savings (`ET 1`).
+  final int? sweepAbove;
 
   /// To savings (`ET 1`) on the 2nd, to the TFSA (`ET 2`) on the 3rd from [tfsaOpened].
   final int toSavings, toTfsa;

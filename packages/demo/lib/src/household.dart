@@ -168,11 +168,31 @@ List<AccountEntry> _accounts(Persona p, Dice dice, List<AccountEntry> cardPaymen
   final firstMonth = DateTime.utc(lifeStart.year, lifeStart.month + 1);
   final lastDay = DateTime.utc(lifeEnd.year, lifeEnd.month, 0);
   var nextAtm = _day(firstMonth, 9);
+  final invoices = <DateTime, List<(String, int)>>{};
   for (final d in _days(firstMonth, lastDay)) {
     final weekday = d.weekday;
     switch (p.income) {
       case Salary(:final firstPayday, :final pay, :final employer):
         if (d.difference(firstPayday).inDays % 14 == 0) add('EOP', d, 'DI', 'Paie / $employer', _priceOn(pay, d));
+      case Clients(:final names, :final typical, :final spread, :final invoicesInMonth):
+        if (d.day == 1) {
+          // Mostly one or two invoices paid a month, sometimes none or three.
+          final int count = invoicesInMonth[d] ?? dice.pick(const [0, 1, 1, 1, 2, 2, 3]);
+          for (var i = 0; i < count; i++) {
+            var day = DateTime.utc(d.year, d.month, dice.range(3, 26));
+            if (day.weekday == DateTime.saturday) day = _day(day, 2);
+            if (day.weekday == DateTime.sunday) day = _day(day, 1);
+            invoices.putIfAbsent(day, () => []).add((dice.pick(names), dice.around(typical, spread)));
+          }
+        }
+        for (final (client, cents) in invoices[d] ?? const <(String, int)>[]) {
+          add('EOP', d, 'DI', 'Dépôt direct / $client', cents);
+        }
+    }
+    if (d.day == 15 && d.month % 3 == 0) {
+      for (final t in p.taxInstallments) {
+        add('EOP', d, 'PWW', 'Paiement facture - AccèsD Internet / ${t.payee}', -t.cents);
+      }
     }
     if (d.day == 1) add('EOP', d, 'VMW', 'Virement envoyé à / ${p.landlord} /Loyer', -_priceOn(p.rent, d));
     if (d.day == 2 && p.toSavings > 0) {
@@ -221,6 +241,11 @@ List<AccountEntry> _accounts(Persona p, Dice dice, List<AccountEntry> cardPaymen
       add('EOP', d, 'VMW', 'Annulation - Virement Interac à / ${p.friends.first}/', 4000);
     }
     if (_day(d, 1).day == 1) {
+      final excess = p.sweepAbove == null ? 0 : balance['EOP']! - p.sweepAbove!;
+      if (excess > 0) {
+        add('EOP', d, 'VIW', 'Virement - AccèsD Internet / à ET 1', -excess);
+        add('ET 1', d, 'VIW', 'Virement - AccèsD Internet / de EOP', excess);
+      }
       add('EOP', d, 'FIX', "Frais fixes d'utilisation", -395);
       final savings = ((balance['ET 1'] ?? 0) * p.savingsRate / 12).round();
       if (savings > 0) add('ET 1', d, 'IET', 'Intérêt sur ET', savings);

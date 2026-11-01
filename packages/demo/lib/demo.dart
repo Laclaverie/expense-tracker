@@ -8,5 +8,6 @@ export 'src/desjardins/card_statement.dart' show newCardLayoutFrom;
 export 'src/desjardins/statements.dart';
 export 'src/household.dart';
 export 'src/life.dart';
-export 'src/persona.dart' show Persona, Income, Salary, ShowState, lifeEnd, lifeStart;
+export 'src/freelancer.dart';
+export 'src/persona.dart' show Clients, Income, Persona, Salary, ShowState, TaxInstallment, lifeEnd, lifeStart;
 export 'src/personas.dart';

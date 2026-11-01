@@ -23,19 +23,21 @@ void main() {
   });
 
   group('the Desjardins plug-in reads every statement back', () {
-    for (final s in statements) {
-      test(s.name, () {
-        final input = PdfInput('${s.name}.pdf', s.words);
-        final format = importer.detect(input);
-        expect(s.name, startsWith('$format-'));
-        final read = importer.read(input);
-        expect(read.failedChecks, isEmpty);
-        expect(read.checkCount, greaterThan(0));
-        expect(read.warnings, isEmpty, reason: 'every line matches a rule');
-        for (final l in read.lines) {
-          expect(l.amount, isNot(0));
-        }
-      });
+    for (final persona in personas.values) {
+      for (final s in desjardinsStatements(liveHousehold(persona: persona))) {
+        test('${persona.id} ${s.name}', () {
+          final input = PdfInput('${s.name}.pdf', s.words);
+          final format = importer.detect(input);
+          expect(s.name, startsWith('$format-'));
+          final read = importer.read(input);
+          expect(read.failedChecks, isEmpty);
+          expect(read.checkCount, greaterThan(0));
+          expect(read.warnings, isEmpty, reason: 'every line matches a rule');
+          for (final l in read.lines) {
+            expect(l.amount, isNot(0));
+          }
+        });
+      }
     }
   });
 
