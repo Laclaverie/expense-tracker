@@ -42,8 +42,11 @@ class StatsData {
   /// Monthly average over complete months only.
   int averageOf(List<int> monthly) => averageOverComplete(monthly, complete);
 
+  /// Both periods are fully covered by statements: changes can be shown.
+  bool get comparable => previousComplete && complete.every((c) => c);
+
   /// Change vs previous period, only when both periods are complete.
-  double? changeOf(Breakdown b) => previousComplete && complete.every((c) => c) ? b.change : null;
+  double? changeOf(Breakdown b) => comparable ? b.change : null;
 
   String get currency => scopeCurrency(scope);
   List<DateTime> get months => monthsBetween(from, to);

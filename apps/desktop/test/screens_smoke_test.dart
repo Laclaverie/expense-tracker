@@ -150,16 +150,24 @@ void main() {
         await open('Balances');
         expect(find.text('Month-end balance'), findsOneWidget);
 
-        // Categories: leaving a group out of shares adds the second share column, and back.
+        // Categories: hiding a group from shares adds the second share column, and back.
         await open('Categories');
-        expect(find.text('Share excl.'), findsNothing);
-        await tester.tap(find.byTooltip('Leave Housing out of shares (rent, taxes…)'));
+        expect(find.text('Share of shown'), findsNothing);
+        await tester.tap(find.byTooltip('Hide Housing from shares (rent, taxes…)'));
         await settle();
-        expect(find.text('Share excl.'), findsOneWidget);
-        expect(find.textContaining('Shares without: Housing'), findsOneWidget);
-        await tester.tap(find.text('Put all back'));
+        expect(find.text('Share of shown'), findsOneWidget);
+        expect(find.textContaining('Hidden from shares: Housing'), findsOneWidget);
+        await tester.tap(find.text('Show all'));
         await settle();
-        expect(find.text('Share excl.'), findsNothing);
+        expect(find.text('Share of shown'), findsNothing);
+        // A bar segment narrows the tab to its group's categories; "All" goes back.
+        await tester.tap(find.textContaining(RegExp(r'^Food \d+ %$')));
+        await settle();
+        expect(find.text('All'), findsOneWidget);
+        expect(find.textContaining(RegExp(r'^Groceries \d+ %$')), findsOneWidget);
+        await tester.tap(find.text('All'));
+        await settle();
+        expect(find.text('All'), findsNothing);
         expect(tester.takeException(), isNull);
 
         // Notifications: due statements and spending anomalies.

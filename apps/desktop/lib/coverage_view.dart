@@ -43,15 +43,24 @@ String monthsText(BuildContext context, DateTime first, DateTime last) {
   return first == last ? f.format(first) : '${f.format(first)} – ${f.format(last)}';
 }
 
-/// Lists incomplete months (consecutive months with the same gaps grouped).
-class CoverageNotice extends StatelessWidget {
+/// Incomplete months in one line; "Details" lists them (consecutive months
+/// with the same gaps grouped).
+class CoverageNotice extends StatefulWidget {
   const CoverageNotice(this.statuses, {super.key});
 
   final List<MonthStatus> statuses;
 
   @override
+  State<CoverageNotice> createState() => _CoverageNoticeState();
+}
+
+class _CoverageNoticeState extends State<CoverageNotice> {
+  bool _open = false;
+
+  @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
+    final statuses = widget.statuses;
     final groups = <(DateTime, DateTime, String)>[];
     for (final s in statuses.where((s) => !s.complete)) {
       final text = s.gaps.map((g) => gapText(context, g)).join(', ');
@@ -68,22 +77,34 @@ class CoverageNotice extends StatelessWidget {
     return Card(
       color: scheme.secondaryContainer,
       child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Row(
+        padding: const EdgeInsets.fromLTRB(12, 2, 4, 2),
+        child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Icon(Icons.info_outline, color: scheme.onSecondaryContainer),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(l.incompleteMonths, style: const TextStyle(fontWeight: FontWeight.w600)),
-                  const SizedBox(height: 4),
-                  for (final (a, b, text) in groups) Text('• ${monthsText(context, a, b)} : $text'),
-                ],
-              ),
+            Row(
+              children: [
+                Icon(Icons.info_outline, size: 20, color: scheme.onSecondaryContainer),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    l.incompleteMonthsShort(statuses.where((s) => !s.complete).length),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                TextButton(
+                  onPressed: () => setState(() => _open = !_open),
+                  child: Text(_open ? l.hideDetails : l.details),
+                ),
+              ],
             ),
+            if (_open)
+              Padding(
+                padding: const EdgeInsets.fromLTRB(32, 0, 8, 8),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [for (final (a, b, text) in groups) Text('• ${monthsText(context, a, b)} : $text')],
+                ),
+              ),
           ],
         ),
       ),

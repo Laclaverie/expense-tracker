@@ -2447,32 +2447,56 @@ abstract class AppLocalizations {
   /// No description provided for @shareKept.
   ///
   /// In en, this message translates to:
-  /// **'Share excl.'**
+  /// **'Share of shown'**
   String get shareKept;
 
   /// No description provided for @excludeFromShare.
   ///
   /// In en, this message translates to:
-  /// **'Leave {name} out of shares (rent, taxes…)'**
+  /// **'Hide {name} from shares (rent, taxes…)'**
   String excludeFromShare(String name);
 
   /// No description provided for @includeInShare.
   ///
   /// In en, this message translates to:
-  /// **'Put {name} back in shares'**
+  /// **'Show {name} in shares again'**
   String includeInShare(String name);
 
   /// No description provided for @sharesWithout.
   ///
   /// In en, this message translates to:
-  /// **'Shares without: {names} · {amount} / month'**
+  /// **'Hidden from shares: {names} · {amount} / month'**
   String sharesWithout(String names, String amount);
 
   /// No description provided for @includeAllInShare.
   ///
   /// In en, this message translates to:
-  /// **'Put all back'**
+  /// **'Show all'**
   String get includeAllInShare;
+
+  /// No description provided for @allGroups.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get allGroups;
+
+  /// No description provided for @changeNeedsComplete.
+  ///
+  /// In en, this message translates to:
+  /// **'No comparison: a month of this period or the previous one is missing statements'**
+  String get changeNeedsComplete;
+
+  /// No description provided for @incompleteMonthsShort.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 incomplete month} other{{count} incomplete months}} — counted in totals, left out of averages and comparisons'**
+  String incompleteMonthsShort(int count);
+
+  /// No description provided for @hideDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide'**
+  String get hideDetails;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

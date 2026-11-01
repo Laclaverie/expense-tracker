@@ -936,12 +936,17 @@
     }
   },
   "backupShowFile": "Show the file in Explorer",
-  "shareKept": "Share excl.",
-  "excludeFromShare": "Leave {name} out of shares (rent, taxes…)",
+  "shareKept": "Share of shown",
+  "excludeFromShare": "Hide {name} from shares (rent, taxes…)",
   "@excludeFromShare": { "placeholders": { "name": { "type": "String" } } },
-  "includeInShare": "Put {name} back in shares",
+  "includeInShare": "Show {name} in shares again",
   "@includeInShare": { "placeholders": { "name": { "type": "String" } } },
-  "sharesWithout": "Shares without: {names} · {amount} / month",
+  "sharesWithout": "Hidden from shares: {names} · {amount} / month",
   "@sharesWithout": { "placeholders": { "names": { "type": "String" }, "amount": { "type": "String" } } },
-  "includeAllInShare": "Put all back"
+  "includeAllInShare": "Show all",
+  "allGroups": "All",
+  "changeNeedsComplete": "No comparison: a month of this period or the previous one is missing statements",
+  "incompleteMonthsShort": "{count, plural, =1{1 incomplete month} other{{count} incomplete months}} — counted in totals, left out of averages and comparisons",
+  "@incompleteMonthsShort": { "placeholders": { "count": { "type": "int" } } },
+  "hideDetails": "Hide"
 }

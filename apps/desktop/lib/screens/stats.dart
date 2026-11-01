@@ -178,7 +178,7 @@ class _StatsScreenState extends State<StatsScreen> with SingleTickerProviderStat
                           controller: _tabs,
                           children: [
                             TrendsTab(data, onFocus: _focusOn),
-                            CategoriesTab(data, onFocus: _focusOn),
+                            CategoriesTab(data, onFocus: _focusOn, onNarrow: (key) => setState(() => _focus = key)),
                             MerchantsTab(data),
                             CompareTab(data, month: anchor, coverage: cov),
                             BalancesTab(scope, period),

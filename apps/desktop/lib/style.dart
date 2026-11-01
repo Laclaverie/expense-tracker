@@ -42,6 +42,10 @@ Color groupColor(BuildContext context, String? categoryOrGroup) {
   return Color((dark ? _dark : _light)[chartGroups.indexOf(s)]);
 }
 
+/// Color of an "Others" series (parts too small to show on their own).
+Color otherColor(BuildContext context) =>
+    Color(Theme.of(context).brightness == Brightness.dark ? _otherDark : _otherLight);
+
 /// Categorical palette slot [i] (cycles), for series that aren't category
 /// groups, e.g. one line per account.
 Color seriesColor(BuildContext context, int i) =>

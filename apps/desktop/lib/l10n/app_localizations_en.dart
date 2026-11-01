@@ -1475,23 +1475,43 @@ class AppLocalizationsEn extends AppLocalizations {
   String get backupShowFile => 'Show the file in Explorer';
 
   @override
-  String get shareKept => 'Share excl.';
+  String get shareKept => 'Share of shown';
 
   @override
   String excludeFromShare(String name) {
-    return 'Leave $name out of shares (rent, taxes…)';
+    return 'Hide $name from shares (rent, taxes…)';
   }
 
   @override
   String includeInShare(String name) {
-    return 'Put $name back in shares';
+    return 'Show $name in shares again';
   }
 
   @override
   String sharesWithout(String names, String amount) {
-    return 'Shares without: $names · $amount / month';
+    return 'Hidden from shares: $names · $amount / month';
   }
 
   @override
-  String get includeAllInShare => 'Put all back';
+  String get includeAllInShare => 'Show all';
+
+  @override
+  String get allGroups => 'All';
+
+  @override
+  String get changeNeedsComplete => 'No comparison: a month of this period or the previous one is missing statements';
+
+  @override
+  String incompleteMonthsShort(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count incomplete months',
+      one: '1 incomplete month',
+    );
+    return '$_temp0 — counted in totals, left out of averages and comparisons';
+  }
+
+  @override
+  String get hideDetails => 'Hide';
 }

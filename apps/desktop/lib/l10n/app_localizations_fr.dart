@@ -1490,11 +1490,11 @@ class AppLocalizationsFr extends AppLocalizations {
   String get backupShowFile => 'Montrer le fichier dans l\'Explorateur';
 
   @override
-  String get shareKept => 'Part hors exclus';
+  String get shareKept => 'Part hors masqués';
 
   @override
   String excludeFromShare(String name) {
-    return 'Exclure $name des parts (loyer, impôts…)';
+    return 'Masquer $name des parts (loyer, impôts…)';
   }
 
   @override
@@ -1504,9 +1504,30 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String sharesWithout(String names, String amount) {
-    return 'Parts hors : $names · $amount / mois';
+    return 'Masqués des parts : $names · $amount / mois';
   }
 
   @override
   String get includeAllInShare => 'Tout remettre';
+
+  @override
+  String get allGroups => 'Tout';
+
+  @override
+  String get changeNeedsComplete =>
+      'Pas de comparaison : un mois de cette période ou de la précédente n\'a pas tous ses relevés';
+
+  @override
+  String incompleteMonthsShort(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count mois incomplets — comptés dans les totaux, exclus des moyennes et des comparaisons',
+      one: '1 mois incomplet — compté dans les totaux, exclu des moyennes et des comparaisons',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get hideDetails => 'Masquer';
 }

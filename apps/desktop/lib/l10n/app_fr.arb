@@ -419,12 +419,17 @@
   "lockAction": "Verrouiller",
   "backupDatabaseFile": "Fichier ouvert : {path}",
   "backupShowFile": "Montrer le fichier dans l'Explorateur",
-  "shareKept": "Part hors exclus",
-  "excludeFromShare": "Exclure {name} des parts (loyer, impôts…)",
+  "shareKept": "Part hors masqués",
+  "excludeFromShare": "Masquer {name} des parts (loyer, impôts…)",
   "@excludeFromShare": { "placeholders": { "name": { "type": "String" } } },
   "includeInShare": "Remettre {name} dans les parts",
   "@includeInShare": { "placeholders": { "name": { "type": "String" } } },
-  "sharesWithout": "Parts hors : {names} · {amount} / mois",
+  "sharesWithout": "Masqués des parts : {names} · {amount} / mois",
   "@sharesWithout": { "placeholders": { "names": { "type": "String" }, "amount": { "type": "String" } } },
-  "includeAllInShare": "Tout remettre"
+  "includeAllInShare": "Tout remettre",
+  "allGroups": "Tout",
+  "changeNeedsComplete": "Pas de comparaison : un mois de cette période ou de la précédente n'a pas tous ses relevés",
+  "incompleteMonthsShort": "{count, plural, =1{1 mois incomplet — compté dans les totaux, exclu des moyennes et des comparaisons} other{{count} mois incomplets — comptés dans les totaux, exclus des moyennes et des comparaisons}}",
+  "@incompleteMonthsShort": { "placeholders": { "count": { "type": "int" } } },
+  "hideDetails": "Masquer"
 }
