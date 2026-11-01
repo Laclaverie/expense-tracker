@@ -11,6 +11,18 @@ the app, and it sorts every line into categories (groceries, restaurants, rent, 
 Windows app, in French or English. **Everything stays on your computer**: no account, no cloud, nothing sent
 anywhere.
 
+## See it first
+
+Made-up data (a couple in Montréal, two years of bank files), nothing real:
+
+| | |
+|---|---|
+| ![Dashboard: the month at a glance, targets](docs/images/demo-1-dashboard.png) | ![Import: the bank's file dropped, lines already sorted](docs/images/demo-2-import.png) |
+| ![Groceries: month by month and per store](docs/images/demo-4-categories.png) | ![Subscriptions and regular bills, found automatically](docs/images/demo-5-recurring.png) |
+
+Once built (below), **`demo.bat`** opens the app on this made-up household, without your own statements; how
+to show it to someone: [docs/13-demo.md](docs/13-demo.md).
+
 ## Try it
 
 1. On this page: green **Code** button → **Download ZIP**, then unzip it (for example in `Documents`).

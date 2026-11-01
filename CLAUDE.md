@@ -1,7 +1,7 @@
 # Notes for coding agents
 
 Project rules for any agent (Claude Code loads this file automatically; others: see `AGENTS.md`). Read this, then
-`README.md`, `CONTRIBUTING.md` and `docs/` (01–11). A git-ignored `CLAUDE.local.md` may add the machine owner's
+`README.md`, `CONTRIBUTING.md` and `docs/` (01–13). A git-ignored `CLAUDE.local.md` may add the machine owner's
 personal notes.
 
 ## Be grounded, push back
@@ -32,6 +32,8 @@ registered in `packages/banks`. Adding a bank: follow `docs/10-adding-a-bank.md`
 - Database encrypted with the owner's password (B11, `storage/encryption.dart`, `screens/unlock.dart`). Lock
   button and "Changer de fichier" on the password screen open other database files, each with its own password
   (`database_list.dart`: paths in `databases.json`, never a password; `widgets/database_chooser.dart`).
+- Demo to show the app: two made-up personas (couple, freelancer), `demo.bat`, walkthrough and README images
+  (`docs/13-demo.md`).
 - Not started: Android (M3), sync (M4). Roadmap and decision log:
   `docs/08-roadmap-open-questions.md` (backlog: work to do only) — keep it updated; finished items move to
   `docs/12-done.md` with their date.
@@ -67,7 +69,7 @@ registered in `packages/banks`. Adding a bank: follow `docs/10-adding-a-bank.md`
 | `packages/pdf_words` | PDFium (FFI) → words with coordinates; `groupRows`, `mergeThousands` |
 | `packages/banks` | Bank plug-ins: `lib/src/<bank>/` (Desjardins = reference: `pdf/` and `csv/` readers, 14 fixtures in `test/fixtures/desjardins`); contract `BankImporter` / `StatementFormat` / `ExportGuide` / `LineRule` tables + CSV and anonymization helpers (`lib/plugin.dart`); `testing.dart` (`testFixtures`); registry `lib/banks.dart`; CLIs `dump`, `parse`, `anonymize`, `shape` (`--facts`), `check`, `compare` (no data, for cloud agents) |
 | `packages/core` | Domain: `ImportedStatement`, categories (`defaultCategories`, `retiredCategories`), merchants, categorizer, transfers, targets, analysis, coverage, balances, recurring |
-| `packages/demo` | Made-up household (`persona.dart`: shops, habits, bills, trips; seeded, no real data), lived by `household.dart`, written as Desjardins statements (`desjardins/`): the banks' fixtures (`demo:fixtures`) and the demo database (`demo:database`, `database.dart`) |
+| `packages/demo` | Made-up personas (`persona.dart`: shops and the `Persona` type; `couple.dart` — the fixtures' household —, `freelancer.dart`; seeded, no real data), lived by `household.dart`, written as Desjardins statements and card CSV exports (`desjardins/`): the banks' fixtures (`demo:fixtures`), the demo database (`demo:database`) and the showcase (`demo:showcase`, `demo.bat`) |
 | `packages/storage` | drift/SQLite: `tables.dart`, `database.dart` (schema v9 + migrations), `import_service.dart`, `repository.dart`, `backup.dart` |
 | `apps/desktop` | Flutter Windows app: `lib/screens/*` (a big screen keeps its entry file and puts its parts in a folder of the same name: `screens/stats.dart` + `screens/stats/` one file per tab, shared `charts.dart` / `widgets.dart`), `lib/widgets/*`, `lib/l10n/app_{en,fr}.arb` |
 | `spikes/` | Early PDF extraction experiments (historical) |
@@ -89,6 +91,10 @@ registered in `packages/banks`. Adding a bank: follow `docs/10-adding-a-bank.md`
   household (`packages/demo`, no real data) imported through the real Desjardins plug-in, then reviewed
   (encrypted with the public `demo database password`; the app takes `EXPENSES_DB_PASSWORD` only with
   `EXPENSES_DB_DIR`; `tools\ui-probe.ps1` sets it, `-Locked` shows the password screen).
+- Showing the app: `demo.bat [couple|freelancer]` (`docs/13-demo.md`) — `demo:showcase` database without the last
+  card statement plus its AccèsD card exports to drop, app clock fixed by `EXPENSES_TODAY` (only with
+  `EXPENSES_DB_DIR`, `lib/clock.dart`: use `appNow()`, never `DateTime.now()` for what the app shows). README
+  images: `tools\demo-shots.ps1` (widget test, no window; look before committing).
 - `build-desktop.bat` — installs tools if needed, closes the running app, builds release, starts it.
   `run-desktop.bat` — starts the last build (builds if none). `package-desktop.bat` — builds + zips
   `dist\Depenses-windows.zip` to share the app.

@@ -21,7 +21,6 @@ below.
 | # | Feature | Req | Notes |
 |---|---------|-----|-------|
 | **Medium** | | | |
-| B37 | Demo showcase | — | Show the app to people: two personas (couple, freelancer), `demo.bat` reset with a held-back card CSV to drop, app clock for demos, 7-stop walkthrough (`docs/13-demo.md`), README images from a widget test. Spec: `docs/superpowers/specs/2026-11-01-demo-showcase-design.md` |
 | B6 | Tags | CAT-6 | Free multi tags, filter in Transactions and Statistics; new table + schema migration |
 | B7 | Trips + trip report | CAT-7, ANA-6 | Name + date range, auto-assigned by date; report total / per day / per category, with a day-by-day timeline (date, town, spending). Before M5 (trips across banks); base for B8b |
 | B8a | Places table | ANA-9 | Spending per province and per city from the statements' location (card lines only), sortable, with an honest "no place" line (account debits, online shops, phone numbers). No map, no extra data |
