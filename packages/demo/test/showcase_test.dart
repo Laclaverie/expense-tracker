@@ -1,4 +1,5 @@
 import 'package:banks/banks.dart';
+import 'package:core/core.dart' show DueStatement, dueStatements;
 import 'package:demo/demo.dart';
 import 'package:demo/src/database.dart' show importDay;
 import 'package:demo/src/showcase.dart';
@@ -30,6 +31,18 @@ void main() {
             fileName: name,
             fileType: 'csv',
           );
+
+      Future<List<DueStatement>> due() async => dueStatements([
+        for (final s in await db.select(db.statements).get()) (s.institution, s.format, s.periodEnd),
+      ], demoToday);
+
+      test('on the demo day the bell asks for the card statement; the drop answers it', () async {
+        expect((await due()).map((d) => d.format), contains('desjardins-card'));
+        for (final name in csvs.keys) {
+          await drop(name);
+        }
+        expect((await due()).map((d) => d.format), isNot(contains('desjardins-card')));
+      });
 
       test('nothing to review before the drop', () async {
         final pending = await (db.select(db.transactions)..where((t) => t.needsReview)).get();

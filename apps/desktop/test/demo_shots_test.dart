@@ -49,7 +49,7 @@ void main() {
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.reset);
     final realClock = appClock;
-    appClock = () => DateTime(2026, 10, 22, 12);
+    appClock = () => DateTime(demoToday.year, demoToday.month, demoToday.day, 12);
     addTearDown(() => appClock = realClock);
 
     final folder = Directory(out!)..createSync(recursive: true);

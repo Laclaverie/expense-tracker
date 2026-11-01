@@ -16,7 +16,8 @@ if /i not "%PERSONA%"=="couple" if /i not "%PERSONA%"=="freelancer" (
 )
 
 rem A running app would stay on screen with your own data: the demo needs its own window.
-tasklist /fi "imagename eq expense_desktop.exe" | find /i "expense_desktop.exe" >nul && (
+rem Windows' own find: Git's find, first on some PATHs, fails and the check would let the demo start.
+tasklist /nh /fi "imagename eq expense_desktop.exe" | "%SystemRoot%\System32\find.exe" /i "expense_desktop.exe" >nul && (
   echo Fermez l'application d'abord : la demo ouvre sa propre fenetre.
   echo Close the app first: the demo opens its own copy.
   exit /b 1
@@ -42,6 +43,6 @@ if not "%RESULT%"=="0" exit /b %RESULT%
 start "" explorer "%DIR%"
 set "EXPENSES_DB_DIR=%DIR%"
 set "EXPENSES_DB_PASSWORD=demo database password"
-set "EXPENSES_TODAY=2026-10-22"
+set "EXPENSES_TODAY=2026-10-24"
 start "" "%EXE%"
 exit /b 0

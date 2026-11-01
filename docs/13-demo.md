@@ -27,7 +27,7 @@ invented store numbers, made-up shops and people.
    `releve-carte-0022.csv`) you drop at the import stop.
 
 The app starts on the demo database directly (its public password, `demo database password`, is given by
-`demo.bat`) and believes today is **October 22, 2026**, two days after the last card statement. Run
+`demo.bat`) and believes today is **October 24, 2026**, four days after the last card statement (so the bell asks for it). Run
 `demo.bat` again to start over.
 
 ## 3. The walkthrough (couple, ~5 minutes)
@@ -35,7 +35,7 @@ The app starts on the demo database directly (its public password, `demo databas
 | # | Stop | Where | What to do | What to say |
 |---|------|-------|------------|-------------|
 | 1 | `dashboard` | Dashboard | Point at the three tiles, the targets, the bell | "Two years of a household, imported from bank files, nothing typed. September at a glance: spent, income, how the targets stand. The bell: a statement to download, an unusual bill." |
-| 2 | `import` | Import | Drag both `releve-carte-*.csv` from the folder onto the page | "This is the bank's own export. Dropped: 24 new lines, already sorted, the card payment matched with the checking account. Drop them again: nothing is counted twice." |
+| 2 | `import` | Import | Drag both `releve-carte-*.csv` from the folder onto the page | "This is the bank's own export. Dropped: 24 new lines, already sorted, the card payment matched with the checking account, and the bell's reminder is gone. Drop them again: nothing is counted twice." |
 | 3 | `review` | Review | Open the one line left (Kickstarter), pick a category, confirm | "Known shops were sorted by themselves; only a new one asks. One click and it is learned." |
 | 4 | `categories` | Statistics → Categories | Click the Food bar, then the "analyze only" icon of Groceries | "Where the money goes, rent apart. Groceries alone: month by month, and a card per store, how often and how much." |
 | 5 | `recurring` | Statistics → Recurring (clear the Groceries chip first) | Scroll the list | "Found by itself: rent, transit pass, Hydro every two months, the dentist twice a year, and Virgin's bill that went up in September." |
