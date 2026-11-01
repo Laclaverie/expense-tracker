@@ -8,6 +8,7 @@ import 'package:provider/provider.dart';
 import 'package:storage/storage.dart';
 
 import '../app_state.dart';
+import '../clock.dart';
 import '../coverage_view.dart';
 import '../l10n/app_localizations.dart';
 import '../style.dart';
@@ -583,7 +584,7 @@ class _TargetsCard extends StatelessWidget {
           streamKey: (scope, from),
           stream: () => repo.watchSpendingLines(scope, from, to),
           builder: (context, lines) {
-            final views = computeTargets(targets, lines ?? const [], reference, DateTime.now());
+            final views = computeTargets(targets, lines ?? const [], reference, appNow());
             return Card(
               child: Padding(
                 padding: const EdgeInsets.all(16),

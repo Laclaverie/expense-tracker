@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:storage/storage.dart';
 
 import '../app_state.dart';
+import '../clock.dart';
 import '../coverage_view.dart';
 import '../l10n/app_localizations.dart';
 import '../stats_periods.dart';
@@ -63,7 +64,7 @@ class _StatsScreenState extends State<StatsScreen> with SingleTickerProviderStat
       streamKey: scope,
       stream: () => context.read<ExpenseRepository>().watchLatestDate(scope),
       builder: (context, latest) {
-        final now = DateTime.now();
+        final now = appNow();
         final anchor = DateTime.utc((latest ?? now).year, (latest ?? now).month);
         return _page(context, scope, anchor);
       },

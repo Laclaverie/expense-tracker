@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:storage/storage.dart';
 
+import 'clock.dart';
+
 /// UI selections shared by every screen: statistics scope, month, language.
 class AppState extends ChangeNotifier {
   Scope? _scope;
-  DateTime _month = _firstOfMonth(DateTime.now());
+  DateTime _month = _firstOfMonth(appNow());
   Locale? _locale;
 
   /// Null until the first account exists. May be narrowed to one account
@@ -18,7 +20,7 @@ class AppState extends ChangeNotifier {
   /// The day whose periods targets show: today in the current month, else
   /// the last day of the selected month.
   DateTime get referenceDay {
-    final now = DateTime.now();
+    final now = appNow();
     final today = DateTime.utc(now.year, now.month, now.day);
     return today.isBefore(nextMonth) && !today.isBefore(_month) ? today : nextMonth.subtract(const Duration(days: 1));
   }

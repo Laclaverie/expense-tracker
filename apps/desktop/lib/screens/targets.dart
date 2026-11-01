@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:storage/storage.dart';
 
 import '../app_state.dart';
+import '../clock.dart';
 import '../l10n/app_localizations.dart';
 import '../style.dart';
 import '../targets_view.dart';
@@ -33,7 +34,7 @@ class TargetsScreen extends StatelessWidget {
         streamKey: (scope, from),
         stream: () => repo.watchSpendingLines(scope, from, to),
         builder: (context, lines) {
-          final views = computeTargets(targets ?? const [], lines ?? const [], reference, DateTime.now());
+          final views = computeTargets(targets ?? const [], lines ?? const [], reference, appNow());
           return ListView(
             padding: const EdgeInsets.all(24),
             children: [

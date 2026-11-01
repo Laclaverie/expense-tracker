@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:storage/storage.dart';
 
 import '../app_state.dart';
+import '../clock.dart';
 import '../coverage_view.dart';
 import '../l10n/app_localizations.dart';
 import '../style.dart';
@@ -16,7 +17,7 @@ import 'transactions_dialog.dart';
 /// Statements whose next one should be out by now (recomputed from the
 /// imported statements: importing the new one clears it).
 Stream<List<DueStatement>> watchDueStatements(ExpenseRepository repo) => repo.watchStatements().map(
-  (rows) => dueStatements([for (final s in rows) (s.institution, s.format, s.periodEnd)], DateTime.now()),
+  (rows) => dueStatements([for (final s in rows) (s.institution, s.format, s.periodEnd)], appNow()),
 );
 
 /// "Desjardins · Mastercard".

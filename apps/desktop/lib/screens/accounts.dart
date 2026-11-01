@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:storage/storage.dart';
 
+import '../clock.dart';
 import '../l10n/app_localizations.dart';
 import '../style.dart';
 import '../widgets/category_picker.dart';
@@ -124,7 +125,7 @@ class _CashExpenseDialogState extends State<_CashExpenseDialog> {
   final _note = TextEditingController();
   String _currency = 'CAD';
   String? _category;
-  DateTime _date = DateTime.now();
+  DateTime _date = appNow();
 
   int? get _cents {
     final v = double.tryParse(_amount.text.replaceAll(',', '.').replaceAll(' ', ''));
@@ -187,7 +188,7 @@ class _CashExpenseDialogState extends State<_CashExpenseDialog> {
                       context: context,
                       initialDate: _date,
                       firstDate: DateTime(2020),
-                      lastDate: DateTime.now().add(const Duration(days: 1)),
+                      lastDate: appNow().add(const Duration(days: 1)),
                     );
                     if (d != null) setState(() => _date = d);
                   },
