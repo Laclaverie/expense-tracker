@@ -151,6 +151,9 @@ void main() {
     expect((again.status, again.newCount, again.duplicateCount), (ImportStatus.imported, 1, 2));
     expect((await importCsv(newer, 'c')).duplicateReason, DuplicateReason.sameLines);
     expect(await count(), 3);
+    // Two exports ending on the same day are not the same statement: no
+    // "imported several times" warning (deleting one would lose its new lines).
+    expect(await repo.watchDuplicateStatements().first, isEmpty);
   });
 
   test('statement failing its checks writes nothing', () async {

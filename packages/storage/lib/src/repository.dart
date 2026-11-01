@@ -153,10 +153,14 @@ class ExpenseRepository {
 
   /// Groups of imported statements that are the same statement (same type and
   /// statement date) — should always be empty since imports refuse them, but
-  /// lets the user verify the history.
+  /// lets the user verify the history. PDF statements only, like the import
+  /// check: a text export (CSV) ends on whatever day it was downloaded, so two
+  /// overlapping exports often share their last date while each brought new
+  /// lines (their shared lines are stored once).
   Stream<List<List<Statement>>> watchDuplicateStatements() => watchStatements().map((all) {
     final groups = <String, List<Statement>>{};
     for (final st in all) {
+      if (st.fileType != 'pdf') continue;
       groups.putIfAbsent('${st.format}|${st.periodEnd.toIso8601String()}', () => []).add(st);
     }
     return [
