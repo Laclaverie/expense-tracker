@@ -536,7 +536,7 @@
   },
   "recurringPerMonth": "Recurring per month",
   "recurringCount": "{count, plural, =1{1 recurring payment} other{{count} recurring payments}}",
-  "recurringHint": "Found automatically in all imported history: same merchant, regular interval, similar amount, even when the date varies (a bill paid by hand). Needs at least 3 payments.",
+  "recurringHint": "Found automatically in all imported history: same merchant, regular interval, similar amount, even when the date varies (a bill paid by hand). Needs at least 3 payments (2 for a yearly one).",
   "recurringNone": "No recurring payment found yet: import a few months of statements.",
   "recurringStopped": "Not seen lately (probably stopped)",
   "cadenceWeekly": "Weekly",
@@ -948,5 +948,7 @@
   "changeNeedsComplete": "No comparison: a month of this period or the previous one is missing statements",
   "incompleteMonthsShort": "{count, plural, =1{1 incomplete month} other{{count} incomplete months}} — counted in totals, left out of averages and comparisons",
   "@incompleteMonthsShort": { "placeholders": { "count": { "type": "int" } } },
-  "hideDetails": "Hide"
+  "hideDetails": "Hide",
+  "balancesFrom": "Balances known from {month}: before, a statement is missing or the account had no transactions yet.",
+  "@balancesFrom": { "placeholders": { "month": { "type": "String" } } }
 }

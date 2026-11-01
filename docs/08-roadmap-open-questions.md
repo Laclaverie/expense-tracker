@@ -20,7 +20,6 @@ below.
 
 | # | Feature | Req | Notes |
 |---|---------|-----|-------|
-| B35 | Recurring "stopped" judged per account | ANA-7 | Bug: a payment is "stopped" when the latest data of *any* account is past its next date, so rent on an account statement ending Sept 30 shows stopped once a card statement to Oct 20 is imported (demo database shows it). Judge against the coverage of the payment's own account |
 | **Medium** | | | |
 | B6 | Tags | CAT-6 | Free multi tags, filter in Transactions and Statistics; new table + schema migration |
 | B7 | Trips + trip report | CAT-7, ANA-6 | Name + date range, auto-assigned by date; report total / per day / per category, with a day-by-day timeline (date, town, spending). Before M5 (trips across banks); base for B8b |

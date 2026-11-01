@@ -21,7 +21,9 @@ class CompareTab extends StatefulWidget {
 
   final StatsData d;
 
-  /// Month compared at first (latest with data); arrows in the tab move it.
+  /// Latest month with data; the tab starts on the latest complete month up
+  /// to it (an unfinished month would compare rent not imported yet).
+  /// Arrows in the tab move it.
   final DateTime month;
   final Map<String, List<DayRange>> coverage;
 
@@ -31,13 +33,20 @@ class CompareTab extends StatefulWidget {
 
 class _CompareTabState extends State<CompareTab> {
   _Comparison _mode = _Comparison.previousMonth;
-  late DateTime _month = widget.month;
+  late DateTime _month = _start();
+
+  /// The latest complete month among the last three, else the latest month.
+  DateTime _start() {
+    final m = widget.month;
+    final recent = [for (var i = 0; i < 3; i++) DateTime.utc(m.year, m.month - i)];
+    return monthStatuses(widget.coverage, recent).where((s) => s.complete).firstOrNull?.month ?? m;
+  }
 
   @override
   void didUpdateWidget(CompareTab old) {
     super.didUpdateWidget(old);
-    // New data (an import) moves the latest month: follow it.
-    if (old.month != widget.month) _month = widget.month;
+    // New data (an import) moves the latest month, coverage may load after the tab: follow them.
+    if (old.month != widget.month || (old.coverage.isEmpty && widget.coverage.isNotEmpty)) _month = _start();
   }
 
   @override

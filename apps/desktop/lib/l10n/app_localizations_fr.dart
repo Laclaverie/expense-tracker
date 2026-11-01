@@ -857,7 +857,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get recurringHint =>
-      'Trouvés automatiquement dans tout l\'historique importé : même marchand, intervalle régulier, montant semblable, même si la date varie (facture payée à la main). Il faut au moins 3 paiements.';
+      'Trouvés automatiquement dans tout l\'historique importé : même marchand, intervalle régulier, montant semblable, même si la date varie (facture payée à la main). Il faut au moins 3 paiements (2 pour un paiement annuel).';
 
   @override
   String get recurringNone => 'Aucun paiement récurrent trouvé pour l\'instant : importez quelques mois de relevés.';
@@ -1530,4 +1530,9 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get hideDetails => 'Masquer';
+
+  @override
+  String balancesFrom(String month) {
+    return 'Soldes connus à partir de $month : avant, un relevé manque ou le compte n\'avait pas encore d\'opérations.';
+  }
 }

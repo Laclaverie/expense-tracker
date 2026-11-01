@@ -96,7 +96,12 @@ class TrendsTab extends StatelessWidget {
                     ? null
                     : l.savingsRateOver(percentRate(rate), d.completeMonths > 0 ? d.completeMonths : d.months.length),
                 legend: [(l.legendSpending, chartBlue), (l.legendIncome, chartAqua)],
-                child: _IncomeSpending(months: d.months, totals: totals ?? const [], currency: d.currency),
+                child: _IncomeSpending(
+                  months: d.months,
+                  complete: d.complete,
+                  totals: totals ?? const [],
+                  currency: d.currency,
+                ),
               );
             },
           ),
@@ -381,11 +386,14 @@ class _StackedBars extends StatelessWidget {
   }
 }
 
-/// Income and spending per month: two lines on the same money axis.
+/// Income and spending per month: two lines on the same money axis. The
+/// income line skips incomplete months: a missing account statement is not
+/// a month without pay.
 class _IncomeSpending extends StatelessWidget {
-  const _IncomeSpending({required this.months, required this.totals, required this.currency});
+  const _IncomeSpending({required this.months, required this.complete, required this.totals, required this.currency});
 
   final List<DateTime> months;
+  final List<bool> complete;
   final List<(String, int, int)> totals;
   final String currency;
 
@@ -395,9 +403,12 @@ class _IncomeSpending extends StatelessWidget {
     final l = AppLocalizations.of(context);
     final byMonth = {for (final t in totals) t.$1: t};
     String ym(DateTime m) => '${m.year}-${m.month.toString().padLeft(2, '0')}';
-    List<FlSpot> spots(int Function((String, int, int)) pick) => [
+    List<FlSpot> spots(int Function((String, int, int)) pick, {bool skipIncomplete = false}) => [
       for (final (i, m) in months.indexed)
-        FlSpot(i.toDouble(), (byMonth[ym(m)] == null ? 0 : pick(byMonth[ym(m)]!)) / 100),
+        if (skipIncomplete && !complete[i])
+          FlSpot.nullSpot
+        else
+          FlSpot(i.toDouble(), (byMonth[ym(m)] == null ? 0 : pick(byMonth[ym(m)]!)) / 100),
     ];
     LineChartBarData series(List<FlSpot> s, Color c) => LineChartBarData(
       spots: s,
@@ -412,7 +423,11 @@ class _IncomeSpending extends StatelessWidget {
     );
     return LineChart(
       LineChartData(
-        lineBarsData: [series(spots((t) => t.$2), chartBlue), series(spots((t) => t.$3), chartAqua)],
+        minY: 0,
+        lineBarsData: [
+          series(spots((t) => t.$2), chartBlue),
+          series(spots((t) => t.$3, skipIncomplete: true), chartAqua),
+        ],
         gridData: FlGridData(
           drawVerticalLine: false,
           getDrawingHorizontalLine: (_) => FlLine(color: scheme.outlineVariant, strokeWidth: 0.5),
@@ -437,7 +452,8 @@ class _IncomeSpending extends StatelessWidget {
               return [
                 for (final s in spots)
                   LineTooltipItem(
-                    '${s.barIndex == 0 ? '${monthLabel(context, months[s.x.toInt()])}\n' : ''}'
+                    '${s.barIndex == 0 ? '${monthLabel(context, months[s.x.toInt()])}'
+                              '${complete[s.x.toInt()] ? '' : ' (${l.incomplete})'}\n' : ''}'
                     '${s.barIndex == 0 ? l.legendSpending : l.legendIncome}  ${money(context, (s.y * 100).round(), currency)}'
                     '${s.barIndex == 1 ? rate(s.x.toInt()) : ''}',
                     TextStyle(color: scheme.onInverseSurface),

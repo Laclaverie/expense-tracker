@@ -101,6 +101,8 @@ class BalancesTab extends StatelessWidget {
               child: _BalanceLines(months: months, series: series, currency: currency),
             ),
             const SizedBox(height: 8),
+            // The period asks for more than is known (walking back stops at a missing statement).
+            if (first.isAfter(from)) Text(l.balancesFrom(monthLabel(context, first)), style: t.bodySmall),
             Text(l.balancesHint, style: t.bodySmall),
             for (final (a, ms) in series) ...[
               const SizedBox(height: 24),

@@ -243,7 +243,7 @@
   "globalSince": "Tous les comptes à partir de {month} seulement : avant, il n'y a pas de relevé {label}, les dépenses paraîtraient plus faibles. Choisissez un compte en haut pour voir tout son historique.",
   "recurringPerMonth": "Récurrent par mois",
   "recurringCount": "{count, plural, =1{1 paiement récurrent} other{{count} paiements récurrents}}",
-  "recurringHint": "Trouvés automatiquement dans tout l'historique importé : même marchand, intervalle régulier, montant semblable, même si la date varie (facture payée à la main). Il faut au moins 3 paiements.",
+  "recurringHint": "Trouvés automatiquement dans tout l'historique importé : même marchand, intervalle régulier, montant semblable, même si la date varie (facture payée à la main). Il faut au moins 3 paiements (2 pour un paiement annuel).",
   "recurringNone": "Aucun paiement récurrent trouvé pour l'instant : importez quelques mois de relevés.",
   "recurringStopped": "Plus vus récemment (probablement arrêtés)",
   "cadenceWeekly": "Chaque semaine",
@@ -431,5 +431,7 @@
   "changeNeedsComplete": "Pas de comparaison : un mois de cette période ou de la précédente n'a pas tous ses relevés",
   "incompleteMonthsShort": "{count, plural, =1{1 mois incomplet — compté dans les totaux, exclu des moyennes et des comparaisons} other{{count} mois incomplets — comptés dans les totaux, exclus des moyennes et des comparaisons}}",
   "@incompleteMonthsShort": { "placeholders": { "count": { "type": "int" } } },
-  "hideDetails": "Masquer"
+  "hideDetails": "Masquer",
+  "balancesFrom": "Soldes connus à partir de {month} : avant, un relevé manque ou le compte n'avait pas encore d'opérations.",
+  "@balancesFrom": { "placeholders": { "month": { "type": "String" } } }
 }

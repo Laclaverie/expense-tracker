@@ -131,6 +131,53 @@ void main() {
     expect(found.map((r) => (r.merchant, r.active)), [('Cheap', true), ('Old', false)]);
   });
 
+  test('judged against its own account: a later card statement does not stop rent', () {
+    SpendLine on(int account, SpendLine l) => SpendLine(
+      date: l.date,
+      cents: l.cents,
+      categoryId: l.categoryId,
+      merchantId: l.merchantId,
+      merchant: l.merchant,
+      isPerson: l.isPerson,
+      accountId: account,
+    );
+    final lines = [
+      // Account statements end Sept 30; the card statement goes to Oct 20.
+      for (final m in [6, 7, 8, 9]) on(1, pay(1, 'Landlord', '2026-0$m-01', 145000, person: true)),
+      on(1, pay(9, 'Bakery', '2026-09-30', 500)),
+      for (final m in [7, 8, 9]) on(2, pay(2, 'Stream', '2026-0$m-14', 1499)),
+      on(2, pay(9, 'Bakery', '2026-10-20', 500)),
+      // Paid by card, last seen in July: stopped.
+      for (final m in [4, 5, 6, 7]) on(2, pay(3, 'Gym', '2026-0$m-03', 4000)),
+    ];
+    final found = {for (final r in detectRecurring(lines)) r.merchant: r.active};
+    expect(found, {'Landlord': true, 'Stream': true, 'Gym': false});
+  });
+
+  test('yearly needs the whole merchant: two similar amounts a year apart at a grocery are chance', () {
+    final lines = [
+      pay(1, 'Bank', '2025-02-03', 13000),
+      pay(1, 'Bank', '2026-02-03', 13000),
+      for (final (i, d) in [
+        '02-11',
+        '02-14',
+        '03-20',
+        '05-02',
+        '05-06',
+        '05-28',
+        '07-09',
+        '08-30',
+        '09-03',
+        '11-17',
+      ].indexed)
+        pay(2, 'Grocery', '2025-$d', 6000 + 1731 * i),
+      pay(2, 'Grocery', '2025-01-02', 4015),
+      pay(2, 'Grocery', '2026-01-02', 4015),
+    ];
+    final found = detectRecurring(lines, asOf: DateTime.utc(2026, 3, 1));
+    expect(found.map((r) => (r.merchant, r.cadence)), [('Bank', Cadence.yearly)]);
+  });
+
   test('day range wraps over the month end', () {
     final lines = [
       for (final d in ['2026-01-30', '2026-03-02', '2026-03-31', '2026-05-01', '2026-05-29']) pay(1, 'Gym', d, 4000),

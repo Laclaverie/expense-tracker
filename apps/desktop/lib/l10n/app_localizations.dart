@@ -1403,7 +1403,7 @@ abstract class AppLocalizations {
   /// No description provided for @recurringHint.
   ///
   /// In en, this message translates to:
-  /// **'Found automatically in all imported history: same merchant, regular interval, similar amount, even when the date varies (a bill paid by hand). Needs at least 3 payments.'**
+  /// **'Found automatically in all imported history: same merchant, regular interval, similar amount, even when the date varies (a bill paid by hand). Needs at least 3 payments (2 for a yearly one).'**
   String get recurringHint;
 
   /// No description provided for @recurringNone.
@@ -2497,6 +2497,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Hide'**
   String get hideDetails;
+
+  /// No description provided for @balancesFrom.
+  ///
+  /// In en, this message translates to:
+  /// **'Balances known from {month}: before, a statement is missing or the account had no transactions yet.'**
+  String balancesFrom(String month);
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

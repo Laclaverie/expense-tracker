@@ -92,19 +92,28 @@ class Recurring {
 /// Recurring payments in [lines], active ones first, then by monthly cost.
 /// [asOf] is the end of the data (defaults to the latest line): a series
 /// whose next payment is well before it is reported as no longer active.
+/// Each series is judged against the latest line of the account it is paid
+/// from (at most [asOf]): rent on an account statement ending Sept 30 is not
+/// stopped because a card statement goes to Oct 20.
 List<Recurring> detectRecurring(List<SpendLine> lines, {DateTime? asOf}) {
   final byMerchant = <int, Map<DateTime, int>>{};
   final names = <int, String>{};
   final persons = <int>{};
   final categories = <int, Map<String?, int>>{};
+  final latestByAccount = <int?, DateTime>{};
+  final accountOf = <int, (DateTime, int?)>{};
   DateTime? end;
   for (final l in lines) {
     if (end == null || l.date.isAfter(end)) end = l.date;
+    final seen = latestByAccount[l.accountId];
+    if (seen == null || l.date.isAfter(seen)) latestByAccount[l.accountId] = l.date;
     final id = l.merchantId;
     if (id == null || l.cents <= 0) continue;
     final day = DateTime.utc(l.date.year, l.date.month, l.date.day);
     byMerchant.putIfAbsent(id, () => {}).update(day, (v) => v + l.cents, ifAbsent: () => l.cents);
     names[id] = l.merchant;
+    final paid = accountOf[id];
+    if (paid == null || !l.date.isBefore(paid.$1)) accountOf[id] = (l.date, l.accountId);
     if (l.isPerson) persons.add(id);
     categories.putIfAbsent(id, () => {}).update(l.categoryId, (n) => n + 1, ifAbsent: () => 1);
   }
@@ -117,13 +126,19 @@ List<Recurring> detectRecurring(List<SpendLine> lines, {DateTime? asOf}) {
     // The whole merchant first (amount may vary: phone bill with extras, price
     // change); otherwise separate series by amount (two policies at one insurer,
     // a subscription among one-off purchases).
+    // A yearly series needs only two payments, so it must be the whole
+    // merchant: two similar amounts a year apart among many purchases (a
+    // grocery store) are chance.
     var series = [?_series(payments, amountTolerance: 0.35, amountShare: 0.5)];
     if (series.isEmpty) {
       series = [
-        for (final cluster in _amountClusters(payments)) ?_series(cluster, amountTolerance: 0.15, amountShare: 1),
+        for (final cluster in _amountClusters(payments))
+          ?_series(cluster, amountTolerance: 0.15, amountShare: 1, allowYearly: false),
       ];
     }
     final category = categories[id]!.entries.reduce((a, b) => b.value > a.value ? b : a).key;
+    final accountEnd = latestByAccount[accountOf[id]!.$2]!;
+    final seenUntil = accountEnd.isBefore(end) ? accountEnd : end;
     for (final (cadence, kept) in series) {
       final next = _next(kept.last.$1, cadence);
       final grace = cadence.tolerance > cadence.days / 2 ? cadence.tolerance : cadence.days / 2;
@@ -135,7 +150,7 @@ List<Recurring> detectRecurring(List<SpendLine> lines, {DateTime? asOf}) {
           isPerson: persons.contains(id),
           cadence: cadence,
           payments: kept,
-          active: !end.isAfter(_addDays(next, grace)),
+          active: !seenUntil.isAfter(_addDays(next, grace)),
         ),
       );
     }
@@ -153,10 +168,12 @@ List<Recurring> detectRecurring(List<SpendLine> lines, {DateTime? asOf}) {
   List<Payment> payments, {
   required double amountTolerance,
   required double amountShare,
+  bool allowYearly = true,
 }) {
   (Cadence, List<Payment>)? best;
   (int, int, double)? bestScore;
   for (final cadence in Cadence.values) {
+    if (cadence == Cadence.yearly && !allowYearly) continue;
     final yearly = cadence == Cadence.yearly;
     for (var start = 0; start < payments.length && start < 3; start++) {
       final kept = [payments[start]];

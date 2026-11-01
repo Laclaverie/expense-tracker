@@ -849,7 +849,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get recurringHint =>
-      'Found automatically in all imported history: same merchant, regular interval, similar amount, even when the date varies (a bill paid by hand). Needs at least 3 payments.';
+      'Found automatically in all imported history: same merchant, regular interval, similar amount, even when the date varies (a bill paid by hand). Needs at least 3 payments (2 for a yearly one).';
 
   @override
   String get recurringNone => 'No recurring payment found yet: import a few months of statements.';
@@ -1514,4 +1514,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get hideDetails => 'Hide';
+
+  @override
+  String balancesFrom(String month) {
+    return 'Balances known from $month: before, a statement is missing or the account had no transactions yet.';
+  }
 }

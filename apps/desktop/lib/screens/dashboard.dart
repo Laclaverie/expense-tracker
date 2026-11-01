@@ -220,19 +220,26 @@ class _Kpis extends StatelessWidget {
     final m = monthLabel(context, month);
     // A month missing a statement would look thrifty: no rate then.
     final rate = status.complete ? savingsRate([current?.$3 ?? 0], [spent], const [true]) : null;
-    return Row(
-      children: [
-        _Tile(label: l.spentIn(m), value: money(context, spent, currency), sub: delta),
-        const SizedBox(width: 16),
-        _Tile(label: l.average6, value: average == null ? '—' : money(context, average, currency)),
-        const SizedBox(width: 16),
-        _Tile(
-          label: l.incomeIn(m),
-          value: money(context, current?.$3 ?? 0, currency),
-          sub: rate == null ? null : l.savingsRateIs('${rate < 0 ? '−' : ''}${(rate.abs() * 100).round()} %'),
-        ),
-        balance,
-      ],
+    // Same height for every tile, whatever line they show below the value.
+    return IntrinsicHeight(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          _Tile(label: l.spentIn(m), value: money(context, spent, currency), sub: delta),
+          const SizedBox(width: 16),
+          _Tile(label: l.average6, value: average == null ? '—' : money(context, average, currency)),
+          const SizedBox(width: 16),
+          _Tile(
+            label: l.incomeIn(m),
+            value: money(context, current?.$3 ?? 0, currency),
+            // Income of a month missing a statement is not 0, just not imported yet.
+            sub: rate == null
+                ? (status.complete ? null : l.incomplete)
+                : l.savingsRateIs('${rate < 0 ? '−' : ''}${(rate.abs() * 100).round()} %'),
+          ),
+          balance,
+        ],
+      ),
     );
   }
 }
