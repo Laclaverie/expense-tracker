@@ -9,10 +9,8 @@
 import 'dart:io';
 
 import 'package:demo/src/database.dart';
+import 'package:demo/src/showcase.dart' show demoPassword;
 import 'package:storage/storage.dart';
-
-/// Public on purpose: it only ever protects the made-up household.
-const demoPassword = 'demo database password';
 
 Future<void> main(List<String> args) async {
   if (args.length != 1) {
