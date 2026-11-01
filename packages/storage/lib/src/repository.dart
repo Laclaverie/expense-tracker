@@ -541,6 +541,12 @@ class ExpenseRepository {
     )..where((c) => c.id.isIn(ids))).write(const CategoriesCompanion(archived: Value(true)));
   });
 
+  /// Leaves a category or group out of (or back into) the share without
+  /// excluded categories (Statistics → Categories).
+  Future<void> setExcludedFromShare(String id, bool excluded) => (db.update(
+    db.categories,
+  )..where((c) => c.id.equals(id))).write(CategoriesCompanion(excludedFromShare: Value(excluded)));
+
   // --------------------------------------------------------------------- rules
 
   Future<int> addRule({required String categoryId, String? descriptionContains, String? merchantKey, String? code}) =>

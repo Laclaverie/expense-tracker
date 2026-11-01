@@ -46,7 +46,22 @@ void main() {
     await db.close();
   }
 
-  const v8 = ['ALTER TABLE statements DROP COLUMN file_type', 'ALTER TABLE statements DROP COLUMN verified'];
+  const v9 = ['ALTER TABLE categories DROP COLUMN excluded_from_share'];
+  const v8 = [...v9, 'ALTER TABLE statements DROP COLUMN file_type', 'ALTER TABLE statements DROP COLUMN verified'];
+
+  test('v8 -> current: no category excluded from shares yet', () async {
+    await current();
+    await downgradeTo(8, v9);
+
+    final db = ExpenseDatabase(NativeDatabase(file));
+    addTearDown(db.close);
+    final rows = await db.select(db.categories).get();
+    expect(rows, isNotEmpty);
+    expect(rows.where((c) => c.excludedFromShare), isEmpty);
+    await ExpenseRepository(db).setExcludedFromShare('housing.rent', true);
+    final rent = await (db.select(db.categories)..where((c) => c.id.equals('housing.rent'))).getSingle();
+    expect(rent.excludedFromShare, isTrue);
+  });
 
   test('v7 -> current: statements so far were verified PDFs', () async {
     await current();

@@ -2443,6 +2443,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Show the file in Explorer'**
   String get backupShowFile;
+
+  /// No description provided for @shareKept.
+  ///
+  /// In en, this message translates to:
+  /// **'Share excl.'**
+  String get shareKept;
+
+  /// No description provided for @excludeFromShare.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave {name} out of shares (rent, taxes…)'**
+  String excludeFromShare(String name);
+
+  /// No description provided for @includeInShare.
+  ///
+  /// In en, this message translates to:
+  /// **'Put {name} back in shares'**
+  String includeInShare(String name);
+
+  /// No description provided for @sharesWithout.
+  ///
+  /// In en, this message translates to:
+  /// **'Shares without: {names} · {amount} / month'**
+  String sharesWithout(String names, String amount);
+
+  /// No description provided for @includeAllInShare.
+  ///
+  /// In en, this message translates to:
+  /// **'Put all back'**
+  String get includeAllInShare;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

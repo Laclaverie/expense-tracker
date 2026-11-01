@@ -935,5 +935,13 @@
       }
     }
   },
-  "backupShowFile": "Show the file in Explorer"
+  "backupShowFile": "Show the file in Explorer",
+  "shareKept": "Share excl.",
+  "excludeFromShare": "Leave {name} out of shares (rent, taxes…)",
+  "@excludeFromShare": { "placeholders": { "name": { "type": "String" } } },
+  "includeInShare": "Put {name} back in shares",
+  "@includeInShare": { "placeholders": { "name": { "type": "String" } } },
+  "sharesWithout": "Shares without: {names} · {amount} / month",
+  "@sharesWithout": { "placeholders": { "names": { "type": "String" }, "amount": { "type": "String" } } },
+  "includeAllInShare": "Put all back"
 }

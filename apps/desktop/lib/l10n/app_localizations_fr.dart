@@ -1488,4 +1488,25 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get backupShowFile => 'Montrer le fichier dans l\'Explorateur';
+
+  @override
+  String get shareKept => 'Part hors exclus';
+
+  @override
+  String excludeFromShare(String name) {
+    return 'Exclure $name des parts (loyer, impôts…)';
+  }
+
+  @override
+  String includeInShare(String name) {
+    return 'Remettre $name dans les parts';
+  }
+
+  @override
+  String sharesWithout(String names, String amount) {
+    return 'Parts hors : $names · $amount / mois';
+  }
+
+  @override
+  String get includeAllInShare => 'Tout remettre';
 }

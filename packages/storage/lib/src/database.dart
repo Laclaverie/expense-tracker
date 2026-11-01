@@ -10,7 +10,7 @@ class ExpenseDatabase extends _$ExpenseDatabase {
   ExpenseDatabase(super.executor);
 
   /// Read before opening a file, to copy it when this version will migrate it.
-  static const currentSchemaVersion = 8;
+  static const currentSchemaVersion = 9;
 
   @override
   int get schemaVersion => currentSchemaVersion;
@@ -63,6 +63,7 @@ class ExpenseDatabase extends _$ExpenseDatabase {
         await m.addColumn(statements, statements.fileType);
         await m.addColumn(statements, statements.verified);
       }
+      if (from < 9) await m.addColumn(categories, categories.excludedFromShare);
     },
     beforeOpen: (details) async {
       await customStatement('PRAGMA foreign_keys = ON');

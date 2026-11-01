@@ -1152,8 +1152,29 @@ class $CategoriesTable extends Categories with TableInfo<$CategoriesTable, Categ
     defaultConstraints: GeneratedColumn.constraintIsAlways('CHECK ("archived" IN (0, 1))'),
     defaultValue: const Constant(false),
   );
+  static const VerificationMeta _excludedFromShareMeta = const VerificationMeta('excludedFromShare');
   @override
-  List<GeneratedColumn> get $columns => [id, parentId, nameFr, nameEn, type, color, sortOrder, archived];
+  late final GeneratedColumn<bool> excludedFromShare = GeneratedColumn<bool>(
+    'excluded_from_share',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways('CHECK ("excluded_from_share" IN (0, 1))'),
+    defaultValue: const Constant(false),
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    parentId,
+    nameFr,
+    nameEn,
+    type,
+    color,
+    sortOrder,
+    archived,
+    excludedFromShare,
+  ];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -1199,6 +1220,12 @@ class $CategoriesTable extends Categories with TableInfo<$CategoriesTable, Categ
     if (data.containsKey('archived')) {
       context.handle(_archivedMeta, archived.isAcceptableOrUnknown(data['archived']!, _archivedMeta));
     }
+    if (data.containsKey('excluded_from_share')) {
+      context.handle(
+        _excludedFromShareMeta,
+        excludedFromShare.isAcceptableOrUnknown(data['excluded_from_share']!, _excludedFromShareMeta),
+      );
+    }
     return context;
   }
 
@@ -1216,6 +1243,10 @@ class $CategoriesTable extends Categories with TableInfo<$CategoriesTable, Categ
       color: attachedDatabase.typeMapping.read(DriftSqlType.int, data['${effectivePrefix}color'])!,
       sortOrder: attachedDatabase.typeMapping.read(DriftSqlType.int, data['${effectivePrefix}sort_order'])!,
       archived: attachedDatabase.typeMapping.read(DriftSqlType.bool, data['${effectivePrefix}archived'])!,
+      excludedFromShare: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}excluded_from_share'],
+      )!,
     );
   }
 
@@ -1241,6 +1272,10 @@ class CategoryRow extends DataClass implements Insertable<CategoryRow> {
 
   /// Hidden from pickers; kept so old references still have a name.
   final bool archived;
+
+  /// Left out of the "share without excluded" figures (Statistics → Categories),
+  /// e.g. rent or taxes. A group's flag covers its categories.
+  final bool excludedFromShare;
   const CategoryRow({
     required this.id,
     this.parentId,
@@ -1250,6 +1285,7 @@ class CategoryRow extends DataClass implements Insertable<CategoryRow> {
     required this.color,
     required this.sortOrder,
     required this.archived,
+    required this.excludedFromShare,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -1264,6 +1300,7 @@ class CategoryRow extends DataClass implements Insertable<CategoryRow> {
     map['color'] = Variable<int>(color);
     map['sort_order'] = Variable<int>(sortOrder);
     map['archived'] = Variable<bool>(archived);
+    map['excluded_from_share'] = Variable<bool>(excludedFromShare);
     return map;
   }
 
@@ -1277,6 +1314,7 @@ class CategoryRow extends DataClass implements Insertable<CategoryRow> {
       color: Value(color),
       sortOrder: Value(sortOrder),
       archived: Value(archived),
+      excludedFromShare: Value(excludedFromShare),
     );
   }
 
@@ -1291,6 +1329,7 @@ class CategoryRow extends DataClass implements Insertable<CategoryRow> {
       color: serializer.fromJson<int>(json['color']),
       sortOrder: serializer.fromJson<int>(json['sortOrder']),
       archived: serializer.fromJson<bool>(json['archived']),
+      excludedFromShare: serializer.fromJson<bool>(json['excludedFromShare']),
     );
   }
   @override
@@ -1305,6 +1344,7 @@ class CategoryRow extends DataClass implements Insertable<CategoryRow> {
       'color': serializer.toJson<int>(color),
       'sortOrder': serializer.toJson<int>(sortOrder),
       'archived': serializer.toJson<bool>(archived),
+      'excludedFromShare': serializer.toJson<bool>(excludedFromShare),
     };
   }
 
@@ -1317,6 +1357,7 @@ class CategoryRow extends DataClass implements Insertable<CategoryRow> {
     int? color,
     int? sortOrder,
     bool? archived,
+    bool? excludedFromShare,
   }) => CategoryRow(
     id: id ?? this.id,
     parentId: parentId.present ? parentId.value : this.parentId,
@@ -1326,6 +1367,7 @@ class CategoryRow extends DataClass implements Insertable<CategoryRow> {
     color: color ?? this.color,
     sortOrder: sortOrder ?? this.sortOrder,
     archived: archived ?? this.archived,
+    excludedFromShare: excludedFromShare ?? this.excludedFromShare,
   );
   CategoryRow copyWithCompanion(CategoriesCompanion data) {
     return CategoryRow(
@@ -1337,6 +1379,7 @@ class CategoryRow extends DataClass implements Insertable<CategoryRow> {
       color: data.color.present ? data.color.value : this.color,
       sortOrder: data.sortOrder.present ? data.sortOrder.value : this.sortOrder,
       archived: data.archived.present ? data.archived.value : this.archived,
+      excludedFromShare: data.excludedFromShare.present ? data.excludedFromShare.value : this.excludedFromShare,
     );
   }
 
@@ -1350,13 +1393,14 @@ class CategoryRow extends DataClass implements Insertable<CategoryRow> {
           ..write('type: $type, ')
           ..write('color: $color, ')
           ..write('sortOrder: $sortOrder, ')
-          ..write('archived: $archived')
+          ..write('archived: $archived, ')
+          ..write('excludedFromShare: $excludedFromShare')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(id, parentId, nameFr, nameEn, type, color, sortOrder, archived);
+  int get hashCode => Object.hash(id, parentId, nameFr, nameEn, type, color, sortOrder, archived, excludedFromShare);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -1368,7 +1412,8 @@ class CategoryRow extends DataClass implements Insertable<CategoryRow> {
           other.type == this.type &&
           other.color == this.color &&
           other.sortOrder == this.sortOrder &&
-          other.archived == this.archived);
+          other.archived == this.archived &&
+          other.excludedFromShare == this.excludedFromShare);
 }
 
 class CategoriesCompanion extends UpdateCompanion<CategoryRow> {
@@ -1380,6 +1425,7 @@ class CategoriesCompanion extends UpdateCompanion<CategoryRow> {
   final Value<int> color;
   final Value<int> sortOrder;
   final Value<bool> archived;
+  final Value<bool> excludedFromShare;
   final Value<int> rowid;
   const CategoriesCompanion({
     this.id = const Value.absent(),
@@ -1390,6 +1436,7 @@ class CategoriesCompanion extends UpdateCompanion<CategoryRow> {
     this.color = const Value.absent(),
     this.sortOrder = const Value.absent(),
     this.archived = const Value.absent(),
+    this.excludedFromShare = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   CategoriesCompanion.insert({
@@ -1401,6 +1448,7 @@ class CategoriesCompanion extends UpdateCompanion<CategoryRow> {
     required int color,
     required int sortOrder,
     this.archived = const Value.absent(),
+    this.excludedFromShare = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : id = Value(id),
        nameFr = Value(nameFr),
@@ -1417,6 +1465,7 @@ class CategoriesCompanion extends UpdateCompanion<CategoryRow> {
     Expression<int>? color,
     Expression<int>? sortOrder,
     Expression<bool>? archived,
+    Expression<bool>? excludedFromShare,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -1428,6 +1477,7 @@ class CategoriesCompanion extends UpdateCompanion<CategoryRow> {
       if (color != null) 'color': color,
       if (sortOrder != null) 'sort_order': sortOrder,
       if (archived != null) 'archived': archived,
+      if (excludedFromShare != null) 'excluded_from_share': excludedFromShare,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -1441,6 +1491,7 @@ class CategoriesCompanion extends UpdateCompanion<CategoryRow> {
     Value<int>? color,
     Value<int>? sortOrder,
     Value<bool>? archived,
+    Value<bool>? excludedFromShare,
     Value<int>? rowid,
   }) {
     return CategoriesCompanion(
@@ -1452,6 +1503,7 @@ class CategoriesCompanion extends UpdateCompanion<CategoryRow> {
       color: color ?? this.color,
       sortOrder: sortOrder ?? this.sortOrder,
       archived: archived ?? this.archived,
+      excludedFromShare: excludedFromShare ?? this.excludedFromShare,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -1483,6 +1535,9 @@ class CategoriesCompanion extends UpdateCompanion<CategoryRow> {
     if (archived.present) {
       map['archived'] = Variable<bool>(archived.value);
     }
+    if (excludedFromShare.present) {
+      map['excluded_from_share'] = Variable<bool>(excludedFromShare.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -1500,6 +1555,7 @@ class CategoriesCompanion extends UpdateCompanion<CategoryRow> {
           ..write('color: $color, ')
           ..write('sortOrder: $sortOrder, ')
           ..write('archived: $archived, ')
+          ..write('excludedFromShare: $excludedFromShare, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -4600,6 +4656,7 @@ typedef $$CategoriesTableCreateCompanionBuilder = CategoriesCompanion Function({
   required int color,
   required int sortOrder,
   Value<bool> archived,
+  Value<bool> excludedFromShare,
   Value<int> rowid,
 });
 typedef $$CategoriesTableUpdateCompanionBuilder = CategoriesCompanion Function({
@@ -4611,6 +4668,7 @@ typedef $$CategoriesTableUpdateCompanionBuilder = CategoriesCompanion Function({
   Value<int> color,
   Value<int> sortOrder,
   Value<bool> archived,
+  Value<bool> excludedFromShare,
   Value<int> rowid,
 });
 
@@ -4711,6 +4769,9 @@ class $$CategoriesTableFilterComposer extends Composer<_$ExpenseDatabase, $Categ
 
   ColumnFilters<bool> get archived =>
       $composableBuilder(column: $table.archived, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<bool> get excludedFromShare =>
+      $composableBuilder(column: $table.excludedFromShare, builder: (column) => ColumnFilters(column));
 
   Expression<bool> merchantsRefs(Expression<bool> Function($$MerchantsTableFilterComposer f) f) {
     final $$MerchantsTableFilterComposer composer = $composerBuilder(
@@ -4833,6 +4894,9 @@ class $$CategoriesTableOrderingComposer extends Composer<_$ExpenseDatabase, $Cat
 
   ColumnOrderings<bool> get archived =>
       $composableBuilder(column: $table.archived, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<bool> get excludedFromShare =>
+      $composableBuilder(column: $table.excludedFromShare, builder: (column) => ColumnOrderings(column));
 }
 
 class $$CategoriesTableAnnotationComposer extends Composer<_$ExpenseDatabase, $CategoriesTable> {
@@ -4858,6 +4922,9 @@ class $$CategoriesTableAnnotationComposer extends Composer<_$ExpenseDatabase, $C
   GeneratedColumn<int> get sortOrder => $composableBuilder(column: $table.sortOrder, builder: (column) => column);
 
   GeneratedColumn<bool> get archived => $composableBuilder(column: $table.archived, builder: (column) => column);
+
+  GeneratedColumn<bool> get excludedFromShare =>
+      $composableBuilder(column: $table.excludedFromShare, builder: (column) => column);
 
   Expression<T> merchantsRefs<T extends Object>(Expression<T> Function($$MerchantsTableAnnotationComposer a) f) {
     final $$MerchantsTableAnnotationComposer composer = $composerBuilder(
@@ -4989,6 +5056,7 @@ class $$CategoriesTableTableManager
                 Value<int> color = const Value.absent(),
                 Value<int> sortOrder = const Value.absent(),
                 Value<bool> archived = const Value.absent(),
+                Value<bool> excludedFromShare = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => CategoriesCompanion(
                 id: id,
@@ -4999,6 +5067,7 @@ class $$CategoriesTableTableManager
                 color: color,
                 sortOrder: sortOrder,
                 archived: archived,
+                excludedFromShare: excludedFromShare,
                 rowid: rowid,
               ),
           createCompanionCallback:
@@ -5011,6 +5080,7 @@ class $$CategoriesTableTableManager
                 required int color,
                 required int sortOrder,
                 Value<bool> archived = const Value.absent(),
+                Value<bool> excludedFromShare = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => CategoriesCompanion.insert(
                 id: id,
@@ -5021,6 +5091,7 @@ class $$CategoriesTableTableManager
                 color: color,
                 sortOrder: sortOrder,
                 archived: archived,
+                excludedFromShare: excludedFromShare,
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0

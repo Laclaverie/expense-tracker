@@ -150,6 +150,18 @@ void main() {
         await open('Balances');
         expect(find.text('Month-end balance'), findsOneWidget);
 
+        // Categories: leaving a group out of shares adds the second share column, and back.
+        await open('Categories');
+        expect(find.text('Share excl.'), findsNothing);
+        await tester.tap(find.byTooltip('Leave Housing out of shares (rent, taxes…)'));
+        await settle();
+        expect(find.text('Share excl.'), findsOneWidget);
+        expect(find.textContaining('Shares without: Housing'), findsOneWidget);
+        await tester.tap(find.text('Put all back'));
+        await settle();
+        expect(find.text('Share excl.'), findsNothing);
+        expect(tester.takeException(), isNull);
+
         // Notifications: due statements and spending anomalies.
         await tester.tap(find.byTooltip('Notifications'));
         await settle();

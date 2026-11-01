@@ -418,5 +418,13 @@
   "lockConfirm": "Le fichier se ferme. Il faudra son mot de passe pour le rouvrir.",
   "lockAction": "Verrouiller",
   "backupDatabaseFile": "Fichier ouvert : {path}",
-  "backupShowFile": "Montrer le fichier dans l'Explorateur"
+  "backupShowFile": "Montrer le fichier dans l'Explorateur",
+  "shareKept": "Part hors exclus",
+  "excludeFromShare": "Exclure {name} des parts (loyer, impôts…)",
+  "@excludeFromShare": { "placeholders": { "name": { "type": "String" } } },
+  "includeInShare": "Remettre {name} dans les parts",
+  "@includeInShare": { "placeholders": { "name": { "type": "String" } } },
+  "sharesWithout": "Parts hors : {names} · {amount} / mois",
+  "@sharesWithout": { "placeholders": { "names": { "type": "String" }, "amount": { "type": "String" } } },
+  "includeAllInShare": "Tout remettre"
 }

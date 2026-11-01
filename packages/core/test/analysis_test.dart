@@ -21,6 +21,18 @@ void main() {
     expect([inFocus(null, ''), inFocus('food', '')], [true, false]);
   });
 
+  test('share without excluded categories: a category or a whole group', () {
+    final cats = breakdown(lines, from, to, keyOf: (x) => x.categoryId ?? '', labelOf: (k) => k);
+    expect(isExcludedFromShare('housing.rent', {'housing.rent'}), isTrue);
+    expect(isExcludedFromShare('housing.rent', {'housing'}), isTrue);
+    expect(isExcludedFromShare('housing', {'housing'}), isTrue);
+    expect(isExcludedFromShare('housing.utilities', {'housing.rent'}), isFalse);
+    expect(isExcludedFromShare(null, {''}), isFalse);
+    expect(keptByGroup(cats, {}), {'food': 5300, 'housing': 149000});
+    expect(keptByGroup(cats, {'housing.rent'}), {'food': 5300});
+    expect(keptByGroup(cats, {'food.coffee'}), {'food': 2800, 'housing': 149000});
+  });
+
   test('months and previous period', () {
     expect(monthsBetween(from, to).map((m) => m.month), [7, 8, 9]);
     expect(previousPeriod(from, to), (DateTime.utc(2026, 4), from));

@@ -11,6 +11,7 @@ CategoryRow row(String id, String fr, String en, {String? parent}) => CategoryRo
   color: 0,
   sortOrder: 0,
   archived: false,
+  excludedFromShare: false,
 );
 
 void main() {

@@ -50,6 +50,25 @@ bool inFocus(String? categoryId, String focus) => focus.isEmpty
 /// Group of a category id: `food.coffee` -> `food`; null/'' -> ''.
 String groupKey(String? categoryId) => categoryId == null || categoryId.isEmpty ? '' : categoryId.split('.').first;
 
+/// Whether [categoryId] is left out of the share without excluded categories:
+/// it or its group is in [excluded] (rent, taxes). Uncategorized never is.
+bool isExcludedFromShare(String? categoryId, Set<String> excluded) =>
+    categoryId != null &&
+    categoryId.isNotEmpty &&
+    (excluded.contains(categoryId) || excluded.contains(groupKey(categoryId)));
+
+/// Spending per group once [excluded] categories and groups are left out.
+/// [cats] is a breakdown keyed by category id; groups with nothing left are
+/// dropped.
+Map<String, int> keptByGroup(Iterable<Breakdown> cats, Set<String> excluded) {
+  final kept = <String, int>{};
+  for (final c in cats) {
+    if (isExcludedFromShare(c.key, excluded)) continue;
+    kept.update(groupKey(c.key), (v) => v + c.total, ifAbsent: () => c.total);
+  }
+  return kept..removeWhere((_, v) => v == 0);
+}
+
 /// Aggregated figures for one key (group, category or merchant) over a range.
 class Breakdown {
   Breakdown(

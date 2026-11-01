@@ -23,7 +23,8 @@ registered in `packages/banks`. Adding a bank: follow `docs/10-adding-a-bank.md`
   bulk category / confirm after a confirmation dialog, copy name to search, learned one-click suggestions),
   notification bell (due statements, spending anomalies), global search (Ctrl+K), transactions, splits, targets
   (week/month/year), dashboard, statistics (trends, categories, merchants, compare, balances, recurring
-  payments; per account; narrowed to a category with per-store cards), accounts, categories & rules (picker: keyboard,
+  payments; per account; narrowed to a category with per-store cards; category shares without
+  excluded categories such as rent, B36), accounts, categories & rules (picker: keyboard,
   search aliases from `core/category_search.dart`, frequent categories), FR/EN.
 - Banks: Desjardins — PDF (account statement, Odyssée Mastercard original and October 2026 layouts) and
   the AccèsD CSV export (account, card; preferred source, last 18 months). Same days from a PDF and a CSV
@@ -67,7 +68,7 @@ registered in `packages/banks`. Adding a bank: follow `docs/10-adding-a-bank.md`
 | `packages/banks` | Bank plug-ins: `lib/src/<bank>/` (Desjardins = reference: `pdf/` and `csv/` readers, 14 fixtures in `test/fixtures/desjardins`); contract `BankImporter` / `StatementFormat` / `ExportGuide` / `LineRule` tables + CSV and anonymization helpers (`lib/plugin.dart`); `testing.dart` (`testFixtures`); registry `lib/banks.dart`; CLIs `dump`, `parse`, `anonymize`, `shape` (`--facts`), `check`, `compare` (no data, for cloud agents) |
 | `packages/core` | Domain: `ImportedStatement`, categories (`defaultCategories`, `retiredCategories`), merchants, categorizer, transfers, targets, analysis, coverage, balances, recurring |
 | `packages/demo` | Made-up household (`persona.dart`: shops, habits, bills, trips; seeded, no real data), lived by `household.dart`, written as Desjardins statements (`desjardins/`): the banks' fixtures (`demo:fixtures`) and the demo database (`demo:database`, `database.dart`) |
-| `packages/storage` | drift/SQLite: `tables.dart`, `database.dart` (schema v7 + migrations), `import_service.dart`, `repository.dart`, `backup.dart` |
+| `packages/storage` | drift/SQLite: `tables.dart`, `database.dart` (schema v9 + migrations), `import_service.dart`, `repository.dart`, `backup.dart` |
 | `apps/desktop` | Flutter Windows app: `lib/screens/*` (a big screen keeps its entry file and puts its parts in a folder of the same name: `screens/stats.dart` + `screens/stats/` one file per tab, shared `charts.dart` / `widgets.dart`), `lib/widgets/*`, `lib/l10n/app_{en,fr}.arb` |
 | `spikes/` | Early PDF extraction experiments (historical) |
 

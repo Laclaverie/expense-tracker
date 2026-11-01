@@ -68,6 +68,10 @@ class Categories extends Table {
   /// Hidden from pickers; kept so old references still have a name.
   BoolColumn get archived => boolean().withDefault(const Constant(false))();
 
+  /// Left out of the "share without excluded" figures (Statistics → Categories),
+  /// e.g. rent or taxes. A group's flag covers its categories.
+  BoolColumn get excludedFromShare => boolean().withDefault(const Constant(false))();
+
   @override
   Set<Column> get primaryKey => {id};
 }
