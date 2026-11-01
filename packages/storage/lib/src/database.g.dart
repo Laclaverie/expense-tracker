@@ -4220,12 +4220,12 @@ class $$AccountsTableTableManager
               getPrefetchedDataCallback: (items) async {
                 return [
                   if (transactionsRefs)
-                    await $_getPrefetchedData<Account, $AccountsTable, Txn>(
+                    await $_getPrefetchedDataByColumns<Account, $AccountsTable, Txn, $TransactionsTable>(
                       currentTable: table,
                       referencedTable: $$AccountsTableReferences._transactionsRefsTable(db),
                       managerFromTypedResult: (p0) => $$AccountsTableReferences(db, table, p0).transactionsRefs,
-                      referencedItemsForCurrentItem: (item, referencedItems) =>
-                          referencedItems.where((e) => e.accountId == item.id),
+                      currentColumn: 'id',
+                      referencedColumn: 'account_id',
                       typedResults: items,
                     ),
                 ];
@@ -4561,12 +4561,12 @@ class $$StatementsTableTableManager
               getPrefetchedDataCallback: (items) async {
                 return [
                   if (transactionsRefs)
-                    await $_getPrefetchedData<Statement, $StatementsTable, Txn>(
+                    await $_getPrefetchedDataByColumns<Statement, $StatementsTable, Txn, $TransactionsTable>(
                       currentTable: table,
                       referencedTable: $$StatementsTableReferences._transactionsRefsTable(db),
                       managerFromTypedResult: (p0) => $$StatementsTableReferences(db, table, p0).transactionsRefs,
-                      referencedItemsForCurrentItem: (item, referencedItems) =>
-                          referencedItems.where((e) => e.statementId == item.id),
+                      currentColumn: 'id',
+                      referencedColumn: 'statement_id',
                       typedResults: items,
                     ),
                 ];
@@ -5049,48 +5049,48 @@ class $$CategoriesTableTableManager
                   getPrefetchedDataCallback: (items) async {
                     return [
                       if (merchantsRefs)
-                        await $_getPrefetchedData<CategoryRow, $CategoriesTable, Merchant>(
+                        await $_getPrefetchedDataByColumns<CategoryRow, $CategoriesTable, Merchant, $MerchantsTable>(
                           currentTable: table,
                           referencedTable: $$CategoriesTableReferences._merchantsRefsTable(db),
                           managerFromTypedResult: (p0) => $$CategoriesTableReferences(db, table, p0).merchantsRefs,
-                          referencedItemsForCurrentItem: (item, referencedItems) =>
-                              referencedItems.where((e) => e.categoryId == item.id),
+                          currentColumn: 'id',
+                          referencedColumn: 'category_id',
                           typedResults: items,
                         ),
                       if (rulesRefs)
-                        await $_getPrefetchedData<CategoryRow, $CategoriesTable, RuleRow>(
+                        await $_getPrefetchedDataByColumns<CategoryRow, $CategoriesTable, RuleRow, $RulesTable>(
                           currentTable: table,
                           referencedTable: $$CategoriesTableReferences._rulesRefsTable(db),
                           managerFromTypedResult: (p0) => $$CategoriesTableReferences(db, table, p0).rulesRefs,
-                          referencedItemsForCurrentItem: (item, referencedItems) =>
-                              referencedItems.where((e) => e.categoryId == item.id),
+                          currentColumn: 'id',
+                          referencedColumn: 'category_id',
                           typedResults: items,
                         ),
                       if (transactionsRefs)
-                        await $_getPrefetchedData<CategoryRow, $CategoriesTable, Txn>(
+                        await $_getPrefetchedDataByColumns<CategoryRow, $CategoriesTable, Txn, $TransactionsTable>(
                           currentTable: table,
                           referencedTable: $$CategoriesTableReferences._transactionsRefsTable(db),
                           managerFromTypedResult: (p0) => $$CategoriesTableReferences(db, table, p0).transactionsRefs,
-                          referencedItemsForCurrentItem: (item, referencedItems) =>
-                              referencedItems.where((e) => e.categoryId == item.id),
+                          currentColumn: 'id',
+                          referencedColumn: 'category_id',
                           typedResults: items,
                         ),
                       if (splitsRefs)
-                        await $_getPrefetchedData<CategoryRow, $CategoriesTable, Split>(
+                        await $_getPrefetchedDataByColumns<CategoryRow, $CategoriesTable, Split, $SplitsTable>(
                           currentTable: table,
                           referencedTable: $$CategoriesTableReferences._splitsRefsTable(db),
                           managerFromTypedResult: (p0) => $$CategoriesTableReferences(db, table, p0).splitsRefs,
-                          referencedItemsForCurrentItem: (item, referencedItems) =>
-                              referencedItems.where((e) => e.categoryId == item.id),
+                          currentColumn: 'id',
+                          referencedColumn: 'category_id',
                           typedResults: items,
                         ),
                       if (targetsRefs)
-                        await $_getPrefetchedData<CategoryRow, $CategoriesTable, TargetRow>(
+                        await $_getPrefetchedDataByColumns<CategoryRow, $CategoriesTable, TargetRow, $TargetsTable>(
                           currentTable: table,
                           referencedTable: $$CategoriesTableReferences._targetsRefsTable(db),
                           managerFromTypedResult: (p0) => $$CategoriesTableReferences(db, table, p0).targetsRefs,
-                          referencedItemsForCurrentItem: (item, referencedItems) =>
-                              referencedItems.where((e) => e.categoryId == item.id),
+                          currentColumn: 'id',
+                          referencedColumn: 'category_id',
                           typedResults: items,
                         ),
                     ];
@@ -5372,12 +5372,12 @@ class $$MerchantsTableTableManager
               getPrefetchedDataCallback: (items) async {
                 return [
                   if (transactionsRefs)
-                    await $_getPrefetchedData<Merchant, $MerchantsTable, Txn>(
+                    await $_getPrefetchedDataByColumns<Merchant, $MerchantsTable, Txn, $TransactionsTable>(
                       currentTable: table,
                       referencedTable: $$MerchantsTableReferences._transactionsRefsTable(db),
                       managerFromTypedResult: (p0) => $$MerchantsTableReferences(db, table, p0).transactionsRefs,
-                      referencedItemsForCurrentItem: (item, referencedItems) =>
-                          referencedItems.where((e) => e.merchantId == item.id),
+                      currentColumn: 'id',
+                      referencedColumn: 'merchant_id',
                       typedResults: items,
                     ),
                 ];
@@ -6459,12 +6459,12 @@ class $$TransactionsTableTableManager
                   getPrefetchedDataCallback: (items) async {
                     return [
                       if (splitsRefs)
-                        await $_getPrefetchedData<Txn, $TransactionsTable, Split>(
+                        await $_getPrefetchedDataByColumns<Txn, $TransactionsTable, Split, $SplitsTable>(
                           currentTable: table,
                           referencedTable: $$TransactionsTableReferences._splitsRefsTable(db),
                           managerFromTypedResult: (p0) => $$TransactionsTableReferences(db, table, p0).splitsRefs,
-                          referencedItemsForCurrentItem: (item, referencedItems) =>
-                              referencedItems.where((e) => e.transactionId == item.id),
+                          currentColumn: 'id',
+                          referencedColumn: 'transaction_id',
                           typedResults: items,
                         ),
                     ];
