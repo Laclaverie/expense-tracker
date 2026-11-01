@@ -542,6 +542,8 @@
   "cadenceWeekly": "Weekly",
   "cadenceBiweekly": "Every 2 weeks",
   "cadenceMonthly": "Monthly",
+  "cadenceBimonthly": "Every 2 months",
+  "cadenceSemiannual": "Every 6 months",
   "cadenceQuarterly": "Quarterly",
   "cadenceYearly": "Yearly",
   "onDay": "on day {day}",

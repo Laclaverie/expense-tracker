@@ -183,7 +183,9 @@ class _RecurringRowState extends State<_RecurringRow> {
       Cadence.weekly => l.cadenceWeekly,
       Cadence.biweekly => l.cadenceBiweekly,
       Cadence.monthly => l.cadenceMonthly,
+      Cadence.bimonthly => l.cadenceBimonthly,
       Cadence.quarterly => l.cadenceQuarterly,
+      Cadence.semiannual => l.cadenceSemiannual,
       Cadence.yearly => l.cadenceYearly,
     };
     final days = r.dayRange;

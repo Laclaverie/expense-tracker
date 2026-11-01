@@ -867,6 +867,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get cadenceMonthly => 'Monthly';
 
   @override
+  String get cadenceBimonthly => 'Every 2 months';
+
+  @override
+  String get cadenceSemiannual => 'Every 6 months';
+
+  @override
   String get cadenceQuarterly => 'Quarterly';
 
   @override

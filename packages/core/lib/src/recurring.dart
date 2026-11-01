@@ -10,7 +10,9 @@ enum Cadence {
   weekly(7, 2),
   biweekly(14, 3),
   monthly(30.44, 6),
+  bimonthly(60.88, 10),
   quarterly(91.31, 15),
+  semiannual(182.62, 20),
   yearly(365.25, 25);
 
   const Cadence(this.days, this.tolerance);
@@ -37,6 +39,7 @@ class Recurring {
     required this.cadence,
     required this.payments,
     required this.active,
+    this.variableAmount = false,
   });
 
   final int merchantId;
@@ -53,6 +56,10 @@ class Recurring {
   /// Still seen: the latest data is not well past [nextExpected].
   final bool active;
 
+  /// A bill whose amount varies a lot (electricity, twice as high in winter):
+  /// kept because the merchant is paid only on this schedule.
+  final bool variableAmount;
+
   DateTime get first => payments.first.$1;
   DateTime get last => payments.last.$1;
   int get lastAmount => payments.last.$2;
@@ -60,9 +67,19 @@ class Recurring {
   int get maxAmount => payments.map((p) => p.$2).reduce((a, b) => a > b ? a : b);
 
   /// Current price: median of the last three payments (one unusual bill
-  /// doesn't count, a price change does after two payments).
-  int get typicalAmount =>
-      _median([for (final p in payments.skip(payments.length < 3 ? 0 : payments.length - 3)) p.$2]);
+  /// doesn't count, a price change does after two payments). A variable
+  /// bill: average of the last year's payments (every season counts).
+  int get typicalAmount {
+    if (variableAmount) {
+      final since = last.subtract(const Duration(days: 365));
+      final year = [
+        for (final p in payments)
+          if (p.$1.isAfter(since)) p.$2,
+      ];
+      return (year.reduce((a, b) => a + b) / year.length).round();
+    }
+    return _median([for (final p in payments.skip(payments.length < 3 ? 0 : payments.length - 3)) p.$2]);
+  }
 
   int get monthlyCost => (typicalAmount * cadence.perMonth).round();
 
@@ -126,20 +143,20 @@ List<Recurring> detectRecurring(List<SpendLine> lines, {DateTime? asOf}) {
     // The whole merchant first (amount may vary: phone bill with extras, price
     // change); otherwise separate series by amount (two policies at one insurer,
     // a subscription among one-off purchases).
-    // A yearly series needs only two payments, so it must be the whole
-    // merchant: two similar amounts a year apart among many purchases (a
-    // grocery store) are chance.
+    // Slower than monthly must be the whole merchant: a few similar amounts
+    // months apart among many purchases (a grocery store, a restaurant) are
+    // chance.
     var series = [?_series(payments, amountTolerance: 0.35, amountShare: 0.5)];
     if (series.isEmpty) {
       series = [
         for (final cluster in _amountClusters(payments))
-          ?_series(cluster, amountTolerance: 0.15, amountShare: 1, allowYearly: false),
+          ?_series(cluster, amountTolerance: 0.15, amountShare: 1, allowSlow: false),
       ];
     }
     final category = categories[id]!.entries.reduce((a, b) => b.value > a.value ? b : a).key;
     final accountEnd = latestByAccount[accountOf[id]!.$2]!;
     final seenUntil = accountEnd.isBefore(end) ? accountEnd : end;
-    for (final (cadence, kept) in series) {
+    for (final (cadence, kept, variable) in series) {
       final next = _next(kept.last.$1, cadence);
       final grace = cadence.tolerance > cadence.days / 2 ? cadence.tolerance : cadence.days / 2;
       out.add(
@@ -151,6 +168,7 @@ List<Recurring> detectRecurring(List<SpendLine> lines, {DateTime? asOf}) {
           cadence: cadence,
           payments: kept,
           active: !seenUntil.isAfter(_addDays(next, grace)),
+          variableAmount: variable,
         ),
       );
     }
@@ -162,18 +180,24 @@ List<Recurring> detectRecurring(List<SpendLine> lines, {DateTime? asOf}) {
   return out;
 }
 
-/// Best regular series in [payments] (date order), or null. Payments that
-/// don't fit (an extra purchase, a late one) may be left out, up to a quarter.
-(Cadence, List<Payment>)? _series(
+/// Best regular series in [payments] (date order), or null, and whether its
+/// amount varies beyond [amountTolerance]. Payments that don't fit (an extra
+/// purchase, a late one) may be left out, up to a quarter.
+///
+/// Amounts that vary more (a seasonal bill) are accepted when every payment
+/// of the merchant fits a monthly or slower schedule, at least
+/// [minVariablePayments] of them, the highest at most [maxVariableRatio] times
+/// the lowest: a shop paid only on a schedule is a bill.
+(Cadence, List<Payment>, bool)? _series(
   List<Payment> payments, {
   required double amountTolerance,
   required double amountShare,
-  bool allowYearly = true,
+  bool allowSlow = true,
 }) {
-  (Cadence, List<Payment>)? best;
+  (Cadence, List<Payment>, bool)? best;
   (int, int, double)? bestScore;
   for (final cadence in Cadence.values) {
-    if (cadence == Cadence.yearly && !allowYearly) continue;
+    if (cadence.days > Cadence.monthly.days && !allowSlow) continue;
     final yearly = cadence == Cadence.yearly;
     for (var start = 0; start < payments.length && start < 3; start++) {
       final kept = [payments[start]];
@@ -193,14 +217,30 @@ List<Recurring> detectRecurring(List<SpendLine> lines, {DateTime? asOf}) {
       if (consecutive < (yearly ? 1 : 2)) continue;
       final median = _median([for (final p in kept) p.$2]);
       final close = kept.where((p) => (p.$2 - median).abs() <= median * amountTolerance).length;
-      if (close < kept.length * amountShare) continue;
+      // More than a quarter of the payments off the usual amount: a variable
+      // bill, if the schedule alone makes it one.
+      var variable = false;
+      if (close < kept.length * 0.75) {
+        final amounts = [for (final p in kept) p.$2];
+        final low = amounts.reduce((a, b) => a < b ? a : b);
+        final high = amounts.reduce((a, b) => a > b ? a : b);
+        variable =
+            amountShare < 1 &&
+            kept.length == payments.length &&
+            kept.length >= minVariablePayments &&
+            cadence.days >= 28 &&
+            high <= low * maxVariableRatio;
+      }
+      if (close < kept.length * amountShare && !variable) continue;
       // More payments explained, then more back-to-back intervals, then less drift.
       final score = (kept.length, consecutive, -drift / kept.length);
-      if (bestScore == null || _better(score, bestScore)) (best, bestScore) = ((cadence, kept), score);
+      if (bestScore == null || _better(score, bestScore)) (best, bestScore) = ((cadence, kept, variable), score);
     }
   }
   return best;
 }
+
+const minVariablePayments = 4, maxVariableRatio = 3;
 
 bool _better((int, int, double) a, (int, int, double) b) =>
     a.$1 != b.$1 ? a.$1 > b.$1 : (a.$2 != b.$2 ? a.$2 > b.$2 : a.$3 > b.$3);
@@ -237,7 +277,9 @@ DateTime _addDays(DateTime d, double days) => d.add(Duration(days: days.round())
 DateTime _next(DateTime d, Cadence cadence) {
   final months = switch (cadence) {
     Cadence.monthly => 1,
+    Cadence.bimonthly => 2,
     Cadence.quarterly => 3,
+    Cadence.semiannual => 6,
     Cadence.yearly => 12,
     _ => 0,
   };

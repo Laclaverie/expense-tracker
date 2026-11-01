@@ -154,7 +154,7 @@ void main() {
     expect(found, {'Landlord': true, 'Stream': true, 'Gym': false});
   });
 
-  test('yearly needs the whole merchant: two similar amounts a year apart at a grocery are chance', () {
+  test('slower than monthly needs the whole merchant: similar amounts months apart at a grocery are chance', () {
     final lines = [
       pay(1, 'Bank', '2025-02-03', 13000),
       pay(1, 'Bank', '2026-02-03', 13000),
@@ -173,9 +173,61 @@ void main() {
         pay(2, 'Grocery', '2025-$d', 6000 + 1731 * i),
       pay(2, 'Grocery', '2025-01-02', 4015),
       pay(2, 'Grocery', '2026-01-02', 4015),
+      // Same basket every six months.
+      for (final d in ['2025-01-20', '2025-07-21', '2026-01-19']) pay(2, 'Grocery', d, 2490),
     ];
     final found = detectRecurring(lines, asOf: DateTime.utc(2026, 3, 1));
     expect(found.map((r) => (r.merchant, r.cadence)), [('Bank', Cadence.yearly)]);
+  });
+
+  test('electricity every two months, paid by hand, twice as high in winter', () {
+    final lines = [
+      for (final (d, c) in [
+        ('2025-01-12', 20450),
+        ('2025-03-08', 22010),
+        ('2025-05-14', 9120),
+        ('2025-07-10', 9830),
+        ('2025-09-06', 8790),
+        ('2025-11-13', 19870),
+        ('2026-01-09', 21540),
+        ('2026-03-11', 20990),
+        ('2026-05-12', 9640),
+        ('2026-07-08', 10120),
+        ('2026-09-10', 9300),
+      ])
+        pay(1, 'Power', d, c, cat: 'housing.utilities'),
+    ];
+    final r = detectRecurring(lines, asOf: DateTime.utc(2026, 10, 20)).single;
+    expect((r.cadence, r.payments.length, r.variableAmount, r.active), (Cadence.bimonthly, 11, true, true));
+    expect(r.nextExpected, DateTime.utc(2026, 11, 10));
+    // Usual amount: the last year's average, not the last three summer bills.
+    final year = [21540, 20990, 9640, 10120, 9300, 19870];
+    expect(r.typicalAmount, (year.reduce((a, b) => a + b) / year.length).round());
+    expect(r.monthlyCost, (r.typicalAmount * 30.44 / 60.88).round());
+  });
+
+  test('every six months', () {
+    final lines = [
+      for (final d in ['2025-01-20', '2025-07-15', '2026-01-22', '2026-07-18']) pay(1, 'Dentist', d, 18000),
+    ];
+    final r = detectRecurring(lines, asOf: DateTime.utc(2026, 8, 1)).single;
+    expect((r.cadence, r.variableAmount, r.nextExpected), (Cadence.semiannual, false, DateTime.utc(2027, 1, 18)));
+  });
+
+  test('varying amounts need every payment on schedule: one extra purchase is a shop, not a bill', () {
+    final lines = [
+      for (final (d, c) in [
+        ('2026-01-10', 4000),
+        ('2026-02-11', 9000),
+        ('2026-03-09', 3500),
+        ('2026-03-24', 6100),
+        ('2026-04-10', 10500),
+        ('2026-05-12', 4200),
+        ('2026-06-10', 8800),
+      ])
+        pay(1, 'Bookshop', d, c),
+    ];
+    expect(detectRecurring(lines, asOf: DateTime.utc(2026, 6, 30)), isEmpty);
   });
 
   test('day range wraps over the month end', () {

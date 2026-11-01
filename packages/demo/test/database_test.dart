@@ -38,6 +38,11 @@ void main() {
     expect(names['Netflix']!.maxAmount, greaterThan(names['Netflix']!.minAmount));
     expect(found.where((r) => !r.active).map((r) => r.merchant), contains('Club Sportif Boreal'));
     expect(found.where((r) => r.isPerson), isNotEmpty, reason: 'rent to a person');
+    // Electricity every two months, about twice as high in winter.
+    final power = names['Hydro-Québec']!;
+    expect((power.cadence, power.variableAmount, power.active), (Cadence.bimonthly, true, true));
+    // Similar amounts months apart at shops visited often are chance.
+    expect(names.keys, isNot(anyOf(contains('Sushi Maki Bar'), contains('Fruiterie Du Quartier'), contains('IGA'))));
   });
 
   test('alerts: a very large expense and a bill at a different amount', () async {

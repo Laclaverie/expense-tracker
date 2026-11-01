@@ -249,6 +249,8 @@
   "cadenceWeekly": "Chaque semaine",
   "cadenceBiweekly": "Toutes les 2 semaines",
   "cadenceMonthly": "Chaque mois",
+  "cadenceBimonthly": "Tous les 2 mois",
+  "cadenceSemiannual": "Tous les 6 mois",
   "cadenceQuarterly": "Chaque trimestre",
   "cadenceYearly": "Chaque année",
   "onDay": "le {day}",

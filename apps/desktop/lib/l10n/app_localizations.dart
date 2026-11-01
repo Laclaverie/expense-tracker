@@ -1436,6 +1436,18 @@ abstract class AppLocalizations {
   /// **'Monthly'**
   String get cadenceMonthly;
 
+  /// No description provided for @cadenceBimonthly.
+  ///
+  /// In en, this message translates to:
+  /// **'Every 2 months'**
+  String get cadenceBimonthly;
+
+  /// No description provided for @cadenceSemiannual.
+  ///
+  /// In en, this message translates to:
+  /// **'Every 6 months'**
+  String get cadenceSemiannual;
+
   /// No description provided for @cadenceQuarterly.
   ///
   /// In en, this message translates to:
