@@ -129,14 +129,31 @@ if ($Android) {
   $sdkDir = Join-Path $env:LOCALAPPDATA 'Android\Sdk'
   $sdkManager = Join-Path $sdkDir 'cmdline-tools\latest\bin\sdkmanager.bat'
 
-  $hasJdk = (Has javac) -or ($env:JAVA_HOME -and (Test-Path (Join-Path $env:JAVA_HOME 'bin\javac.exe'))) -or
-    (Test-Path 'C:\Program Files\Microsoft\jdk-17*\bin\javac.exe')
-  if (-not $hasJdk) {
+  # The JDK home: JAVA_HOME, else the one on PATH, else a Microsoft OpenJDK 17 under Program Files.
+  function Find-Jdk {
+    if ($env:JAVA_HOME -and (Test-Path (Join-Path $env:JAVA_HOME 'bin\javac.exe'))) { return $env:JAVA_HOME }
+    $javac = Get-Command javac -ErrorAction SilentlyContinue
+    if ($javac) { return Split-Path (Split-Path $javac.Source -Parent) -Parent }
+    $found = Get-ChildItem 'C:\Program Files\Microsoft\jdk-17*\bin\javac.exe' -ErrorAction SilentlyContinue |
+      Select-Object -First 1
+    if ($found) { return Split-Path (Split-Path $found.FullName -Parent) -Parent }
+  }
+  $jdk = Find-Jdk
+  if (-not $jdk) {
     $missing += 'JDK 17'
     if (-not $DryRun) {
       Step 'Installation de Java (JDK 17)' 'Installing Java (JDK 17)'
       Winget @('--id', 'Microsoft.OpenJDK.17', '--silent')
       Reload-Path
+      $jdk = Find-Jdk
+    }
+  }
+  if ($jdk -and -not $DryRun) {
+    # sdkmanager and Gradle need java: this process now, later shells through the user's environment.
+    $env:JAVA_HOME = $jdk
+    $env:Path = "$jdk\bin;$env:Path"
+    if ([Environment]::GetEnvironmentVariable('JAVA_HOME', 'User') -ne $jdk) {
+      [Environment]::SetEnvironmentVariable('JAVA_HOME', $jdk, 'User')
     }
   }
 
@@ -149,30 +166,31 @@ if ($Android) {
       Invoke-WebRequest 'https://dl.google.com/android/repository/commandlinetools-win-11076708_latest.zip' -OutFile $zip
       if (Test-Path $tmp) { Remove-Item $tmp -Recurse -Force }
       Expand-Archive $zip $tmp
+      # A partial earlier download would make Move-Item nest the new folder inside it.
+      $latest = Join-Path $sdkDir 'cmdline-tools\latest'
+      if (Test-Path $latest) { Remove-Item $latest -Recurse -Force }
       # The tools must sit in cmdline-tools\latest\ for sdkmanager to find the SDK root.
       New-Item -ItemType Directory -Force (Join-Path $sdkDir 'cmdline-tools') | Out-Null
-      Move-Item (Join-Path $tmp 'cmdline-tools') (Join-Path $sdkDir 'cmdline-tools\latest')
+      Move-Item (Join-Path $tmp 'cmdline-tools') $latest
       Remove-Item $zip, $tmp -Recurse -Force
     }
   }
 
   $packages = @('platform-tools', 'platforms;android-35', 'build-tools;35.0.0')
   $absent = $packages | Where-Object { -not (Test-Path (Join-Path $sdkDir ($_ -replace ';', '\'))) }
-  if ($absent) {
-    $missing += 'Android SDK packages'
-    if (-not $DryRun) {
+  if ($absent) { $missing += 'Android SDK packages' }
+  if (-not $DryRun -and (Test-Path $sdkManager)) {
+    # Licenses first: sdkmanager asks for them before installing and cannot do so unattended otherwise.
+    Step 'Licences Android' 'Android licenses'
+    1..30 | ForEach-Object { 'y' } | & $sdkManager "--sdk_root=$sdkDir" --licenses | Out-Null
+    if ($absent) {
       Step 'Installation du SDK Android (plusieurs Go)' 'Installing the Android SDK (several GB)'
-      Reload-Path
       & $sdkManager "--sdk_root=$sdkDir" @packages
       if ($LASTEXITCODE -ne 0) { throw 'sdkmanager install failed' }
     }
-  }
-
-  if (-not $DryRun -and (Has flutter) -and (Test-Path $sdkManager)) {
-    # Accepting licenses and pointing Flutter at the SDK are idempotent.
-    Step 'Licences Android' 'Android licenses'
-    1..30 | ForEach-Object { 'y' } | & $sdkManager "--sdk_root=$sdkDir" --licenses | Out-Null
-    & flutter config --android-sdk $sdkDir | Out-Null
+    # Pointing Flutter at the SDK is idempotent. Flutter may not be on PATH yet: use the copy step 4 installed.
+    $flutterCmd = if (Has flutter) { 'flutter' } else { Join-Path $flutterBin 'flutter.bat' }
+    if (Has $flutterCmd) { & $flutterCmd config --android-sdk $sdkDir | Out-Null }
   }
 }
 
