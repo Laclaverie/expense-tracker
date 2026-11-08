@@ -10,6 +10,7 @@ import 'app_state.dart';
 import 'database_list.dart';
 import 'db_location.dart';
 import 'l10n/app_localizations.dart';
+import 'phone_sync.dart';
 import 'screens/shell.dart';
 import 'screens/unlock.dart';
 import 'style.dart';
@@ -47,6 +48,7 @@ class UnlockGate extends StatefulWidget {
 class _UnlockGateState extends State<UnlockGate> {
   late File _file = widget.file;
   ExpenseDatabase? _db;
+  PhoneSync? _phone;
   Widget? _app;
   String? _error;
 
@@ -84,10 +86,12 @@ class _UnlockGateState extends State<UnlockGate> {
     setState(() {
       _db = db;
       _scratch = false;
+      _phone = PhoneSync(db, Directory('${file.parent.path}${Platform.pathSeparator}sync'));
       _app = appFor(
         db,
         backups: Backups(file, password: password),
         session: session,
+        phoneSync: _phone,
       );
     });
   }
@@ -95,6 +99,8 @@ class _UnlockGateState extends State<UnlockGate> {
   /// Back to the password screen; the database closes once the app is gone.
   void _lock() {
     final db = _db;
+    _phone?.dispose();
+    _phone = null;
     setState(() {
       _app = null;
       _db = null;
@@ -138,12 +144,14 @@ ThemeData appTheme(Brightness b) => ThemeData(
 );
 
 /// The whole app on [db] (tests pass an in-memory database and no [backups]:
-/// no copies made, no backup button; no [session]: no lock button).
-Widget appFor(ExpenseDatabase db, {Backups? backups, DatabaseSession? session}) => MultiProvider(
+/// no copies made, no backup button; no [session]: no lock button; no [phoneSync]: no phone button).
+Widget appFor(ExpenseDatabase db, {Backups? backups, DatabaseSession? session, PhoneSync? phoneSync}) => MultiProvider(
   providers: [
     Provider.value(value: db),
     Provider<Backups?>.value(value: backups),
     Provider<DatabaseSession?>.value(value: session),
+    // Null in tests: no phone button.
+    ListenableProvider<PhoneSync?>.value(value: phoneSync),
     Provider(create: (_) => ExpenseRepository(db)),
     Provider(create: (_) => ImportService(db)),
     ChangeNotifierProvider(create: (_) => AppState()),

@@ -25,6 +25,8 @@ dependencies:
   pdf_words: any
   provider: ^6.1.5
   storage: any
+  sync: any
+  qr_flutter: ^4.1.0
   excel: ^4.0.6
 
 dev_dependencies:

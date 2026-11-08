@@ -2515,6 +2515,120 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Balances known from {month}: before, a statement is missing or the account had no transactions yet.'**
   String balancesFrom(String month);
+
+  /// No description provided for @phoneTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone'**
+  String get phoneTitle;
+
+  /// No description provided for @phoneNotPaired.
+  ///
+  /// In en, this message translates to:
+  /// **'No phone is paired. Pair one to read your expenses on it (read-only, over your home Wi-Fi).'**
+  String get phoneNotPaired;
+
+  /// No description provided for @phonePair.
+  ///
+  /// In en, this message translates to:
+  /// **'Pair a phone'**
+  String get phonePair;
+
+  /// No description provided for @phoneScan.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan with the Dépenses app on your phone'**
+  String get phoneScan;
+
+  /// No description provided for @phoneNoNetwork.
+  ///
+  /// In en, this message translates to:
+  /// **'No network found — connect this computer to Wi-Fi'**
+  String get phoneNoNetwork;
+
+  /// No description provided for @phoneQrDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get phoneQrDone;
+
+  /// No description provided for @phonePairedOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone paired on {date}'**
+  String phonePairedOn(String date);
+
+  /// No description provided for @phoneLastSync.
+  ///
+  /// In en, this message translates to:
+  /// **'Last sync: {date}'**
+  String phoneLastSync(String date);
+
+  /// No description provided for @phoneLastSyncNever.
+  ///
+  /// In en, this message translates to:
+  /// **'Last sync: never'**
+  String get phoneLastSyncNever;
+
+  /// No description provided for @phoneSend.
+  ///
+  /// In en, this message translates to:
+  /// **'Send to phone'**
+  String get phoneSend;
+
+  /// No description provided for @phoneForget.
+  ///
+  /// In en, this message translates to:
+  /// **'Forget phone'**
+  String get phoneForget;
+
+  /// No description provided for @phoneForgetTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Forget this phone?'**
+  String get phoneForgetTitle;
+
+  /// No description provided for @phoneForgetBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The phone will no longer be able to receive your data. Its own copy stays on the phone until you remove it there.'**
+  String get phoneForgetBody;
+
+  /// No description provided for @phoneShowQr.
+  ///
+  /// In en, this message translates to:
+  /// **'Show QR again'**
+  String get phoneShowQr;
+
+  /// No description provided for @phoneWaiting.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for the phone… open the app on your phone (same Wi-Fi). {time} left'**
+  String phoneWaiting(String time);
+
+  /// No description provided for @phoneStop.
+  ///
+  /// In en, this message translates to:
+  /// **'Stop'**
+  String get phoneStop;
+
+  /// No description provided for @phoneHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing yet? Check the phone is on the same Wi-Fi and that Windows allowed Dépenses on private networks.'**
+  String get phoneHint;
+
+  /// No description provided for @phoneUpToDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone up to date · {date}'**
+  String phoneUpToDate(String date);
+
+  /// No description provided for @phoneFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not send: {error}'**
+  String phoneFailed(String error);
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

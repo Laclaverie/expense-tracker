@@ -10,6 +10,7 @@ import 'package:drift/drift.dart' show driftRuntimeOptions;
 import 'package:drift/native.dart';
 import 'package:expense_desktop/app_state.dart';
 import 'package:expense_desktop/main.dart';
+import 'package:expense_desktop/phone_sync.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -74,7 +75,9 @@ void main() {
           expect(find.byType(ErrorWidget), findsNothing, reason: label);
         }
 
-        await tester.pumpWidget(appFor(db));
+        final phone = PhoneSync(db, Directory.systemTemp.createTempSync('expenses-smoke-phone'));
+        addTearDown(phone.dispose);
+        await tester.pumpWidget(appFor(db, phoneSync: phone));
         await settle();
         final startup = tester.takeException();
         expect(startup, isNull, reason: startup is FlutterError ? startup.toStringDeep() : '$startup');
@@ -91,6 +94,14 @@ void main() {
         ]) {
           await open(page);
         }
+
+        // The phone dialog opens (nothing paired yet) and closes.
+        await tester.tap(find.byIcon(Icons.phone_android));
+        await settle();
+        expect(find.text('Pair a phone'), findsOneWidget);
+        await tester.tap(find.text('Close'));
+        await settle();
+        expect(tester.takeException(), isNull);
 
         // Import lists what the app reads; a missing bank leads to the masked-copy page.
         await open('Import');

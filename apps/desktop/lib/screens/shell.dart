@@ -7,6 +7,7 @@ import 'package:storage/storage.dart';
 import '../app_state.dart';
 import '../database_list.dart';
 import '../l10n/app_localizations.dart';
+import '../phone_sync.dart';
 import '../style.dart';
 import 'accounts.dart';
 import 'categories.dart';
@@ -17,6 +18,7 @@ import 'stats.dart';
 import 'targets.dart';
 import 'transactions.dart';
 import '../widgets/backup_dialog.dart';
+import '../widgets/phone_dialog.dart';
 import '../widgets/notifications.dart';
 import '../widgets/search_palette.dart';
 
@@ -281,6 +283,12 @@ class _TopBar extends StatelessWidget {
                 context: context,
                 builder: (_) => BackupDialog(backups: backups),
               ),
+            ),
+          if (context.read<PhoneSync?>() != null)
+            IconButton(
+              tooltip: l.phoneTitle,
+              icon: const Icon(Icons.phone_android),
+              onPressed: () => showPhoneDialog(context),
             ),
           if (context.read<DatabaseSession?>() case final session?) ...[
             // Another file than the app's own (a developer copy, a shared copy): always in sight.

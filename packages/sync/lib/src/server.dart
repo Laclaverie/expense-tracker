@@ -32,6 +32,11 @@ class SyncServer {
   final Completer<SyncAck?> _done = Completer<SyncAck?>();
   Timer? _timer;
   Future<void>? _closing;
+  bool _contacted = false;
+
+  /// True once any request reached the server (signed or not): tells "the phone cannot reach us" from
+  /// "the phone reached us".
+  bool get contacted => _contacted;
 
   /// Binds [address] (default: all IPv4 interfaces) on [port], or on the next ones up to `port + 10` when
   /// busy. Port 0 lets the system choose. After [window] without a valid ack the server closes and [done]
@@ -82,6 +87,7 @@ class SyncServer {
 
   Future<void> _handle(HttpRequest request) async {
     final response = request.response;
+    _contacted = true;
     try {
       final method = request.method;
       final path = request.uri.path;

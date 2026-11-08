@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:core/core.dart' show appNow;
 import 'package:drift/drift.dart';
 import 'package:uuid/uuid.dart';
 
@@ -20,7 +21,7 @@ class PairingStore {
       id: 1,
       databaseId: const Uuid().v4(),
       secret: Uint8List.fromList([for (var i = 0; i < 32; i++) random.nextInt(256)]),
-      pairedAt: DateTime.now().toUtc(),
+      pairedAt: appNow().toUtc(),
     );
     await _db.into(_db.pairedPhones).insertOnConflictUpdate(row);
     return row;

@@ -1541,4 +1541,74 @@ class AppLocalizationsFr extends AppLocalizations {
   String balancesFrom(String month) {
     return 'Soldes connus à partir de $month : avant, un relevé manque ou le compte n\'avait pas encore d\'opérations.';
   }
+
+  @override
+  String get phoneTitle => 'Téléphone';
+
+  @override
+  String get phoneNotPaired =>
+      'Aucun téléphone n\'est associé. Associez-en un pour consulter vos dépenses dessus (lecture seule, par votre Wi-Fi).';
+
+  @override
+  String get phonePair => 'Associer un téléphone';
+
+  @override
+  String get phoneScan => 'Scannez avec l\'application Dépenses sur votre téléphone';
+
+  @override
+  String get phoneNoNetwork => 'Aucun réseau trouvé — connectez cet ordinateur au Wi-Fi';
+
+  @override
+  String get phoneQrDone => 'Terminé';
+
+  @override
+  String phonePairedOn(String date) {
+    return 'Téléphone associé le $date';
+  }
+
+  @override
+  String phoneLastSync(String date) {
+    return 'Dernière synchronisation : $date';
+  }
+
+  @override
+  String get phoneLastSyncNever => 'Dernière synchronisation : jamais';
+
+  @override
+  String get phoneSend => 'Envoyer au téléphone';
+
+  @override
+  String get phoneForget => 'Oublier le téléphone';
+
+  @override
+  String get phoneForgetTitle => 'Oublier ce téléphone ?';
+
+  @override
+  String get phoneForgetBody =>
+      'Le téléphone ne pourra plus recevoir vos données. Sa copie reste sur le téléphone jusqu\'à ce que vous la supprimiez.';
+
+  @override
+  String get phoneShowQr => 'Afficher le QR';
+
+  @override
+  String phoneWaiting(String time) {
+    return 'En attente du téléphone… ouvrez l\'application sur votre téléphone (même Wi-Fi). Il reste $time';
+  }
+
+  @override
+  String get phoneStop => 'Arrêter';
+
+  @override
+  String get phoneHint =>
+      'Rien encore ? Vérifiez que le téléphone est sur le même Wi-Fi et que Windows a autorisé Dépenses sur les réseaux privés.';
+
+  @override
+  String phoneUpToDate(String date) {
+    return 'Téléphone à jour · $date';
+  }
+
+  @override
+  String phoneFailed(String error) {
+    return 'Envoi impossible : $error';
+  }
 }

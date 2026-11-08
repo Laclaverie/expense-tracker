@@ -1525,4 +1525,74 @@ class AppLocalizationsEn extends AppLocalizations {
   String balancesFrom(String month) {
     return 'Balances known from $month: before, a statement is missing or the account had no transactions yet.';
   }
+
+  @override
+  String get phoneTitle => 'Phone';
+
+  @override
+  String get phoneNotPaired =>
+      'No phone is paired. Pair one to read your expenses on it (read-only, over your home Wi-Fi).';
+
+  @override
+  String get phonePair => 'Pair a phone';
+
+  @override
+  String get phoneScan => 'Scan with the Dépenses app on your phone';
+
+  @override
+  String get phoneNoNetwork => 'No network found — connect this computer to Wi-Fi';
+
+  @override
+  String get phoneQrDone => 'Done';
+
+  @override
+  String phonePairedOn(String date) {
+    return 'Phone paired on $date';
+  }
+
+  @override
+  String phoneLastSync(String date) {
+    return 'Last sync: $date';
+  }
+
+  @override
+  String get phoneLastSyncNever => 'Last sync: never';
+
+  @override
+  String get phoneSend => 'Send to phone';
+
+  @override
+  String get phoneForget => 'Forget phone';
+
+  @override
+  String get phoneForgetTitle => 'Forget this phone?';
+
+  @override
+  String get phoneForgetBody =>
+      'The phone will no longer be able to receive your data. Its own copy stays on the phone until you remove it there.';
+
+  @override
+  String get phoneShowQr => 'Show QR again';
+
+  @override
+  String phoneWaiting(String time) {
+    return 'Waiting for the phone… open the app on your phone (same Wi-Fi). $time left';
+  }
+
+  @override
+  String get phoneStop => 'Stop';
+
+  @override
+  String get phoneHint =>
+      'Nothing yet? Check the phone is on the same Wi-Fi and that Windows allowed Dépenses on private networks.';
+
+  @override
+  String phoneUpToDate(String date) {
+    return 'Phone up to date · $date';
+  }
+
+  @override
+  String phoneFailed(String error) {
+    return 'Could not send: $error';
+  }
 }

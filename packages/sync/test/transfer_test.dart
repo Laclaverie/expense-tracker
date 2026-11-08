@@ -237,6 +237,17 @@ void main() {
     await expectLater(client.manifest('127.0.0.1', server.port), throwsA(isA<SyncException>()));
   });
 
+  test('contacted flips on the first request, even an unsigned one', () async {
+    final server = await startServer(window: const Duration(seconds: 5));
+    expect(server.contacted, isFalse);
+    final raw = HttpClient();
+    final res = await (await raw.getUrl(Uri.parse('http://127.0.0.1:${server.port}/manifest'))).close();
+    expect(res.statusCode, 401);
+    await res.drain<void>();
+    raw.close(force: true);
+    expect(server.contacted, isTrue);
+  });
+
   test('busy port moves to the next one', () async {
     final first = await startServer();
     final second = await startServer(port: first.port);
