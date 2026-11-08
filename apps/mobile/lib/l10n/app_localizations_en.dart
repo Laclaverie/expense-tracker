@@ -283,9 +283,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get notCounted => 'Not counted in spending';
 
   @override
-  String get statsSoon => 'Statistics';
-
-  @override
   String get pairedDesktop => 'Paired desktop';
 
   @override
@@ -320,4 +317,176 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get chooseScope => 'Account';
+
+  @override
+  String get range6 => '6 months';
+
+  @override
+  String get range12 => '12 months';
+
+  @override
+  String get rangeThisYear => 'This year';
+
+  @override
+  String get tabCategories => 'Categories';
+
+  @override
+  String get tabTrends => 'Trends';
+
+  @override
+  String get tabMerchants => 'Merchants';
+
+  @override
+  String get tabRecurring => 'Recurring';
+
+  @override
+  String get tabBalances => 'Balances';
+
+  @override
+  String get statTotal => 'Total';
+
+  @override
+  String get statAverage => 'Monthly average';
+
+  @override
+  String overCompleteMonths(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count complete months',
+      one: '1 complete month',
+    );
+    return 'over $_temp0';
+  }
+
+  @override
+  String get share => 'Share';
+
+  @override
+  String get other => 'Other';
+
+  @override
+  String get unspecified => 'unspecified';
+
+  @override
+  String sharesWithout(String names, String amount) {
+    return 'Hidden from shares: $names · $amount / month';
+  }
+
+  @override
+  String globalSincePhone(String month) {
+    return 'All accounts from $month only: before that, one type of statement is missing. Pick one account at the top to see its whole history.';
+  }
+
+  @override
+  String incompleteMonthsShort(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count incomplete months',
+      one: '1 incomplete month',
+    );
+    return '$_temp0 — counted in totals, left out of averages';
+  }
+
+  @override
+  String get noSpending => 'No spending in this period.';
+
+  @override
+  String get chartMonthlySpending => 'Monthly spending';
+
+  @override
+  String get fadedIncomplete => 'Faded bars: a statement is missing for that month.';
+
+  @override
+  String visits(int count) {
+    String _temp0 = intl.Intl.pluralLogic(count, locale: localeName, other: '$count purchases', one: '1 purchase');
+    return '$_temp0';
+  }
+
+  @override
+  String lastOn(String date) {
+    return 'last $date';
+  }
+
+  @override
+  String get merchantsHint => 'Businesses only: transfers to people count in their category.';
+
+  @override
+  String merchantsOf(String name) {
+    return '$name: merchants';
+  }
+
+  @override
+  String get noMerchants => 'No merchant here.';
+
+  @override
+  String get recurringPerMonth => 'Recurring per month';
+
+  @override
+  String recurringCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count recurring payments',
+      one: '1 recurring payment',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get recurringNone => 'No recurring payment found yet: import a few months of statements.';
+
+  @override
+  String get recurringStopped => 'Not seen lately (probably stopped)';
+
+  @override
+  String get cadenceWeekly => 'Weekly';
+
+  @override
+  String get cadenceBiweekly => 'Every 2 weeks';
+
+  @override
+  String get cadenceMonthly => 'Monthly';
+
+  @override
+  String get cadenceBimonthly => 'Every 2 months';
+
+  @override
+  String get cadenceQuarterly => 'Quarterly';
+
+  @override
+  String get cadenceSemiannual => 'Every 6 months';
+
+  @override
+  String get cadenceYearly => 'Yearly';
+
+  @override
+  String nextOn(String date) {
+    return 'next $date';
+  }
+
+  @override
+  String perMonth(String amount) {
+    return '$amount / month';
+  }
+
+  @override
+  String get chartBalances => 'Month-end balance';
+
+  @override
+  String get balancesNone => 'No balance to follow here: pick a checking or savings account (or all accounts).';
+
+  @override
+  String balanceChange(String amount) {
+    return 'Change over the period: $amount';
+  }
+
+  @override
+  String balancesFrom(String month) {
+    return 'Balances known from $month: before, a statement is missing or the account had no transactions yet.';
+  }
+
+  @override
+  String get withoutHidden => 'without hidden';
 }

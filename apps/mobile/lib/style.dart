@@ -14,6 +14,12 @@ Color groupColor(BuildContext context, String? categoryOrGroup) {
   return Color((dark ? core.darkPalette : core.lightPalette)[core.chartGroups.indexOf(s)]);
 }
 
+/// Color of the [i]-th series that is not a category group (accounts on the balances chart).
+Color seriesColor(BuildContext context, int i) => Color(
+  (Theme.of(context).brightness == Brightness.dark ? core.darkPalette : core.lightPalette)[i %
+      core.lightPalette.length],
+);
+
 /// Color of an "Others" series.
 Color otherColor(BuildContext context) =>
     Color(Theme.of(context).brightness == Brightness.dark ? core.otherDark : core.otherLight);

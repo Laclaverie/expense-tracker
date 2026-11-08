@@ -22,6 +22,10 @@ class _KeyedStreamBuilderState<T> extends State<KeyedStreamBuilder<T>> {
   }
 
   @override
-  Widget build(BuildContext context) =>
-      StreamBuilder<T>(stream: _stream, builder: (context, snap) => widget.builder(context, snap.data));
+  Widget build(BuildContext context) => StreamBuilder<T>(
+    // A new key starts empty: the previous stream's data never shows under the new key.
+    key: ValueKey(widget.streamKey),
+    stream: _stream,
+    builder: (context, snap) => widget.builder(context, snap.data),
+  );
 }

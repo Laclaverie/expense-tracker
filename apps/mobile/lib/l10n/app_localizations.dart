@@ -572,12 +572,6 @@ abstract class AppLocalizations {
   /// **'Not counted in spending'**
   String get notCounted;
 
-  /// No description provided for @statsSoon.
-  ///
-  /// In en, this message translates to:
-  /// **'Statistics'**
-  String get statsSoon;
-
   /// No description provided for @pairedDesktop.
   ///
   /// In en, this message translates to:
@@ -649,6 +643,264 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Account'**
   String get chooseScope;
+
+  /// No description provided for @range6.
+  ///
+  /// In en, this message translates to:
+  /// **'6 months'**
+  String get range6;
+
+  /// No description provided for @range12.
+  ///
+  /// In en, this message translates to:
+  /// **'12 months'**
+  String get range12;
+
+  /// No description provided for @rangeThisYear.
+  ///
+  /// In en, this message translates to:
+  /// **'This year'**
+  String get rangeThisYear;
+
+  /// No description provided for @tabCategories.
+  ///
+  /// In en, this message translates to:
+  /// **'Categories'**
+  String get tabCategories;
+
+  /// No description provided for @tabTrends.
+  ///
+  /// In en, this message translates to:
+  /// **'Trends'**
+  String get tabTrends;
+
+  /// No description provided for @tabMerchants.
+  ///
+  /// In en, this message translates to:
+  /// **'Merchants'**
+  String get tabMerchants;
+
+  /// No description provided for @tabRecurring.
+  ///
+  /// In en, this message translates to:
+  /// **'Recurring'**
+  String get tabRecurring;
+
+  /// No description provided for @tabBalances.
+  ///
+  /// In en, this message translates to:
+  /// **'Balances'**
+  String get tabBalances;
+
+  /// No description provided for @statTotal.
+  ///
+  /// In en, this message translates to:
+  /// **'Total'**
+  String get statTotal;
+
+  /// No description provided for @statAverage.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly average'**
+  String get statAverage;
+
+  /// No description provided for @overCompleteMonths.
+  ///
+  /// In en, this message translates to:
+  /// **'over {count, plural, =1{1 complete month} other{{count} complete months}}'**
+  String overCompleteMonths(int count);
+
+  /// No description provided for @share.
+  ///
+  /// In en, this message translates to:
+  /// **'Share'**
+  String get share;
+
+  /// No description provided for @other.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get other;
+
+  /// No description provided for @unspecified.
+  ///
+  /// In en, this message translates to:
+  /// **'unspecified'**
+  String get unspecified;
+
+  /// No description provided for @sharesWithout.
+  ///
+  /// In en, this message translates to:
+  /// **'Hidden from shares: {names} · {amount} / month'**
+  String sharesWithout(String names, String amount);
+
+  /// No description provided for @globalSincePhone.
+  ///
+  /// In en, this message translates to:
+  /// **'All accounts from {month} only: before that, one type of statement is missing. Pick one account at the top to see its whole history.'**
+  String globalSincePhone(String month);
+
+  /// No description provided for @incompleteMonthsShort.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 incomplete month} other{{count} incomplete months}} — counted in totals, left out of averages'**
+  String incompleteMonthsShort(int count);
+
+  /// No description provided for @noSpending.
+  ///
+  /// In en, this message translates to:
+  /// **'No spending in this period.'**
+  String get noSpending;
+
+  /// No description provided for @chartMonthlySpending.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly spending'**
+  String get chartMonthlySpending;
+
+  /// No description provided for @fadedIncomplete.
+  ///
+  /// In en, this message translates to:
+  /// **'Faded bars: a statement is missing for that month.'**
+  String get fadedIncomplete;
+
+  /// No description provided for @visits.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 purchase} other{{count} purchases}}'**
+  String visits(int count);
+
+  /// No description provided for @lastOn.
+  ///
+  /// In en, this message translates to:
+  /// **'last {date}'**
+  String lastOn(String date);
+
+  /// No description provided for @merchantsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Businesses only: transfers to people count in their category.'**
+  String get merchantsHint;
+
+  /// No description provided for @merchantsOf.
+  ///
+  /// In en, this message translates to:
+  /// **'{name}: merchants'**
+  String merchantsOf(String name);
+
+  /// No description provided for @noMerchants.
+  ///
+  /// In en, this message translates to:
+  /// **'No merchant here.'**
+  String get noMerchants;
+
+  /// No description provided for @recurringPerMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'Recurring per month'**
+  String get recurringPerMonth;
+
+  /// No description provided for @recurringCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 recurring payment} other{{count} recurring payments}}'**
+  String recurringCount(int count);
+
+  /// No description provided for @recurringNone.
+  ///
+  /// In en, this message translates to:
+  /// **'No recurring payment found yet: import a few months of statements.'**
+  String get recurringNone;
+
+  /// No description provided for @recurringStopped.
+  ///
+  /// In en, this message translates to:
+  /// **'Not seen lately (probably stopped)'**
+  String get recurringStopped;
+
+  /// No description provided for @cadenceWeekly.
+  ///
+  /// In en, this message translates to:
+  /// **'Weekly'**
+  String get cadenceWeekly;
+
+  /// No description provided for @cadenceBiweekly.
+  ///
+  /// In en, this message translates to:
+  /// **'Every 2 weeks'**
+  String get cadenceBiweekly;
+
+  /// No description provided for @cadenceMonthly.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly'**
+  String get cadenceMonthly;
+
+  /// No description provided for @cadenceBimonthly.
+  ///
+  /// In en, this message translates to:
+  /// **'Every 2 months'**
+  String get cadenceBimonthly;
+
+  /// No description provided for @cadenceQuarterly.
+  ///
+  /// In en, this message translates to:
+  /// **'Quarterly'**
+  String get cadenceQuarterly;
+
+  /// No description provided for @cadenceSemiannual.
+  ///
+  /// In en, this message translates to:
+  /// **'Every 6 months'**
+  String get cadenceSemiannual;
+
+  /// No description provided for @cadenceYearly.
+  ///
+  /// In en, this message translates to:
+  /// **'Yearly'**
+  String get cadenceYearly;
+
+  /// No description provided for @nextOn.
+  ///
+  /// In en, this message translates to:
+  /// **'next {date}'**
+  String nextOn(String date);
+
+  /// No description provided for @perMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'{amount} / month'**
+  String perMonth(String amount);
+
+  /// No description provided for @chartBalances.
+  ///
+  /// In en, this message translates to:
+  /// **'Month-end balance'**
+  String get chartBalances;
+
+  /// No description provided for @balancesNone.
+  ///
+  /// In en, this message translates to:
+  /// **'No balance to follow here: pick a checking or savings account (or all accounts).'**
+  String get balancesNone;
+
+  /// No description provided for @balanceChange.
+  ///
+  /// In en, this message translates to:
+  /// **'Change over the period: {amount}'**
+  String balanceChange(String amount);
+
+  /// No description provided for @balancesFrom.
+  ///
+  /// In en, this message translates to:
+  /// **'Balances known from {month}: before, a statement is missing or the account had no transactions yet.'**
+  String balancesFrom(String month);
+
+  /// No description provided for @withoutHidden.
+  ///
+  /// In en, this message translates to:
+  /// **'without hidden'**
+  String get withoutHidden;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

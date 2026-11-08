@@ -6,7 +6,7 @@ import 'l10n/app_localizations.dart';
 import 'phone_store.dart';
 import 'screens/home.dart';
 import 'screens/settings.dart';
-import 'screens/statistics.dart';
+import 'screens/stats.dart';
 import 'screens/transactions.dart';
 import 'session.dart';
 import 'state.dart';

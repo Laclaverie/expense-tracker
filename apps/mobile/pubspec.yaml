@@ -14,6 +14,7 @@ dependencies:
     sdk: flutter
   core: any
   drift: any
+  fl_chart: any
   sqlite3: any
   storage: any
   sync: any
