@@ -20,7 +20,10 @@ class PhoneSync extends ChangeNotifier {
     this.window = const Duration(minutes: 10),
     this.hintAfter = const Duration(minutes: 2),
     this.hosts = lanAddresses,
-  }) : store = PairingStore(_db);
+  }) : store = PairingStore(_db) {
+    // A copy left by a session that never ended (the app was quit while serving).
+    _deleteCopy();
+  }
 
   final ExpenseDatabase _db;
 
@@ -44,6 +47,9 @@ class PhoneSync extends ChangeNotifier {
   bool _loaded = false;
   bool _serving = false;
   bool _disposed = false;
+
+  /// Bumped by [send] and [stop]: a [send] still preparing when the session changed gives up.
+  int _session = 0;
   DateTime? _syncedAt;
   Object? _error;
   SyncServer? _server;
@@ -110,6 +116,8 @@ class PhoneSync extends ChangeNotifier {
     if (_serving) return;
     final p = _phone ?? await store.current();
     if (p == null) return;
+    final session = ++_session;
+    bool live() => session == _session && !_disposed;
     _serving = true;
     _syncedAt = null;
     _error = null;
@@ -117,36 +125,76 @@ class PhoneSync extends ChangeNotifier {
       ..reset()
       ..start();
     _notify();
+    SyncServer? server;
+    DiscoveryResponder? responder;
     try {
       scratch.createSync(recursive: true);
       _deleteCopy();
       await _db.customStatement("VACUUM INTO '${_copy.path.replaceAll("'", "''")}'");
+      if (!live()) {
+        await _abandon(null, null);
+        return;
+      }
       final digest = await sha256.bind(_copy.openRead()).first;
+      if (!live()) {
+        await _abandon(null, null);
+        return;
+      }
+      final size = await _copy.length();
+      if (!live()) {
+        await _abandon(null, null);
+        return;
+      }
       final manifest = Manifest(
         databaseId: p.databaseId,
         schemaVersion: ExpenseDatabase.currentSchemaVersion,
-        size: await _copy.length(),
+        size: size,
         sha256: digest.toString(),
         createdAt: appNow().toUtc(),
       );
-      final server = await SyncServer.start(
+      server = await SyncServer.start(
         file: _copy,
         manifest: manifest,
         secret: p.secret,
         window: window,
         address: bindAddress,
       );
-      _server = server;
+      if (!live()) {
+        await _abandon(server, null);
+        return;
+      }
       try {
-        _responder = await DiscoveryResponder.start(p.databaseId, p.secret, server.port, port: discoveryPort);
+        responder = await DiscoveryResponder.start(p.databaseId, p.secret, server.port, port: discoveryPort);
       } on SocketException {
         // Discovery is a convenience (the QR holds the addresses): carry on without it.
       }
+      if (!live()) {
+        await _abandon(server, responder);
+        return;
+      }
+      _server = server;
+      _responder = responder;
       unawaited(_finish(server));
     } catch (e) {
+      if (!live()) {
+        await _abandon(server, responder);
+        return;
+      }
       _error = e;
       await _end();
     }
+  }
+
+  /// A session stopped (or the object disposed) while it was still being prepared: undo what it made.
+  Future<void> _abandon(SyncServer? server, DiscoveryResponder? responder) async {
+    responder?.close();
+    try {
+      await server?.close();
+    } catch (_) {
+      // Already closed.
+    }
+    // Unless a newer session is already serving it.
+    if (!_serving) _deleteCopy();
   }
 
   Future<void> _finish(SyncServer server) async {
@@ -167,6 +215,7 @@ class PhoneSync extends ChangeNotifier {
 
   /// Ends the session: closes the server and discovery, deletes the copy.
   Future<void> stop() async {
+    _session++;
     final server = _server;
     if (server != null) await server.close();
     await _end();
@@ -205,6 +254,7 @@ class PhoneSync extends ChangeNotifier {
   @override
   void dispose() {
     _disposed = true;
+    _session++;
     _server?.close();
     _responder?.close();
     _server = null;

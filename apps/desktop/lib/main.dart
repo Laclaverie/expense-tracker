@@ -70,6 +70,12 @@ class _UnlockGateState extends State<UnlockGate> {
     }
   }
 
+  @override
+  void dispose() {
+    _phone?.dispose();
+    super.dispose();
+  }
+
   /// Called once [prepareDatabase] accepted [password].
   Future<void> _open(String password, UnlockOutcome outcome) async {
     final file = _file;
