@@ -5,11 +5,16 @@
 #   4. Flutter, version in .flutter-version   (cloned into %LOCALAPPDATA%\expense-tracker\flutter,
 #                                              added to the user's PATH)
 # Steps 2 and 3 ask for administrator rights (a Windows prompt appears).
+# With -Android (off by default, for building apps/mobile; build-mobile.bat passes it), also:
+#   5. JDK 17 (winget) and the Android SDK in %LOCALAPPDATA%\Android\Sdk: command-line tools, platform-tools,
+#      platform 35, build-tools 35.0.0, licenses accepted, `flutter config --android-sdk`. The NDK is fetched
+#      by Gradle on the first build.
 #
 # Usage: setup.bat (double-click), or
 #   powershell -ExecutionPolicy Bypass -File tools\setup.ps1 [-DryRun]
 #   -DryRun  only says what is missing and what would be installed.
-param([switch]$DryRun)
+#   -Android also set up what building the Android app needs (step 5).
+param([switch]$DryRun, [switch]$Android)
 
 $ErrorActionPreference = 'Stop'
 $root = Split-Path $PSScriptRoot -Parent
@@ -117,6 +122,58 @@ if (-not $DryRun -and -not (Has flutter) -and (Test-Path (Join-Path $flutterBin 
   & flutter --disable-analytics | Out-Null
   & flutter config --enable-windows-desktop | Out-Null
   & flutter precache --windows
+}
+
+# 5. Android toolchain (only with -Android) --------------------------------------------------------
+if ($Android) {
+  $sdkDir = Join-Path $env:LOCALAPPDATA 'Android\Sdk'
+  $sdkManager = Join-Path $sdkDir 'cmdline-tools\latest\bin\sdkmanager.bat'
+
+  $hasJdk = (Has javac) -or ($env:JAVA_HOME -and (Test-Path (Join-Path $env:JAVA_HOME 'bin\javac.exe'))) -or
+    (Test-Path 'C:\Program Files\Microsoft\jdk-17*\bin\javac.exe')
+  if (-not $hasJdk) {
+    $missing += 'JDK 17'
+    if (-not $DryRun) {
+      Step 'Installation de Java (JDK 17)' 'Installing Java (JDK 17)'
+      Winget @('--id', 'Microsoft.OpenJDK.17', '--silent')
+      Reload-Path
+    }
+  }
+
+  if (-not (Test-Path $sdkManager)) {
+    $missing += 'Android command-line tools'
+    if (-not $DryRun) {
+      Step 'Téléchargement des outils Android en ligne de commande' 'Downloading the Android command-line tools'
+      $zip = Join-Path ([IO.Path]::GetTempPath()) 'android-cmdline-tools.zip'
+      $tmp = Join-Path ([IO.Path]::GetTempPath()) 'android-cmdline-tools'
+      Invoke-WebRequest 'https://dl.google.com/android/repository/commandlinetools-win-11076708_latest.zip' -OutFile $zip
+      if (Test-Path $tmp) { Remove-Item $tmp -Recurse -Force }
+      Expand-Archive $zip $tmp
+      # The tools must sit in cmdline-tools\latest\ for sdkmanager to find the SDK root.
+      New-Item -ItemType Directory -Force (Join-Path $sdkDir 'cmdline-tools') | Out-Null
+      Move-Item (Join-Path $tmp 'cmdline-tools') (Join-Path $sdkDir 'cmdline-tools\latest')
+      Remove-Item $zip, $tmp -Recurse -Force
+    }
+  }
+
+  $packages = @('platform-tools', 'platforms;android-35', 'build-tools;35.0.0')
+  $absent = $packages | Where-Object { -not (Test-Path (Join-Path $sdkDir ($_ -replace ';', '\'))) }
+  if ($absent) {
+    $missing += 'Android SDK packages'
+    if (-not $DryRun) {
+      Step 'Installation du SDK Android (plusieurs Go)' 'Installing the Android SDK (several GB)'
+      Reload-Path
+      & $sdkManager "--sdk_root=$sdkDir" @packages
+      if ($LASTEXITCODE -ne 0) { throw 'sdkmanager install failed' }
+    }
+  }
+
+  if (-not $DryRun -and (Has flutter) -and (Test-Path $sdkManager)) {
+    # Accepting licenses and pointing Flutter at the SDK are idempotent.
+    Step 'Licences Android' 'Android licenses'
+    1..30 | ForEach-Object { 'y' } | & $sdkManager "--sdk_root=$sdkDir" --licenses | Out-Null
+    & flutter config --android-sdk $sdkDir | Out-Null
+  }
 }
 
 if ($DryRun) {

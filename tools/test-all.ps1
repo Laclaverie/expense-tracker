@@ -19,13 +19,15 @@ function Check([string]$name, [string]$dir, [scriptblock]$command) {
 }
 
 Check 'pub get' '.' { dart pub get }
-Check 'format' '.' { dart format --set-exit-if-changed -l 120 --output=none packages apps/desktop/lib apps/desktop/test }
+Check 'format' '.' { dart format --set-exit-if-changed -l 120 --output=none packages apps/desktop/lib apps/desktop/test apps/mobile/lib apps/mobile/test }
 foreach ($package in 'core', 'pdf_words', 'banks', 'storage', 'demo') {
   Check "$package analyze" "packages/$package" { dart analyze --fatal-infos }
   Check "$package test" "packages/$package" { dart test }
 }
 Check 'desktop analyze' 'apps/desktop' { flutter analyze --fatal-infos }
 Check 'desktop test' 'apps/desktop' { flutter test }
+Check 'mobile analyze' 'apps/mobile' { flutter analyze --fatal-infos }
+Check 'mobile test' 'apps/mobile' { flutter test }
 
 if ($failed.Count -gt 0) {
   Write-Host ('FAILED: ' + ($failed -join ', ')) -ForegroundColor Red
