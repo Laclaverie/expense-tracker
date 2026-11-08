@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:storage/storage.dart';
 
 import '../../widgets/transactions_dialog.dart';
-import 'data.dart';
 
 /// Column title that sorts its list: a tap picks the column, a second tap
 /// reverses the order. The active column shows an arrow.

@@ -5,7 +5,7 @@ import 'dart:io';
 import 'package:banks/banks.dart';
 import 'package:banks/testing.dart' show loadFixture;
 import 'package:core/core.dart' show TargetPeriod, monthCoverage;
-import 'package:drift/drift.dart' hide isNull;
+import 'package:drift/drift.dart' hide isNull, isNotNull;
 import 'package:drift/native.dart';
 import 'package:storage/storage.dart';
 import 'package:test/test.dart';
@@ -46,8 +46,22 @@ void main() {
     await db.close();
   }
 
-  const v9 = ['ALTER TABLE categories DROP COLUMN excluded_from_share'];
+  const v10 = ['DROP TABLE paired_phones'];
+  const v9 = [...v10, 'ALTER TABLE categories DROP COLUMN excluded_from_share'];
   const v8 = [...v9, 'ALTER TABLE statements DROP COLUMN file_type', 'ALTER TABLE statements DROP COLUMN verified'];
+
+  test('v9 → v10 adds paired_phones, keeps data', () async {
+    await current();
+    final before = await _countTransactions(file);
+    await downgradeTo(9, v10);
+
+    final db = ExpenseDatabase(NativeDatabase(file));
+    addTearDown(db.close);
+    expect(await db.select(db.pairedPhones).get(), isEmpty);
+    expect(await db.select(db.transactions).get(), hasLength(before));
+    await PairingStore(db).pairNew();
+    expect(await PairingStore(db).current(), isNotNull);
+  });
 
   test('v8 -> current: no category excluded from shares yet', () async {
     await current();
@@ -131,6 +145,15 @@ void main() {
     expect(deposits, isNotEmpty);
     expect(deposits.every((t) => t.kind == 'income' && t.categoryId == 'income.other'), isTrue);
   });
+}
+
+Future<int> _countTransactions(File file) async {
+  final db = ExpenseDatabase(NativeDatabase(file));
+  try {
+    return (await db.select(db.transactions).get()).length;
+  } finally {
+    await db.close();
+  }
 }
 
 /// Plain access to the file, without the app's migrations.

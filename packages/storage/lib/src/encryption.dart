@@ -118,6 +118,17 @@ bool passwordOpens(File file, String password) {
 ExpenseDatabase openEncryptedDatabase(File file, String password) =>
     ExpenseDatabase(NativeDatabase.createInBackground(file, setup: _setupWith(password)));
 
+/// The database in [file] as a phone opens it: encrypted with [password],
+/// never written (`query_only`), never migrated or seeded. A wrong password
+/// or a file needing migration fails on the first query.
+ExpenseDatabase openReadOnlyDatabase(File file, String password) =>
+    ExpenseDatabase(NativeDatabase.createInBackground(file, setup: _readOnlySetupWith(password)), readOnly: true);
+
+void Function(Database) _readOnlySetupWith(String password) => (db) {
+  applyKey(db, password);
+  db.execute('PRAGMA query_only = ON');
+};
+
 /// A top-level function so the closure only captures the password (sent to
 /// the background isolate).
 void Function(Database) _setupWith(String password) =>

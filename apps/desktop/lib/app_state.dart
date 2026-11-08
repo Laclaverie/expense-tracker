@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:core/core.dart' show appNow;
 import 'package:storage/storage.dart';
-
-import 'clock.dart';
 
 /// UI selections shared by every screen: statistics scope, month, language.
 class AppState extends ChangeNotifier {

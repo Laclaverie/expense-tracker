@@ -2,7 +2,7 @@
 /// rules have unit tests (`test/stats_periods_test.dart`).
 library;
 
-import 'package:core/core.dart' show DayRange;
+import 'coverage.dart' show DayRange;
 
 enum StatsRange { six, twelve, thisYear, lastYear, all }
 

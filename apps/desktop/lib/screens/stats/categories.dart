@@ -11,7 +11,6 @@ import '../../l10n/app_localizations.dart';
 import '../../style.dart';
 import '../../widgets/sparkline.dart';
 import 'charts.dart';
-import 'data.dart';
 import 'widgets.dart';
 
 enum _Sort { total, change, average }

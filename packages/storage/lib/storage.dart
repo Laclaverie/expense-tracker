@@ -8,4 +8,6 @@ export 'src/dev_copy.dart';
 export 'src/encryption.dart';
 export 'src/import_service.dart';
 export 'src/learning.dart';
+export 'src/pairing_store.dart';
 export 'src/repository.dart';
+export 'src/stats_views.dart';

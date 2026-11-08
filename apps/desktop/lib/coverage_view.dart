@@ -1,30 +1,11 @@
 import 'package:banks/banks.dart';
 import 'package:core/core.dart';
 import 'package:flutter/material.dart';
+import 'package:storage/storage.dart' show MonthStatus;
 import 'package:intl/intl.dart';
 
 import 'l10n/app_localizations.dart';
 import 'style.dart';
-
-/// A month and the statement types that don't fully cover it.
-class MonthStatus {
-  const MonthStatus(this.month, this.gaps);
-
-  final DateTime month;
-  final List<(String, MonthCoverage)> gaps;
-
-  bool get complete => gaps.isEmpty;
-}
-
-/// Status of each month for every statement type ever imported in the scope.
-/// A scope without statements (cash wallet) is always complete.
-List<MonthStatus> monthStatuses(Map<String, List<DayRange>> coverage, List<DateTime> months) => [
-  for (final m in months)
-    MonthStatus(m, [
-      for (final MapEntry(key: format, value: ranges) in coverage.entries)
-        if (!monthCoverage(ranges, m).full) (format, monthCoverage(ranges, m)),
-    ]),
-];
 
 /// Short name of a statement format from its bank plug-in ("Mastercard").
 String statementLabel(BuildContext context, String format) => statementFormat(format)?.label(lang(context)) ?? format;

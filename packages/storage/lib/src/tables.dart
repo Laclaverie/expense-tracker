@@ -183,3 +183,25 @@ class Targets extends Table {
   IntColumn get amount => integer()();
   DateTimeColumn get createdAt => dateTime()();
 }
+
+/// The phone this database is paired with (read-only mobile app). At most one
+/// row (`id` = 1): pairing again replaces it. The secret is never shown; it
+/// lives in this encrypted file and, on the phone, in its own storage.
+@DataClassName('PairedPhoneRow')
+class PairedPhones extends Table {
+  IntColumn get id => integer()();
+
+  /// UUID v4 naming this database for the phone.
+  TextColumn get databaseId => text()();
+
+  /// 32 random bytes shared with the phone.
+  BlobColumn get secret => blob()();
+  DateTimeColumn get pairedAt => dateTime()();
+  DateTimeColumn get lastSyncAt => dateTime().nullable()();
+
+  /// SHA-256 of the last copy sent to the phone.
+  TextColumn get lastSyncHash => text().nullable()();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}

@@ -1,72 +1,9 @@
 import 'package:core/core.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:storage/storage.dart';
 
 import 'l10n/app_localizations.dart';
 import 'style.dart';
-
-/// A target with its progress for the period containing the reference date,
-/// and whether past periods stayed within it.
-class TargetView {
-  const TargetView(this.row, this.period, this.start, this.end, this.progress, this.history);
-
-  final TargetRow row;
-  final TargetPeriod period;
-  final DateTime start;
-  final DateTime end;
-  final TargetProgress progress;
-
-  /// Past periods, most recent first: `(start, end, spent)`.
-  final List<(DateTime, DateTime, int)> history;
-}
-
-/// How many past periods the history shows.
-const historyLength = {TargetPeriod.week: 8, TargetPeriod.month: 6, TargetPeriod.year: 3};
-
-/// Spending lines needed for targets around [reference]: three years back.
-(DateTime, DateTime) linesWindow(DateTime reference) =>
-    (DateTime.utc(reference.year - 3), DateTime.utc(reference.year + 1, 1, 8));
-
-int spentIn(List<(DateTime, String?, int)> lines, String? categoryId, DateTime start, DateTime end) => lines
-    .where((l) => !l.$1.isBefore(start) && l.$1.isBefore(end) && targetCovers(categoryId, l.$2))
-    .fold(0, (s, l) => s + l.$3);
-
-/// [reference]: the day whose periods are shown. [today] decides whether the
-/// period is still running (projection) or over.
-List<TargetView> computeTargets(
-  List<TargetRow> targets,
-  List<(DateTime, String?, int)> lines,
-  DateTime reference,
-  DateTime today,
-) {
-  today = DateTime.utc(today.year, today.month, today.day);
-  final views = [
-    for (final t in targets)
-      () {
-        final period = TargetPeriod.values.byName(t.period);
-        final (start, end) = periodRange(period, reference);
-        final spent = spentIn(lines, t.categoryId, start, end);
-        final asOf = today.isBefore(end) ? today : end;
-        return TargetView(
-          t,
-          period,
-          start,
-          end,
-          progress(target: t.amount, spent: spent, start: start, end: end, today: asOf),
-          [
-            for (final (s, e) in previousPeriods(period, reference, historyLength[period]!))
-              (s, e, spentIn(lines, t.categoryId, s, e)),
-          ],
-        );
-      }(),
-  ];
-  views.sort((a, b) {
-    final p = a.period.index.compareTo(b.period.index);
-    return p != 0 ? p : (a.row.categoryId ?? '').compareTo(b.row.categoryId ?? '');
-  });
-  return views;
-}
 
 /// Reserved status colors (never reused for categories), always shown with an
 /// icon and a label.

@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:core/core.dart' show appNow;
 import 'package:storage/storage.dart';
 
-import '../clock.dart';
 import '../l10n/app_localizations.dart';
 import '../style.dart';
 import '../widgets/category_picker.dart';

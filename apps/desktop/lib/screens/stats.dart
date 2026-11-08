@@ -5,13 +5,10 @@ import 'package:provider/provider.dart';
 import 'package:storage/storage.dart';
 
 import '../app_state.dart';
-import '../clock.dart';
 import '../coverage_view.dart';
 import '../l10n/app_localizations.dart';
-import '../stats_periods.dart';
 import '../style.dart';
 import '../widgets/keyed_stream.dart';
-import 'stats/data.dart';
 import 'stats/widgets.dart';
 import 'stats/trends.dart';
 import 'stats/categories.dart';

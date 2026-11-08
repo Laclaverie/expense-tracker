@@ -5,7 +5,6 @@ import 'package:provider/provider.dart';
 import 'package:storage/storage.dart';
 
 import '../app_state.dart';
-import '../clock.dart';
 import '../l10n/app_localizations.dart';
 import '../style.dart';
 import '../targets_view.dart';

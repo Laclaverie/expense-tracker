@@ -12,7 +12,6 @@ import '../../l10n/app_localizations.dart';
 import '../../style.dart';
 import '../../widgets/keyed_stream.dart';
 import 'charts.dart';
-import 'data.dart';
 
 enum _Comparison { previousMonth, sameMonthLastYear, yearToDate }
 

@@ -3995,6 +3995,348 @@ class TargetsCompanion extends UpdateCompanion<TargetRow> {
   }
 }
 
+class $PairedPhonesTable extends PairedPhones with TableInfo<$PairedPhonesTable, PairedPhoneRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $PairedPhonesTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _databaseIdMeta = const VerificationMeta('databaseId');
+  @override
+  late final GeneratedColumn<String> databaseId = GeneratedColumn<String>(
+    'database_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _secretMeta = const VerificationMeta('secret');
+  @override
+  late final GeneratedColumn<Uint8List> secret = GeneratedColumn<Uint8List>(
+    'secret',
+    aliasedName,
+    false,
+    type: DriftSqlType.blob,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _pairedAtMeta = const VerificationMeta('pairedAt');
+  @override
+  late final GeneratedColumn<DateTime> pairedAt = GeneratedColumn<DateTime>(
+    'paired_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _lastSyncAtMeta = const VerificationMeta('lastSyncAt');
+  @override
+  late final GeneratedColumn<DateTime> lastSyncAt = GeneratedColumn<DateTime>(
+    'last_sync_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _lastSyncHashMeta = const VerificationMeta('lastSyncHash');
+  @override
+  late final GeneratedColumn<String> lastSyncHash = GeneratedColumn<String>(
+    'last_sync_hash',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [id, databaseId, secret, pairedAt, lastSyncAt, lastSyncHash];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'paired_phones';
+  @override
+  VerificationContext validateIntegrity(Insertable<PairedPhoneRow> instance, {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('database_id')) {
+      context.handle(_databaseIdMeta, databaseId.isAcceptableOrUnknown(data['database_id']!, _databaseIdMeta));
+    } else if (isInserting) {
+      context.missing(_databaseIdMeta);
+    }
+    if (data.containsKey('secret')) {
+      context.handle(_secretMeta, secret.isAcceptableOrUnknown(data['secret']!, _secretMeta));
+    } else if (isInserting) {
+      context.missing(_secretMeta);
+    }
+    if (data.containsKey('paired_at')) {
+      context.handle(_pairedAtMeta, pairedAt.isAcceptableOrUnknown(data['paired_at']!, _pairedAtMeta));
+    } else if (isInserting) {
+      context.missing(_pairedAtMeta);
+    }
+    if (data.containsKey('last_sync_at')) {
+      context.handle(_lastSyncAtMeta, lastSyncAt.isAcceptableOrUnknown(data['last_sync_at']!, _lastSyncAtMeta));
+    }
+    if (data.containsKey('last_sync_hash')) {
+      context.handle(_lastSyncHashMeta, lastSyncHash.isAcceptableOrUnknown(data['last_sync_hash']!, _lastSyncHashMeta));
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  PairedPhoneRow map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return PairedPhoneRow(
+      id: attachedDatabase.typeMapping.read(DriftSqlType.int, data['${effectivePrefix}id'])!,
+      databaseId: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}database_id'])!,
+      secret: attachedDatabase.typeMapping.read(DriftSqlType.blob, data['${effectivePrefix}secret'])!,
+      pairedAt: attachedDatabase.typeMapping.read(DriftSqlType.dateTime, data['${effectivePrefix}paired_at'])!,
+      lastSyncAt: attachedDatabase.typeMapping.read(DriftSqlType.dateTime, data['${effectivePrefix}last_sync_at']),
+      lastSyncHash: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}last_sync_hash']),
+    );
+  }
+
+  @override
+  $PairedPhonesTable createAlias(String alias) {
+    return $PairedPhonesTable(attachedDatabase, alias);
+  }
+}
+
+class PairedPhoneRow extends DataClass implements Insertable<PairedPhoneRow> {
+  final int id;
+
+  /// UUID v4 naming this database for the phone.
+  final String databaseId;
+
+  /// 32 random bytes shared with the phone.
+  final Uint8List secret;
+  final DateTime pairedAt;
+  final DateTime? lastSyncAt;
+
+  /// SHA-256 of the last copy sent to the phone.
+  final String? lastSyncHash;
+  const PairedPhoneRow({
+    required this.id,
+    required this.databaseId,
+    required this.secret,
+    required this.pairedAt,
+    this.lastSyncAt,
+    this.lastSyncHash,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['database_id'] = Variable<String>(databaseId);
+    map['secret'] = Variable<Uint8List>(secret);
+    map['paired_at'] = Variable<DateTime>(pairedAt);
+    if (!nullToAbsent || lastSyncAt != null) {
+      map['last_sync_at'] = Variable<DateTime>(lastSyncAt);
+    }
+    if (!nullToAbsent || lastSyncHash != null) {
+      map['last_sync_hash'] = Variable<String>(lastSyncHash);
+    }
+    return map;
+  }
+
+  PairedPhonesCompanion toCompanion(bool nullToAbsent) {
+    return PairedPhonesCompanion(
+      id: Value(id),
+      databaseId: Value(databaseId),
+      secret: Value(secret),
+      pairedAt: Value(pairedAt),
+      lastSyncAt: lastSyncAt == null && nullToAbsent ? const Value.absent() : Value(lastSyncAt),
+      lastSyncHash: lastSyncHash == null && nullToAbsent ? const Value.absent() : Value(lastSyncHash),
+    );
+  }
+
+  factory PairedPhoneRow.fromJson(Map<String, dynamic> json, {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return PairedPhoneRow(
+      id: serializer.fromJson<int>(json['id']),
+      databaseId: serializer.fromJson<String>(json['databaseId']),
+      secret: serializer.fromJson<Uint8List>(json['secret']),
+      pairedAt: serializer.fromJson<DateTime>(json['pairedAt']),
+      lastSyncAt: serializer.fromJson<DateTime?>(json['lastSyncAt']),
+      lastSyncHash: serializer.fromJson<String?>(json['lastSyncHash']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'databaseId': serializer.toJson<String>(databaseId),
+      'secret': serializer.toJson<Uint8List>(secret),
+      'pairedAt': serializer.toJson<DateTime>(pairedAt),
+      'lastSyncAt': serializer.toJson<DateTime?>(lastSyncAt),
+      'lastSyncHash': serializer.toJson<String?>(lastSyncHash),
+    };
+  }
+
+  PairedPhoneRow copyWith({
+    int? id,
+    String? databaseId,
+    Uint8List? secret,
+    DateTime? pairedAt,
+    Value<DateTime?> lastSyncAt = const Value.absent(),
+    Value<String?> lastSyncHash = const Value.absent(),
+  }) => PairedPhoneRow(
+    id: id ?? this.id,
+    databaseId: databaseId ?? this.databaseId,
+    secret: secret ?? this.secret,
+    pairedAt: pairedAt ?? this.pairedAt,
+    lastSyncAt: lastSyncAt.present ? lastSyncAt.value : this.lastSyncAt,
+    lastSyncHash: lastSyncHash.present ? lastSyncHash.value : this.lastSyncHash,
+  );
+  PairedPhoneRow copyWithCompanion(PairedPhonesCompanion data) {
+    return PairedPhoneRow(
+      id: data.id.present ? data.id.value : this.id,
+      databaseId: data.databaseId.present ? data.databaseId.value : this.databaseId,
+      secret: data.secret.present ? data.secret.value : this.secret,
+      pairedAt: data.pairedAt.present ? data.pairedAt.value : this.pairedAt,
+      lastSyncAt: data.lastSyncAt.present ? data.lastSyncAt.value : this.lastSyncAt,
+      lastSyncHash: data.lastSyncHash.present ? data.lastSyncHash.value : this.lastSyncHash,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('PairedPhoneRow(')
+          ..write('id: $id, ')
+          ..write('databaseId: $databaseId, ')
+          ..write('secret: $secret, ')
+          ..write('pairedAt: $pairedAt, ')
+          ..write('lastSyncAt: $lastSyncAt, ')
+          ..write('lastSyncHash: $lastSyncHash')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, databaseId, $driftBlobEquality.hash(secret), pairedAt, lastSyncAt, lastSyncHash);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is PairedPhoneRow &&
+          other.id == this.id &&
+          other.databaseId == this.databaseId &&
+          $driftBlobEquality.equals(other.secret, this.secret) &&
+          other.pairedAt == this.pairedAt &&
+          other.lastSyncAt == this.lastSyncAt &&
+          other.lastSyncHash == this.lastSyncHash);
+}
+
+class PairedPhonesCompanion extends UpdateCompanion<PairedPhoneRow> {
+  final Value<int> id;
+  final Value<String> databaseId;
+  final Value<Uint8List> secret;
+  final Value<DateTime> pairedAt;
+  final Value<DateTime?> lastSyncAt;
+  final Value<String?> lastSyncHash;
+  const PairedPhonesCompanion({
+    this.id = const Value.absent(),
+    this.databaseId = const Value.absent(),
+    this.secret = const Value.absent(),
+    this.pairedAt = const Value.absent(),
+    this.lastSyncAt = const Value.absent(),
+    this.lastSyncHash = const Value.absent(),
+  });
+  PairedPhonesCompanion.insert({
+    this.id = const Value.absent(),
+    required String databaseId,
+    required Uint8List secret,
+    required DateTime pairedAt,
+    this.lastSyncAt = const Value.absent(),
+    this.lastSyncHash = const Value.absent(),
+  }) : databaseId = Value(databaseId),
+       secret = Value(secret),
+       pairedAt = Value(pairedAt);
+  static Insertable<PairedPhoneRow> custom({
+    Expression<int>? id,
+    Expression<String>? databaseId,
+    Expression<Uint8List>? secret,
+    Expression<DateTime>? pairedAt,
+    Expression<DateTime>? lastSyncAt,
+    Expression<String>? lastSyncHash,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (databaseId != null) 'database_id': databaseId,
+      if (secret != null) 'secret': secret,
+      if (pairedAt != null) 'paired_at': pairedAt,
+      if (lastSyncAt != null) 'last_sync_at': lastSyncAt,
+      if (lastSyncHash != null) 'last_sync_hash': lastSyncHash,
+    });
+  }
+
+  PairedPhonesCompanion copyWith({
+    Value<int>? id,
+    Value<String>? databaseId,
+    Value<Uint8List>? secret,
+    Value<DateTime>? pairedAt,
+    Value<DateTime?>? lastSyncAt,
+    Value<String?>? lastSyncHash,
+  }) {
+    return PairedPhonesCompanion(
+      id: id ?? this.id,
+      databaseId: databaseId ?? this.databaseId,
+      secret: secret ?? this.secret,
+      pairedAt: pairedAt ?? this.pairedAt,
+      lastSyncAt: lastSyncAt ?? this.lastSyncAt,
+      lastSyncHash: lastSyncHash ?? this.lastSyncHash,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (databaseId.present) {
+      map['database_id'] = Variable<String>(databaseId.value);
+    }
+    if (secret.present) {
+      map['secret'] = Variable<Uint8List>(secret.value);
+    }
+    if (pairedAt.present) {
+      map['paired_at'] = Variable<DateTime>(pairedAt.value);
+    }
+    if (lastSyncAt.present) {
+      map['last_sync_at'] = Variable<DateTime>(lastSyncAt.value);
+    }
+    if (lastSyncHash.present) {
+      map['last_sync_hash'] = Variable<String>(lastSyncHash.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('PairedPhonesCompanion(')
+          ..write('id: $id, ')
+          ..write('databaseId: $databaseId, ')
+          ..write('secret: $secret, ')
+          ..write('pairedAt: $pairedAt, ')
+          ..write('lastSyncAt: $lastSyncAt, ')
+          ..write('lastSyncHash: $lastSyncHash')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$ExpenseDatabase extends GeneratedDatabase {
   _$ExpenseDatabase(QueryExecutor e) : super(e);
   $ExpenseDatabaseManager get managers => $ExpenseDatabaseManager(this);
@@ -4006,6 +4348,7 @@ abstract class _$ExpenseDatabase extends GeneratedDatabase {
   late final $TransactionsTable transactions = $TransactionsTable(this);
   late final $SplitsTable splits = $SplitsTable(this);
   late final $TargetsTable targets = $TargetsTable(this);
+  late final $PairedPhonesTable pairedPhones = $PairedPhonesTable(this);
   late final Index accountsRef = Index(
     'accounts_ref',
     'CREATE UNIQUE INDEX accounts_ref ON accounts (institution, ref)',
@@ -4026,6 +4369,7 @@ abstract class _$ExpenseDatabase extends GeneratedDatabase {
     transactions,
     splits,
     targets,
+    pairedPhones,
     accountsRef,
     transactionsAccountDate,
   ];
@@ -7113,6 +7457,180 @@ typedef $$TargetsTableProcessedTableManager =
       TargetRow,
       PrefetchHooks Function({bool categoryId})
     >;
+typedef $$PairedPhonesTableCreateCompanionBuilder = PairedPhonesCompanion Function({
+  Value<int> id,
+  required String databaseId,
+  required Uint8List secret,
+  required DateTime pairedAt,
+  Value<DateTime?> lastSyncAt,
+  Value<String?> lastSyncHash,
+});
+typedef $$PairedPhonesTableUpdateCompanionBuilder = PairedPhonesCompanion Function({
+  Value<int> id,
+  Value<String> databaseId,
+  Value<Uint8List> secret,
+  Value<DateTime> pairedAt,
+  Value<DateTime?> lastSyncAt,
+  Value<String?> lastSyncHash,
+});
+
+class $$PairedPhonesTableFilterComposer extends Composer<_$ExpenseDatabase, $PairedPhonesTable> {
+  $$PairedPhonesTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(column: $table.id, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get databaseId =>
+      $composableBuilder(column: $table.databaseId, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<Uint8List> get secret =>
+      $composableBuilder(column: $table.secret, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<DateTime> get pairedAt =>
+      $composableBuilder(column: $table.pairedAt, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<DateTime> get lastSyncAt =>
+      $composableBuilder(column: $table.lastSyncAt, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get lastSyncHash =>
+      $composableBuilder(column: $table.lastSyncHash, builder: (column) => ColumnFilters(column));
+}
+
+class $$PairedPhonesTableOrderingComposer extends Composer<_$ExpenseDatabase, $PairedPhonesTable> {
+  $$PairedPhonesTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(column: $table.id, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get databaseId =>
+      $composableBuilder(column: $table.databaseId, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<Uint8List> get secret =>
+      $composableBuilder(column: $table.secret, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<DateTime> get pairedAt =>
+      $composableBuilder(column: $table.pairedAt, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<DateTime> get lastSyncAt =>
+      $composableBuilder(column: $table.lastSyncAt, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get lastSyncHash =>
+      $composableBuilder(column: $table.lastSyncHash, builder: (column) => ColumnOrderings(column));
+}
+
+class $$PairedPhonesTableAnnotationComposer extends Composer<_$ExpenseDatabase, $PairedPhonesTable> {
+  $$PairedPhonesTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id => $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get databaseId => $composableBuilder(column: $table.databaseId, builder: (column) => column);
+
+  GeneratedColumn<Uint8List> get secret => $composableBuilder(column: $table.secret, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get pairedAt => $composableBuilder(column: $table.pairedAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get lastSyncAt =>
+      $composableBuilder(column: $table.lastSyncAt, builder: (column) => column);
+
+  GeneratedColumn<String> get lastSyncHash =>
+      $composableBuilder(column: $table.lastSyncHash, builder: (column) => column);
+}
+
+class $$PairedPhonesTableTableManager
+    extends
+        RootTableManager<
+          _$ExpenseDatabase,
+          $PairedPhonesTable,
+          PairedPhoneRow,
+          $$PairedPhonesTableFilterComposer,
+          $$PairedPhonesTableOrderingComposer,
+          $$PairedPhonesTableAnnotationComposer,
+          $$PairedPhonesTableCreateCompanionBuilder,
+          $$PairedPhonesTableUpdateCompanionBuilder,
+          (PairedPhoneRow, BaseReferences<_$ExpenseDatabase, $PairedPhonesTable, PairedPhoneRow>),
+          PairedPhoneRow,
+          PrefetchHooks Function()
+        > {
+  $$PairedPhonesTableTableManager(_$ExpenseDatabase db, $PairedPhonesTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () => $$PairedPhonesTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () => $$PairedPhonesTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () => $$PairedPhonesTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<String> databaseId = const Value.absent(),
+                Value<Uint8List> secret = const Value.absent(),
+                Value<DateTime> pairedAt = const Value.absent(),
+                Value<DateTime?> lastSyncAt = const Value.absent(),
+                Value<String?> lastSyncHash = const Value.absent(),
+              }) => PairedPhonesCompanion(
+                id: id,
+                databaseId: databaseId,
+                secret: secret,
+                pairedAt: pairedAt,
+                lastSyncAt: lastSyncAt,
+                lastSyncHash: lastSyncHash,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                required String databaseId,
+                required Uint8List secret,
+                required DateTime pairedAt,
+                Value<DateTime?> lastSyncAt = const Value.absent(),
+                Value<String?> lastSyncHash = const Value.absent(),
+              }) => PairedPhonesCompanion.insert(
+                id: id,
+                databaseId: databaseId,
+                secret: secret,
+                pairedAt: pairedAt,
+                lastSyncAt: lastSyncAt,
+                lastSyncHash: lastSyncHash,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$PairedPhonesTable, PairedPhoneRow>(table),
+                  BaseReferences<_$ExpenseDatabase, $PairedPhonesTable, PairedPhoneRow>(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$PairedPhonesTableProcessedTableManager =
+    ProcessedTableManager<
+      _$ExpenseDatabase,
+      $PairedPhonesTable,
+      PairedPhoneRow,
+      $$PairedPhonesTableFilterComposer,
+      $$PairedPhonesTableOrderingComposer,
+      $$PairedPhonesTableAnnotationComposer,
+      $$PairedPhonesTableCreateCompanionBuilder,
+      $$PairedPhonesTableUpdateCompanionBuilder,
+      (PairedPhoneRow, BaseReferences<_$ExpenseDatabase, $PairedPhonesTable, PairedPhoneRow>),
+      PairedPhoneRow,
+      PrefetchHooks Function()
+    >;
 
 class $ExpenseDatabaseManager {
   final _$ExpenseDatabase _db;
@@ -7125,4 +7643,5 @@ class $ExpenseDatabaseManager {
   $$TransactionsTableTableManager get transactions => $$TransactionsTableTableManager(_db, _db.transactions);
   $$SplitsTableTableManager get splits => $$SplitsTableTableManager(_db, _db.splits);
   $$TargetsTableTableManager get targets => $$TargetsTableTableManager(_db, _db.targets);
+  $$PairedPhonesTableTableManager get pairedPhones => $$PairedPhonesTableTableManager(_db, _db.pairedPhones);
 }

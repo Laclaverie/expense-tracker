@@ -1,6 +1,7 @@
 import 'dart:math';
 
-import 'package:core/core.dart' show DayRange, MonthBalance, savingsRate;
+import 'package:core/core.dart'
+    show DayRange, MonthBalance, appNow, chartGroups, otherSeries, savingsRate, seriesOf, uncategorizedSeries;
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -8,7 +9,6 @@ import 'package:provider/provider.dart';
 import 'package:storage/storage.dart';
 
 import '../app_state.dart';
-import '../clock.dart';
 import '../coverage_view.dart';
 import '../l10n/app_localizations.dart';
 import '../style.dart';

@@ -9,7 +9,6 @@ import '../../style.dart';
 import '../../widgets/sparkline.dart';
 import '../../widgets/transactions_dialog.dart';
 import 'charts.dart';
-import 'data.dart';
 import 'widgets.dart';
 
 class MerchantsTab extends StatefulWidget {

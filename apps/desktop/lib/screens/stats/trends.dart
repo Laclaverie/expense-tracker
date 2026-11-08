@@ -14,7 +14,6 @@ import '../../style.dart';
 import '../../widgets/keyed_stream.dart';
 import '../../widgets/sparkline.dart';
 import 'charts.dart';
-import 'data.dart';
 import 'merchants.dart';
 
 class TrendsTab extends StatelessWidget {

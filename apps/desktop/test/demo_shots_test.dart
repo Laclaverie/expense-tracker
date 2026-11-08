@@ -11,7 +11,7 @@ import 'package:demo/src/showcase.dart';
 import 'package:drift/drift.dart' show driftRuntimeOptions;
 import 'package:drift/native.dart';
 import 'package:expense_desktop/app_state.dart';
-import 'package:expense_desktop/clock.dart';
+import 'package:core/core.dart' show appClock;
 import 'package:expense_desktop/l10n/app_localizations.dart';
 import 'package:expense_desktop/main.dart';
 import 'package:flutter/material.dart';

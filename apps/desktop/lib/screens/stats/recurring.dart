@@ -12,7 +12,6 @@ import '../../widgets/keyed_stream.dart';
 import '../../widgets/notifications.dart' show anomalyText;
 import '../../widgets/recurring_dialog.dart';
 import 'charts.dart';
-import 'data.dart';
 import 'widgets.dart';
 
 /// Recurring payments found in all history up to the end of the range (the

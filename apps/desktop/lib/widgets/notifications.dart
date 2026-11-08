@@ -1,12 +1,11 @@
 import 'package:banks/banks.dart' show bankFor;
-import 'package:core/core.dart' show Anomaly, AnomalyKind, DueStatement, detectAnomalies, dueStatements;
+import 'package:core/core.dart' show appNow, Anomaly, AnomalyKind, DueStatement, detectAnomalies, dueStatements;
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:storage/storage.dart';
 
 import '../app_state.dart';
-import '../clock.dart';
 import '../coverage_view.dart';
 import '../l10n/app_localizations.dart';
 import '../style.dart';

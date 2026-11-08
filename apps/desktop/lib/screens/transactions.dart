@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:banks/banks.dart' show bankFor;
-import 'package:core/core.dart' show TransactionKind;
+import 'package:core/core.dart' show TransactionKind, groupOf;
 import 'package:file_selector/file_selector.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';

@@ -1,6 +1,5 @@
-import 'package:core/core.dart' show DayRange;
-import 'package:expense_desktop/stats_periods.dart';
-import 'package:flutter_test/flutter_test.dart';
+import 'package:core/core.dart';
+import 'package:test/test.dart';
 
 DateTime m(int y, int mo, [int d = 1]) => DateTime.utc(y, mo, d);
 

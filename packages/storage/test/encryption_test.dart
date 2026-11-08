@@ -3,6 +3,7 @@
 // a database moves to another computer (or system) with its password only.
 import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:banks/desjardins.dart';
 import 'package:core/core.dart';
@@ -263,6 +264,36 @@ void main() {
     });
   });
 
+  group('read-only open', () {
+    test('openReadOnlyDatabase reads but refuses writes', () async {
+      final count = await createEncrypted(file);
+      final db = openReadOnlyDatabase(file, password);
+      addTearDown(db.close);
+      expect((await db.select(db.transactions).get()).length, count);
+      await expectLater(
+        db
+            .into(db.pairedPhones)
+            .insert(PairedPhonesCompanion.insert(databaseId: 'x', secret: Uint8List(32), pairedAt: DateTime.utc(2026))),
+        throwsA(
+          // The background isolate wraps the SQLite error.
+          predicate((e) => '$e'.contains('readonly'), 'a read-only write error'),
+        ),
+      );
+    });
+
+    test('openReadOnlyDatabase does not seed categories', () async {
+      await createEncrypted(file);
+      final writable = openEncryptedDatabase(file, password);
+      await (writable.delete(writable.categories)..where((c) => c.id.equals('housing.rent'))).go();
+      await writable.close();
+
+      final db = openReadOnlyDatabase(file, password);
+      addTearDown(db.close);
+      final rows = await (db.select(db.categories)..where((c) => c.id.equals('housing.rent'))).get();
+      expect(rows, isEmpty);
+    });
+  });
+
   group('copies', () {
     test('automatic and manual copies are encrypted with the same password', () async {
       final count = await createEncrypted(file);
@@ -369,7 +400,7 @@ void main() {
     final count = await createEncrypted(file);
     final oldDb = openEncryptedDatabase(file, password);
     await oldDb.customStatement(
-      "INSERT INTO rules (category_id, merchant_key, created_at) VALUES ('food.coffee', 'ACME CAFE', '2026-10-31T09:00:00')",
+      "INSERT INTO rules (category_id, merchant_key, created_at) VALUES ('housing.rent', 'ACME CAFE', '2026-10-31T09:00:00')",
     );
     final usb = Directory('${dir.path}/usb')..createSync();
     final copy = await backups().saveTo(oldDb, usb);

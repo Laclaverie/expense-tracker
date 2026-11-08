@@ -5,12 +5,18 @@ import 'tables.dart';
 
 part 'database.g.dart';
 
-@DriftDatabase(tables: [Accounts, Statements, Categories, Merchants, Rules, Transactions, Splits, Targets])
+@DriftDatabase(
+  tables: [Accounts, Statements, Categories, Merchants, Rules, Transactions, Splits, Targets, PairedPhones],
+)
 class ExpenseDatabase extends _$ExpenseDatabase {
-  ExpenseDatabase(super.executor);
+  /// [readOnly]: a copy opened by the phone app. It never seeds categories and
+  /// never migrates (a file from a newer or older app is refused).
+  ExpenseDatabase(super.executor, {this.readOnly = false});
+
+  final bool readOnly;
 
   /// Read before opening a file, to copy it when this version will migrate it.
-  static const currentSchemaVersion = 9;
+  static const currentSchemaVersion = 10;
 
   @override
   int get schemaVersion => currentSchemaVersion;
@@ -18,10 +24,12 @@ class ExpenseDatabase extends _$ExpenseDatabase {
   @override
   MigrationStrategy get migration => MigrationStrategy(
     onCreate: (m) async {
+      if (readOnly) throw StateError('read-only database needs migration');
       await m.createAll();
       await seedCategories();
     },
     onUpgrade: (m, from, to) async {
+      if (readOnly) throw StateError('read-only database needs migration');
       if (from < 2) {
         await m.createTable(splits);
         await m.createTable(targets);
@@ -64,11 +72,12 @@ class ExpenseDatabase extends _$ExpenseDatabase {
         await m.addColumn(statements, statements.verified);
       }
       if (from < 9) await m.addColumn(categories, categories.excludedFromShare);
+      if (from < 10) await m.createTable(pairedPhones);
     },
     beforeOpen: (details) async {
       await customStatement('PRAGMA foreign_keys = ON');
       // Adds default categories introduced by app updates; keeps user edits.
-      if (!details.wasCreated) await seedCategories();
+      if (!details.wasCreated && !readOnly) await seedCategories();
     },
   );
 
