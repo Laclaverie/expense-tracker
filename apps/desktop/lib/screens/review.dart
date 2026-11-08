@@ -279,7 +279,10 @@ class _ReviewCard extends StatelessWidget {
     final messenger = ScaffoldMessenger.of(context);
     final text = [v.txn.description, v.txn.location].whereType<String>().join(' ');
     await Clipboard.setData(ClipboardData(text: text));
-    messenger.showSnackBar(SnackBar(content: Text(l.copied(text)), duration: const Duration(seconds: 2)));
+    // Feedback of the click: replaces a longer notice (start-up reminder) instead of queuing behind it.
+    messenger
+      ..hideCurrentSnackBar()
+      ..showSnackBar(SnackBar(content: Text(l.copied(text)), duration: const Duration(seconds: 2)));
   }
 }
 
