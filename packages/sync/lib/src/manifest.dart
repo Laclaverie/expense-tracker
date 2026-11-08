@@ -22,11 +22,23 @@ class Manifest {
     'createdAt': createdAt.toUtc().toIso8601String(),
   };
 
-  static Manifest fromJson(Map<String, Object?> json) => Manifest(
-    databaseId: json['databaseId'] as String,
-    schemaVersion: json['schemaVersion'] as int,
-    size: json['size'] as int,
-    sha256: json['sha256'] as String,
-    createdAt: DateTime.parse(json['createdAt'] as String).toUtc(),
-  );
+  static Manifest fromJson(Map<String, Object?> json) {
+    try {
+      final size = json['size'] as int;
+      final sha = json['sha256'] as String;
+      if (size < 0) throw const FormatException('Bad size');
+      if (!RegExp(r'^[0-9a-f]{64}$').hasMatch(sha)) throw const FormatException('Bad sha256');
+      return Manifest(
+        databaseId: json['databaseId'] as String,
+        schemaVersion: json['schemaVersion'] as int,
+        size: size,
+        sha256: sha,
+        createdAt: DateTime.parse(json['createdAt'] as String).toUtc(),
+      );
+    } on FormatException {
+      rethrow;
+    } catch (e) {
+      throw FormatException('Bad manifest: $e');
+    }
+  }
 }

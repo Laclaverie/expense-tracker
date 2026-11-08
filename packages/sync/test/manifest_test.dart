@@ -21,7 +21,27 @@ void main() {
     expect(back.createdAt.isUtc, isTrue);
   });
   test('local date is serialized as UTC', () {
-    final m = Manifest(databaseId: 'd', schemaVersion: 1, size: 1, sha256: 'x', createdAt: DateTime(2026, 1, 1, 8));
+    final m = Manifest(
+      databaseId: 'd',
+      schemaVersion: 1,
+      size: 1,
+      sha256: 'ab' * 32,
+      createdAt: DateTime(2026, 1, 1, 8),
+    );
     expect((m.toJson()['createdAt'] as String).endsWith('Z'), isTrue);
+  });
+  test('bad fields throw FormatException', () {
+    final good = Manifest(
+      databaseId: 'd',
+      schemaVersion: 1,
+      size: 1,
+      sha256: 'ab' * 32,
+      createdAt: DateTime.utc(2026),
+    ).toJson();
+    expect(() => Manifest.fromJson({...good, 'size': -1}), throwsFormatException);
+    expect(() => Manifest.fromJson({...good, 'sha256': 'XYZ'}), throwsFormatException);
+    expect(() => Manifest.fromJson({...good, 'size': 'a'}), throwsFormatException);
+    expect(() => Manifest.fromJson({...good, 'createdAt': 'nope'}), throwsFormatException);
+    expect(() => Manifest.fromJson({}), throwsFormatException);
   });
 }

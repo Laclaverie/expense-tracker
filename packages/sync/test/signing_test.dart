@@ -38,6 +38,18 @@ void main() {
     t = t.add(const Duration(minutes: 11));
     expect(v.verify('GET', '/manifest', sign(at: t)), isTrue);
   });
+  test('6 minutes in the future fails', () {
+    final v = RequestVerifier(secret, clock: () => now);
+    expect(v.verify('GET', '/manifest', sign(at: now.add(const Duration(minutes: 6)))), isFalse);
+  });
+  test('different method fails', () {
+    final v = RequestVerifier(secret, clock: () => now);
+    expect(v.verify('POST', '/manifest', sign()), isFalse);
+  });
+  test('4-part header fails', () {
+    final v = RequestVerifier(secret, clock: () => now);
+    expect(v.verify('GET', '/manifest', '${sign()}.extra'), isFalse);
+  });
   test('malformed or missing header fails', () {
     final v = RequestVerifier(secret, clock: () => now);
     expect(v.verify('GET', '/manifest', null), isFalse);
@@ -51,11 +63,12 @@ void main() {
   });
   test('body signature round trip and flipped byte', () {
     final body = List<int>.generate(100, (i) => i);
-    final sig = signBody(secret, body);
-    expect(verifyBody(secret, body, sig), isTrue);
+    final sig = signBody(secret, body, nonce: 'n1');
+    expect(verifyBody(secret, body, sig, nonce: 'n1'), isTrue);
+    expect(verifyBody(secret, body, sig, nonce: 'n2'), isFalse);
     final bad = [...body]..[5] ^= 1;
-    expect(verifyBody(secret, bad, sig), isFalse);
-    expect(verifyBody(secret, body, null), isFalse);
-    expect(verifyBody(secret, body, 'zz'), isFalse);
+    expect(verifyBody(secret, bad, sig, nonce: 'n1'), isFalse);
+    expect(verifyBody(secret, body, null, nonce: 'n1'), isFalse);
+    expect(verifyBody(secret, body, 'zz', nonce: 'n1'), isFalse);
   });
 }

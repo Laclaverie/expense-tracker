@@ -43,4 +43,26 @@ void main() {
   test('garbage throws FormatException', () {
     expect(() => PairingInfo.decode('expsync:!!!'), throwsFormatException);
   });
+  test('non-string host, bad host and bad port throw FormatException', () {
+    expect(
+      () => PairingInfo.decode(
+        qr({
+          ...valid(),
+          'hosts': [1],
+        }),
+      ),
+      throwsFormatException,
+    );
+    expect(
+      () => PairingInfo.decode(
+        qr({
+          ...valid(),
+          'hosts': ['example.com'],
+        }),
+      ),
+      throwsFormatException,
+    );
+    expect(() => PairingInfo.decode(qr({...valid(), 'port': 0})), throwsFormatException);
+    expect(() => PairingInfo.decode(qr({...valid(), 'port': 70000})), throwsFormatException);
+  });
 }

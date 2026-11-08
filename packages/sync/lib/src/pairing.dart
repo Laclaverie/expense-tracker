@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 const protocolVersion = 1;
 const defaultPort = 47820;
@@ -8,8 +9,9 @@ const _prefix = 'expsync:';
 
 /// What the desktop shows as a QR code and the phone scans.
 class PairingInfo {
-  PairingInfo({required this.databaseId, required this.hosts, required this.port, required List<int> secret})
-    : secret = List.unmodifiable(secret);
+  PairingInfo({required this.databaseId, required List<String> hosts, required this.port, required List<int> secret})
+    : hosts = List.unmodifiable(hosts),
+      secret = List.unmodifiable(secret);
 
   final String databaseId;
   final List<String> hosts;
@@ -35,12 +37,15 @@ class PairingInfo {
       if (json['v'] != protocolVersion) throw const FormatException('Unsupported pairing version');
       final secret = _b64(json['secret'] as String);
       if (secret.length != 32) throw const FormatException('Bad secret length');
-      return PairingInfo(
-        databaseId: json['db'] as String,
-        hosts: (json['hosts'] as List).cast<String>(),
-        port: json['port'] as int,
-        secret: secret,
-      );
+      final hosts = List<String>.from(json['hosts'] as List);
+      for (final h in hosts) {
+        if (InternetAddress.tryParse(h)?.type != InternetAddressType.IPv4) {
+          throw FormatException('Bad host: $h');
+        }
+      }
+      final port = json['port'] as int;
+      if (port < 1 || port > 65535) throw const FormatException('Bad port');
+      return PairingInfo(databaseId: json['db'] as String, hosts: hosts, port: port, secret: secret);
     } on FormatException {
       rethrow;
     } catch (e) {

@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:math';
 
 import 'package:crypto/crypto.dart';
@@ -10,7 +11,7 @@ const _nonceMemory = Duration(minutes: 10);
 
 String _hex(List<int> bytes) => bytes.map((b) => b.toRadixString(16).padLeft(2, '0')).join();
 
-String _hmac(List<int> secret, String message) => _hex(Hmac(sha256, secret).convert(message.codeUnits).bytes);
+String _hmac(List<int> secret, String message) => _hex(Hmac(sha256, secret).convert(utf8.encode(message)).bytes);
 
 /// Constant-time string comparison.
 bool _constantTimeEquals(String a, String b) {
@@ -36,10 +37,14 @@ String signRequest(List<int> secret, String method, String path, {required DateT
 
 /// Checks signed requests: valid HMAC, fresh timestamp, nonce never seen.
 class RequestVerifier {
-  RequestVerifier(this.secret, {DateTime Function()? clock}) : _clock = clock ?? DateTime.now;
+  RequestVerifier(List<int> secret, {DateTime Function()? clock})
+    : _secret = List.unmodifiable(secret),
+      _clock = clock ?? DateTime.now;
 
-  final List<int> secret;
+  final List<int> _secret;
   final DateTime Function() _clock;
+
+  /// Nonce -> moment it can be forgotten (request time + memory window).
   final Map<String, DateTime> _seen = {};
 
   bool verify(String method, String path, String? header) {
@@ -51,20 +56,24 @@ class RequestVerifier {
     if (millis == null || nonce.isEmpty) return false;
 
     final now = _clock();
-    _seen.removeWhere((_, at) => now.difference(at) > _nonceMemory);
+    _seen.removeWhere((_, expiry) => now.isAfter(expiry));
 
-    final expected = _hmac(secret, '$method $path $millis $nonce');
+    final expected = _hmac(_secret, '$method $path $millis $nonce');
     if (!_constantTimeEquals(expected, parts[2])) return false;
     final skew = now.millisecondsSinceEpoch - millis;
     if (skew.abs() > _maxSkew.inMilliseconds) return false;
     if (_seen.containsKey(nonce)) return false;
-    _seen[nonce] = now;
+    _seen[nonce] = DateTime.fromMillisecondsSinceEpoch(millis, isUtc: true).add(_nonceMemory);
     return true;
   }
 }
 
-/// Hex HMAC-SHA256 of a response body.
-String signBody(List<int> secret, List<int> body) => _hex(Hmac(sha256, secret).convert(body).bytes);
+List<int> _bodyMessage(String nonce, List<int> body) => [...utf8.encode(nonce), 0x0A, ...body];
 
-bool verifyBody(List<int> secret, List<int> body, String? sig) =>
-    sig != null && _constantTimeEquals(signBody(secret, body), sig);
+/// Hex HMAC-SHA256 over `utf8(nonce) + 0x0A + body`; [nonce] is the one of the request being answered,
+/// so a response cannot be replayed for another request.
+String signBody(List<int> secret, List<int> body, {required String nonce}) =>
+    _hex(Hmac(sha256, secret).convert(_bodyMessage(nonce, body)).bytes);
+
+bool verifyBody(List<int> secret, List<int> body, String? sig, {required String nonce}) =>
+    sig != null && _constantTimeEquals(signBody(secret, body, nonce: nonce), sig);
