@@ -10,15 +10,25 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_localizations:
+    sdk: flutter
   core: any
   drift: any
   sqlite3: any
   storage: any
+  sync: any
+  mobile_scanner: ^7.5.0
+  path_provider: ^2.1.6
+  provider: ^6.1.5+1
+  intl: ^0.20.3
+  path: ^1.9.1
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  crypto: ^3.0.6
   flutter_lints: ^6.0.0
 
 flutter:
   uses-material-design: true
+  generate: true
