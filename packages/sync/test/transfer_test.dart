@@ -191,7 +191,43 @@ void main() {
       throwsA(isA<SyncException>().having((e) => e.problem, 'problem', SyncProblem.schemaMismatch)),
     );
     checkSchema(newer, 11);
-    checkSchema(newer, 12);
+    try {
+      checkSchema(newer, 10);
+    } on SyncException catch (e) {
+      expect([e.desktopSchema, e.appSchema], [11, 10]);
+    }
+    expect(
+      () => checkSchema(newer, 12),
+      throwsA(
+        isA<SyncException>()
+            .having((e) => e.problem, 'problem', SyncProblem.schemaMismatch)
+            .having((e) => e.desktopSchema, 'desktop', 11)
+            .having((e) => e.appSchema, 'app', 12),
+      ),
+    );
+  });
+
+  test('a stalled connection does not keep the server alive past the window', () async {
+    final server = await startServer(window: const Duration(milliseconds: 200));
+    final socket = await Socket.connect(InternetAddress.loopbackIPv4, server.port);
+    cleanups.add(() async => socket.destroy());
+    socket.add(ascii.encode('GET /database HTTP/1.1\r\nhost: x\r\n'));
+    await socket.flush();
+    final ack = await server.done.timeout(const Duration(seconds: 3));
+    expect(ack, isNull);
+  });
+
+  test('oversized ack body is refused with 413', () async {
+    final server = await startServer(window: const Duration(seconds: 5));
+    final raw = HttpClient();
+    final header = signRequest(secret, 'POST', '/ack', at: DateTime.now(), nonce: newNonce());
+    final req = await raw.postUrl(Uri.parse('http://127.0.0.1:${server.port}/ack'));
+    req.headers.set(authHeader, header);
+    req.add(List.filled(2000, 65));
+    final res = await req.close();
+    expect(res.statusCode, 413);
+    await res.drain<void>();
+    raw.close(force: true);
   });
 
   test('window timeout closes the server and done is null', () async {

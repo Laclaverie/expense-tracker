@@ -45,29 +45,36 @@ class SyncServer {
     InternetAddress? address,
   }) async {
     final bindTo = address ?? InternetAddress.anyIPv4;
-    final last = port == 0 ? 0 : 10;
+    final last = port == 0 ? 0 : (port + 10 > 65535 ? 65535 - port : 10);
     for (var i = 0; ; i++) {
       try {
         final http = await HttpServer.bind(bindTo, port + i);
         final server = SyncServer._(http, file, manifest, List.unmodifiable(secret), RequestVerifier(secret));
         server._timer = Timer(window, server.close);
         return server;
-      } on SocketException {
-        if (i >= last) rethrow;
+      } on SocketException catch (e) {
+        if (i >= last || !_inUse(e)) rethrow;
       }
     }
   }
 
+  /// EADDRINUSE on Linux/Android, macOS and Windows (WSAEADDRINUSE, WSAEACCES for exclusive binds).
+  static const _addressInUse = {98, 48, 10048, 10013};
+
+  /// Dart reports a second exclusive bind on the same port without an OS code, only with a message.
+  static bool _inUse(SocketException e) =>
+      _addressInUse.contains(e.osError?.errorCode) || (e.osError?.message.contains('shared flag') ?? false);
+
   /// The phone's ack, or null when the window ended (or the server was closed) without one.
   Future<SyncAck?> get done => _done.future;
 
-  /// Stops accepting connections; requests in progress finish. Safe to call more than once.
+  /// Stops accepting and drops lingering connections. Safe to call more than once.
   Future<void> close() => _closing ??= _shutdown(null);
 
   Future<void> _shutdown(SyncAck? ack) async {
     _timer?.cancel();
     try {
-      await _server.close();
+      await _server.close(force: true);
     } finally {
       if (!_done.isCompleted) _done.complete(ack);
     }
@@ -110,13 +117,22 @@ class SyncServer {
     }
   }
 
+  static const _maxAckBody = 1024;
+
   Future<void> _ack(HttpRequest request) async {
     String? sha;
+    if (request.contentLength < 0 || request.contentLength > _maxAckBody) {
+      await _reply(request.response, HttpStatus.requestEntityTooLarge);
+      return;
+    }
     try {
       final bytes = <int>[];
       await for (final chunk in request) {
         bytes.addAll(chunk);
-        if (bytes.length > 4096) break;
+        if (bytes.length > _maxAckBody) {
+          await _reply(request.response, HttpStatus.requestEntityTooLarge);
+          return;
+        }
       }
       final json = jsonDecode(utf8.decode(bytes));
       if (json is Map && json['sha256'] is String) sha = json['sha256'] as String;

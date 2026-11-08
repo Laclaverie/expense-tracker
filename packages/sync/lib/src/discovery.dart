@@ -56,6 +56,7 @@ Future<(String host, int port)?> findDesktop(
   final socket = await RawDatagramSocket.bind(InternetAddress.anyIPv4, 0);
   final result = Completer<(String, int)?>();
   final nonce = newNonce();
+  Timer? resend;
   final timer = Timer(timeout, () {
     if (!result.isCompleted) result.complete(null);
   });
@@ -78,12 +79,24 @@ Future<(String host, int port)?> findDesktop(
   try {
     socket.broadcastEnabled = true;
     final find = jsonEncode({'v': protocolVersion, 'find': p.databaseId, 'nonce': nonce});
-    socket.send(utf8.encode(find), broadcast ?? InternetAddress('255.255.255.255'), port ?? discoveryPort);
+    final to = broadcast ?? InternetAddress('255.255.255.255');
+    final bytes = utf8.encode(find);
+    var sent = 1;
+    resend = Timer.periodic(const Duration(milliseconds: 300), (t) {
+      if (result.isCompleted || ++sent > 3) return t.cancel();
+      try {
+        socket.send(bytes, to, port ?? discoveryPort);
+      } catch (_) {
+        // Network went away; the timeout ends the search.
+      }
+    });
+    socket.send(bytes, to, port ?? discoveryPort);
     return await result.future;
   } on SocketException {
     return null;
   } finally {
     timer.cancel();
+    resend?.cancel();
     socket.close();
   }
 }

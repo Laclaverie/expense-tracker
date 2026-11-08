@@ -11,10 +11,15 @@ import 'signing.dart';
 enum SyncProblem { unreachable, notPaired, incomplete, schemaMismatch }
 
 class SyncException implements Exception {
-  const SyncException(this.problem, [this.detail]);
+  const SyncException(this.problem, [this.detail, this.desktopSchema, this.appSchema]);
 
   final SyncProblem problem;
   final String? detail;
+
+  /// Only for [SyncProblem.schemaMismatch]: schema of the desktop's database and of this app. Desktop newer
+  /// means the phone app must be updated; desktop older means the desktop app must be.
+  final int? desktopSchema;
+  final int? appSchema;
 
   @override
   String toString() => 'SyncException(${problem.name}${detail == null ? '' : ': $detail'})';
@@ -23,10 +28,15 @@ class SyncException implements Exception {
 /// True when the desktop offers a copy different from the phone's ([localSha256] null = none yet).
 bool needsDownload(Manifest m, String? localSha256) => localSha256 != m.sha256;
 
-/// Refuses a database written by a newer schema than the app knows.
+/// Refuses a database whose schema differs from the app's, older or newer: the phone opens the file as is.
 void checkSchema(Manifest m, int appSchemaVersion) {
-  if (m.schemaVersion > appSchemaVersion) {
-    throw SyncException(SyncProblem.schemaMismatch, 'database v${m.schemaVersion}, app v$appSchemaVersion');
+  if (m.schemaVersion != appSchemaVersion) {
+    throw SyncException(
+      SyncProblem.schemaMismatch,
+      'database v${m.schemaVersion}, app v$appSchemaVersion',
+      m.schemaVersion,
+      appSchemaVersion,
+    );
   }
 }
 
@@ -125,7 +135,9 @@ class SyncClient {
   }
 
   /// Downloads to `<target>.download`, checks size and SHA-256 against [m], then moves the previous [target]
-  /// to `<target>.previous` and the download to [target]. Any failure leaves [target] untouched.
+  /// to `<target>.previous` and the download to [target]. Any failure leaves [target] untouched and throws
+  /// [SyncProblem.incomplete], except an unreachable desktop ([SyncProblem.unreachable]) and a refused
+  /// signature ([SyncProblem.notPaired]).
   Future<void> download(
     String host,
     int port,
@@ -140,6 +152,7 @@ class SyncClient {
       final response = await _send(client, 'GET', host, port, '/database', newNonce());
       if (response.statusCode != HttpStatus.ok) {
         await response.drain<void>();
+        if (response.statusCode == HttpStatus.unauthorized) throw const SyncException(SyncProblem.notPaired);
         throw SyncException(SyncProblem.incomplete, 'status ${response.statusCode}');
       }
       Digest? digest;
@@ -155,8 +168,9 @@ class SyncClient {
       }
       hash.close();
       await sink.flush();
-      await sink.close();
+      final finished = sink;
       sink = null;
+      await finished.close();
       if (received != m.size) throw SyncException(SyncProblem.incomplete, 'got $received of ${m.size} bytes');
       if (digest.toString() != m.sha256) throw const SyncException(SyncProblem.incomplete, 'checksum differs');
       await _swap(partial, target);
@@ -202,22 +216,32 @@ class SyncClient {
   Future<void> ack(String host, int port, String sha256) async {
     final client = _newClient();
     try {
-      final response = await _send(
-        client,
-        'POST',
-        host,
-        port,
-        '/ack',
-        newNonce(),
-        body: utf8.encode(jsonEncode({'sha256': sha256})),
-      );
-      await response.drain<void>();
-      if (response.statusCode == HttpStatus.unauthorized) throw const SyncException(SyncProblem.notPaired);
-      if (response.statusCode != HttpStatus.noContent) {
-        throw SyncException(SyncProblem.unreachable, 'ack refused: status ${response.statusCode}');
+      final int status;
+      try {
+        status = await () async {
+          final response = await _send(
+            client,
+            'POST',
+            host,
+            port,
+            '/ack',
+            newNonce(),
+            body: utf8.encode(jsonEncode({'sha256': sha256})),
+          );
+          await response.drain<void>();
+          return response.statusCode;
+        }().timeout(_connectTimeout);
+      } on SocketException catch (e) {
+        throw SyncException(SyncProblem.unreachable, e.message);
+      } on HttpException catch (e) {
+        throw SyncException(SyncProblem.unreachable, e.message);
+      } on TimeoutException {
+        throw const SyncException(SyncProblem.unreachable, 'timeout');
       }
-    } on SocketException catch (e) {
-      throw SyncException(SyncProblem.unreachable, e.message);
+      if (status == HttpStatus.unauthorized) throw const SyncException(SyncProblem.notPaired);
+      if (status != HttpStatus.noContent) {
+        throw SyncException(SyncProblem.unreachable, 'ack refused: status $status');
+      }
     } finally {
       _release(client);
     }
