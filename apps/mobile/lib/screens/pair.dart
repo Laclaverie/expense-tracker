@@ -136,6 +136,8 @@ class _DownloadScreenState extends State<DownloadScreen> {
       if (mounted) widget.onDone();
     } on SyncException catch (e) {
       if (mounted) setState(() => _error = syncMessage(l, e));
+    } on Object {
+      if (mounted) setState(() => _error = l.errGeneric);
     } finally {
       if (mounted) setState(() => _running = false);
     }

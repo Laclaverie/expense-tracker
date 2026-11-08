@@ -41,8 +41,9 @@ class _UnlockScreenState extends State<UnlockScreen> {
         _password.clear();
         setState(() => _wrong = true);
       }
-    } on Object catch (e) {
-      if (mounted) setState(() => _error = l.unlockFailed('$e'));
+    } on Object {
+      // Never show or log the exception: a key error can carry the password.
+      if (mounted) setState(() => _error = l.unlockFailedGeneric);
     } finally {
       if (mounted) setState(() => _busy = false);
     }

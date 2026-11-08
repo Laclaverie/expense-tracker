@@ -60,6 +60,8 @@ class _SyncBannerState extends State<SyncBanner> {
     } on SyncException catch (e) {
       if (_disposed || e.problem == SyncProblem.unreachable) return;
       setState(() => _error = syncMessage(AppLocalizations.of(context), e));
+    } on Object {
+      if (!_disposed) setState(() => _error = AppLocalizations.of(context).errGeneric);
     }
   }
 
@@ -74,6 +76,8 @@ class _SyncBannerState extends State<SyncBanner> {
       if (!_disposed) setState(() => _offer = null);
     } on SyncException catch (e) {
       if (!_disposed) setState(() => _error = syncMessage(l, e));
+    } on Object {
+      if (!_disposed) setState(() => _error = l.errGeneric);
     } finally {
       if (!_disposed) setState(() => _busy = false);
     }

@@ -194,11 +194,17 @@ abstract class AppLocalizations {
   /// **'Opening…'**
   String get unlockOpening;
 
-  /// No description provided for @unlockFailed.
+  /// No description provided for @unlockFailedGeneric.
   ///
   /// In en, this message translates to:
-  /// **'The database cannot be opened: {error}'**
-  String unlockFailed(Object error);
+  /// **'Could not open the data.'**
+  String get unlockFailedGeneric;
+
+  /// No description provided for @errGeneric.
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong, try again.'**
+  String get errGeneric;
 
   /// No description provided for @switchPasswordBanner.
   ///

@@ -30,6 +30,9 @@ class Session extends ChangeNotifier {
   String? _password;
   bool _usingPrevious = false;
 
+  /// Bumped by [lock]: anything that started before a lock must not reopen the database afterwards.
+  int _generation = 0;
+
   ExpenseDatabase? get db => _db;
   bool get unlocked => _db != null;
 
@@ -37,9 +40,12 @@ class Session extends ChangeNotifier {
   bool get usingPrevious => _usingPrevious;
 
   Future<UnlockOutcome> unlock(String password) async {
+    final generation = _generation;
     final file = store.openable;
     if (file == null) return UnlockOutcome.wrong;
-    if (await _check(file.path, password)) {
+    final opens = await _check(file.path, password);
+    if (generation != _generation) return UnlockOutcome.wrong;
+    if (opens) {
       _db = _open(file, password);
       _password = password;
       _usingPrevious = false;
@@ -47,9 +53,9 @@ class Session extends ChangeNotifier {
       notifyListeners();
       return UnlockOutcome.opened;
     }
-    if (file.path == store.database.path &&
-        store.previous.existsSync() &&
-        await _check(store.previous.path, password)) {
+    if (file.path == store.database.path && store.previous.existsSync()) {
+      final previousOpens = await _check(store.previous.path, password);
+      if (generation != _generation || !previousOpens) return UnlockOutcome.wrong;
       _db = _open(store.previous, password);
       _password = password;
       _usingPrevious = true;
@@ -66,6 +72,8 @@ class Session extends ChangeNotifier {
   }
 
   Future<void> lock() async {
+    _generation++;
+    _password = null;
     await _close();
     _password = null;
     _usingPrevious = false;
@@ -76,13 +84,15 @@ class Session extends ChangeNotifier {
   /// password; if that no longer opens, the password screen comes back.
   Future<UpdateResult> sync({void Function(int received, int total)? progress}) async {
     final password = _password;
+    final generation = _generation;
     await _close();
     try {
       return await store.update(progress: progress);
     } finally {
-      if (password != null) {
+      // A lock during the transfer wins: never reopen with the password it forgot.
+      if (password != null && generation == _generation) {
         final outcome = await unlock(password);
-        if (outcome == UnlockOutcome.wrong) _password = null;
+        if (outcome == UnlockOutcome.wrong && generation == _generation) _password = null;
       }
       notifyListeners();
     }

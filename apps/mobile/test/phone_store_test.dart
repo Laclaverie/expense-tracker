@@ -128,14 +128,14 @@ void main() {
 
   test('schema mismatch is refused and names both versions', () async {
     final source = await makeDatabase('desktop.sqlite', 'pw-one');
-    final server = await serve(source, manifestOf(source, schema: 11));
+    final server = await serve(source, manifestOf(source, schema: ExpenseDatabase.currentSchemaVersion + 1));
     final store = PhoneStore(phoneDir, find: (_) async => null)..savePairing(pairing(server.port));
     await expectLater(
       store.update(),
       throwsA(
         isA<SyncException>()
             .having((e) => e.problem, 'problem', SyncProblem.schemaMismatch)
-            .having((e) => e.desktopSchema, 'desktopSchema', 11),
+            .having((e) => e.desktopSchema, 'desktopSchema', ExpenseDatabase.currentSchemaVersion + 1),
       ),
     );
     expect(store.database.existsSync(), isFalse);

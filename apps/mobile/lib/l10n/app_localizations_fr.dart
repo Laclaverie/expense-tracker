@@ -64,9 +64,10 @@ class AppLocalizationsFr extends AppLocalizations {
   String get unlockOpening => 'Ouverture…';
 
   @override
-  String unlockFailed(Object error) {
-    return 'Impossible d\'ouvrir la base : $error';
-  }
+  String get unlockFailedGeneric => 'Impossible d\'ouvrir les données.';
+
+  @override
+  String get errGeneric => 'Une erreur est survenue, réessayez.';
 
   @override
   String get switchPasswordBanner =>

@@ -54,7 +54,14 @@ class PhoneStore {
 
   /// Forgets the pairing and the data files (to pair with another desktop).
   void clear() {
-    for (final f in [_pairing, _last, database, previous]) {
+    final names = ['pairing.json', 'last.json'];
+    for (final base in ['expenses.sqlite']) {
+      for (final suffix in ['', '.download', '.previous', '-wal', '-shm', '-journal']) {
+        names.add('$base$suffix');
+      }
+    }
+    for (final name in names) {
+      final f = File('${dir.path}/$name');
       if (f.existsSync()) f.deleteSync();
     }
   }
@@ -68,10 +75,12 @@ class PhoneStore {
     }
   }
 
-  String? localSha256() => _readLast()?['sha256'] as String?;
+  /// Hash of the accepted copy; null when there is no database file to match it (nothing downloaded yet).
+  String? localSha256() => database.existsSync() ? (_readLast()?['sha256'] as String?) : null;
 
   /// When the last accepted copy was made on the desktop.
   DateTime? dataDate() {
+    if (!database.existsSync()) return null;
     final s = _readLast()?['createdAt'];
     return s is String ? DateTime.tryParse(s) : null;
   }
