@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:isolate';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart' show Locale;
 import 'package:storage/storage.dart';
 
 import 'phone_store.dart';
@@ -27,11 +28,23 @@ class Session extends ChangeNotifier {
   final DatabaseOpener _open;
 
   ExpenseDatabase? _db;
+  late Locale? _locale = _localeOf(store.readLanguage());
   String? _password;
   bool _usingPrevious = false;
 
   /// Bumped by [lock]: anything that started before a lock must not reopen the database afterwards.
   int _generation = 0;
+
+  static Locale? _localeOf(String? code) => code == null ? null : Locale(code);
+
+  /// The chosen language; null follows the device.
+  Locale? get locale => _locale;
+
+  void setLanguage(String? code) {
+    store.saveLanguage(code);
+    _locale = _localeOf(code);
+    notifyListeners();
+  }
 
   ExpenseDatabase? get db => _db;
   bool get unlocked => _db != null;

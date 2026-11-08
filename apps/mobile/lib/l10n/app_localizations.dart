@@ -277,6 +277,378 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'The desktop data is older than this app. Update the desktop app.'**
   String get errUpdateDesktop;
+
+  /// No description provided for @navHome.
+  ///
+  /// In en, this message translates to:
+  /// **'Home'**
+  String get navHome;
+
+  /// No description provided for @navTransactions.
+  ///
+  /// In en, this message translates to:
+  /// **'Transactions'**
+  String get navTransactions;
+
+  /// No description provided for @navStatistics.
+  ///
+  /// In en, this message translates to:
+  /// **'Statistics'**
+  String get navStatistics;
+
+  /// No description provided for @navSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get navSettings;
+
+  /// No description provided for @settingsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get settingsTitle;
+
+  /// No description provided for @scopeCash.
+  ///
+  /// In en, this message translates to:
+  /// **'Cash {currency}'**
+  String scopeCash(String currency);
+
+  /// No description provided for @noData.
+  ///
+  /// In en, this message translates to:
+  /// **'No data yet. Send the database from the desktop app.'**
+  String get noData;
+
+  /// No description provided for @spentIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Spent in {month}'**
+  String spentIn(String month);
+
+  /// No description provided for @lastMonthIs.
+  ///
+  /// In en, this message translates to:
+  /// **'{month}: {amount}'**
+  String lastMonthIs(String month, String amount);
+
+  /// No description provided for @statementMissing.
+  ///
+  /// In en, this message translates to:
+  /// **'Statement missing'**
+  String get statementMissing;
+
+  /// No description provided for @incomplete.
+  ///
+  /// In en, this message translates to:
+  /// **'incomplete'**
+  String get incomplete;
+
+  /// No description provided for @vsLastMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'{percent} vs last month'**
+  String vsLastMonth(String percent);
+
+  /// No description provided for @coverageWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'Statements missing or incomplete for {accounts}'**
+  String coverageWarning(String accounts);
+
+  /// No description provided for @targetsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Targets'**
+  String get targetsTitle;
+
+  /// No description provided for @allSpending.
+  ///
+  /// In en, this message translates to:
+  /// **'All spending'**
+  String get allSpending;
+
+  /// No description provided for @period_week.
+  ///
+  /// In en, this message translates to:
+  /// **'Weekly'**
+  String get period_week;
+
+  /// No description provided for @period_month.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly'**
+  String get period_month;
+
+  /// No description provided for @period_year.
+  ///
+  /// In en, this message translates to:
+  /// **'Yearly'**
+  String get period_year;
+
+  /// No description provided for @targetSpent.
+  ///
+  /// In en, this message translates to:
+  /// **'{spent} of {target}'**
+  String targetSpent(String spent, String target);
+
+  /// No description provided for @status_onTrack.
+  ///
+  /// In en, this message translates to:
+  /// **'On track'**
+  String get status_onTrack;
+
+  /// No description provided for @status_atRisk.
+  ///
+  /// In en, this message translates to:
+  /// **'At risk'**
+  String get status_atRisk;
+
+  /// No description provided for @status_over.
+  ///
+  /// In en, this message translates to:
+  /// **'Over target'**
+  String get status_over;
+
+  /// No description provided for @recentTransactions.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent transactions'**
+  String get recentTransactions;
+
+  /// No description provided for @seeAll.
+  ///
+  /// In en, this message translates to:
+  /// **'See all'**
+  String get seeAll;
+
+  /// No description provided for @noTransactions.
+  ///
+  /// In en, this message translates to:
+  /// **'No transactions'**
+  String get noTransactions;
+
+  /// No description provided for @search.
+  ///
+  /// In en, this message translates to:
+  /// **'Search'**
+  String get search;
+
+  /// No description provided for @allAccounts.
+  ///
+  /// In en, this message translates to:
+  /// **'All accounts'**
+  String get allAccounts;
+
+  /// No description provided for @allCategories.
+  ///
+  /// In en, this message translates to:
+  /// **'All categories'**
+  String get allCategories;
+
+  /// No description provided for @allDates.
+  ///
+  /// In en, this message translates to:
+  /// **'All dates'**
+  String get allDates;
+
+  /// No description provided for @uncategorized.
+  ///
+  /// In en, this message translates to:
+  /// **'Uncategorized'**
+  String get uncategorized;
+
+  /// No description provided for @transactionCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{No transactions} =1{1 transaction} other{{count} transactions}}'**
+  String transactionCount(int count);
+
+  /// No description provided for @colDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Date'**
+  String get colDate;
+
+  /// No description provided for @colAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Account'**
+  String get colAccount;
+
+  /// No description provided for @colCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Category'**
+  String get colCategory;
+
+  /// No description provided for @statementText.
+  ///
+  /// In en, this message translates to:
+  /// **'Statement text'**
+  String get statementText;
+
+  /// No description provided for @location.
+  ///
+  /// In en, this message translates to:
+  /// **'Location'**
+  String get location;
+
+  /// No description provided for @card.
+  ///
+  /// In en, this message translates to:
+  /// **'Card'**
+  String get card;
+
+  /// No description provided for @originalAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Original amount'**
+  String get originalAmount;
+
+  /// No description provided for @note.
+  ///
+  /// In en, this message translates to:
+  /// **'Note'**
+  String get note;
+
+  /// No description provided for @kind.
+  ///
+  /// In en, this message translates to:
+  /// **'Type'**
+  String get kind;
+
+  /// No description provided for @splitParts.
+  ///
+  /// In en, this message translates to:
+  /// **'Split'**
+  String get splitParts;
+
+  /// No description provided for @kind_expense.
+  ///
+  /// In en, this message translates to:
+  /// **'Expense'**
+  String get kind_expense;
+
+  /// No description provided for @kind_income.
+  ///
+  /// In en, this message translates to:
+  /// **'Income'**
+  String get kind_income;
+
+  /// No description provided for @kind_refund.
+  ///
+  /// In en, this message translates to:
+  /// **'Refund'**
+  String get kind_refund;
+
+  /// No description provided for @kind_fee.
+  ///
+  /// In en, this message translates to:
+  /// **'Fee'**
+  String get kind_fee;
+
+  /// No description provided for @kind_interest.
+  ///
+  /// In en, this message translates to:
+  /// **'Interest'**
+  String get kind_interest;
+
+  /// No description provided for @kind_transfer.
+  ///
+  /// In en, this message translates to:
+  /// **'Transfer between my accounts'**
+  String get kind_transfer;
+
+  /// No description provided for @kind_externalTransfer.
+  ///
+  /// In en, this message translates to:
+  /// **'Transfer to another bank'**
+  String get kind_externalTransfer;
+
+  /// No description provided for @notCounted.
+  ///
+  /// In en, this message translates to:
+  /// **'Not counted in spending'**
+  String get notCounted;
+
+  /// No description provided for @statsSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Statistics'**
+  String get statsSoon;
+
+  /// No description provided for @pairedDesktop.
+  ///
+  /// In en, this message translates to:
+  /// **'Paired desktop'**
+  String get pairedDesktop;
+
+  /// No description provided for @notPaired.
+  ///
+  /// In en, this message translates to:
+  /// **'Not paired'**
+  String get notPaired;
+
+  /// No description provided for @checkNewData.
+  ///
+  /// In en, this message translates to:
+  /// **'Check for new data'**
+  String get checkNewData;
+
+  /// No description provided for @upToDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Your data is up to date.'**
+  String get upToDate;
+
+  /// No description provided for @dataUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Data updated.'**
+  String get dataUpdated;
+
+  /// No description provided for @dataDateUnknown.
+  ///
+  /// In en, this message translates to:
+  /// **'Data date unknown'**
+  String get dataDateUnknown;
+
+  /// No description provided for @languageLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Language'**
+  String get languageLabel;
+
+  /// No description provided for @languageDevice.
+  ///
+  /// In en, this message translates to:
+  /// **'Device language'**
+  String get languageDevice;
+
+  /// No description provided for @languageFr.
+  ///
+  /// In en, this message translates to:
+  /// **'Français'**
+  String get languageFr;
+
+  /// No description provided for @languageEn.
+  ///
+  /// In en, this message translates to:
+  /// **'English'**
+  String get languageEn;
+
+  /// No description provided for @lockNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Lock'**
+  String get lockNow;
+
+  /// No description provided for @chooseScope.
+  ///
+  /// In en, this message translates to:
+  /// **'Account'**
+  String get chooseScope;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

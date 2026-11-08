@@ -26,6 +26,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   crypto: ^3.0.6
+  demo: any
   flutter_lints: ^6.0.0
 
 flutter:

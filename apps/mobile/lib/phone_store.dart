@@ -29,6 +29,22 @@ class PhoneStore {
   File get previous => File('${dir.path}/expenses.sqlite.previous');
   File get _pairing => File('${dir.path}/pairing.json');
   File get _last => File('${dir.path}/last.json');
+  File get _settings => File('${dir.path}/settings.json');
+
+  /// `fr`, `en`, or null to follow the device language.
+  String? readLanguage() {
+    try {
+      final code = (jsonDecode(_settings.readAsStringSync()) as Map)['language'];
+      return code == 'fr' || code == 'en' ? code as String : null;
+    } catch (_) {
+      return null;
+    }
+  }
+
+  void saveLanguage(String? code) {
+    dir.createSync(recursive: true);
+    _settings.writeAsStringSync(jsonEncode({'language': code}));
+  }
 
   /// The file to unlock: [database], or [previous] when a crash happened between the two renames of a
   /// download.

@@ -13,6 +13,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:storage/storage.dart';
 import 'package:sync/sync.dart';
 
+import 'helpers.dart';
+
 void main() {
   late Directory root;
   late PhoneStore store;
@@ -71,6 +73,7 @@ void main() {
     expect(find.text('Home'), findsOneWidget);
     expect(session.unlocked, isTrue);
     expect(store.previous.existsSync(), isFalse, reason: 'opening the new file drops the old copy');
+    await closeApp(tester);
   });
 
   testWidgets('locks after 5 minutes in background', (tester) async {
@@ -121,6 +124,7 @@ void main() {
     expect(find.text('Home'), findsOneWidget);
     expect(find.textContaining('another password'), findsNothing);
     expect(store.previous.existsSync(), isFalse);
+    await closeApp(tester);
   });
 
   testWidgets('a QR code that is not ours is refused, ours is paired', (tester) async {
