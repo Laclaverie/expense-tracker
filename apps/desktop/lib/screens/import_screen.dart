@@ -12,10 +12,12 @@ import '../app_state.dart';
 import '../coverage_view.dart';
 import '../db_location.dart';
 import '../l10n/app_localizations.dart';
+import '../phone_sync.dart';
 import '../statement_reader.dart';
 import '../style.dart';
 import '../widgets/backup_dialog.dart';
 import '../widgets/export_guide.dart';
+import '../widgets/phone_dialog.dart';
 import 'add_bank.dart';
 
 /// One file's import outcome, shown until the screen is left.
@@ -53,6 +55,7 @@ class ImportScreenState extends State<ImportScreen> {
     final importer = context.read<ImportService>();
     final repo = context.read<ExpenseRepository>();
     final state = context.read<AppState>();
+    final phoneSync = context.read<PhoneSync?>();
     // Stable order; balances keep the newest statement whatever the order.
     // Files of a type no plug-in can read (photos, Word documents…) are skipped.
     paths = paths.where((f) => statementFileTypes.contains(p.extension(f).replaceFirst('.', '').toLowerCase())).toList()
@@ -60,6 +63,7 @@ class ImportScreenState extends State<ImportScreen> {
     if (paths.isEmpty || !await backupBefore(context, 'before-import')) return;
     final results = [for (final f in paths) _FileResult(p.basename(f))];
     setState(() => _results.insertAll(0, results));
+    var anyImported = false;
     for (final (i, path) in paths.indexed) {
       final r = results[i];
       try {
@@ -74,6 +78,7 @@ class ImportScreenState extends State<ImportScreen> {
         );
         switch (outcome.status) {
           case ImportStatus.imported:
+            anyImported = true;
             r.ok = true;
             r.message = [
               l.importDone(outcome.newCount, outcome.duplicateCount, outcome.reviewCount, outcome.transferCount),
@@ -102,6 +107,30 @@ class ImportScreenState extends State<ImportScreen> {
     // The current month usually has no statement yet: show the latest month with data.
     final latest = await repo.latestTransactionDate();
     if (latest != null && latest.isBefore(state.month)) state.month = latest;
+    if (anyImported && mounted) await _offerPhone(phoneSync);
+  }
+
+  /// A phone is paired: offer to send it the new lines (once per import, whatever the number of files).
+  Future<void> _offerPhone(PhoneSync? sync) async {
+    if (sync == null || sync.phone == null) return;
+    if (sync.serving) {
+      await showPhoneDialog(context);
+      return;
+    }
+    final l = AppLocalizations.of(context);
+    final send = await showDialog<bool>(
+      context: context,
+      builder: (c) => AlertDialog(
+        content: Text(l.phoneAfterImport),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(c, false), child: Text(l.phoneNotNow)),
+          FilledButton(onPressed: () => Navigator.pop(c, true), child: Text(l.phoneAfterImportSend)),
+        ],
+      ),
+    );
+    if (send != true || !mounted) return;
+    await sync.send();
+    if (mounted) await showPhoneDialog(context);
   }
 
   Future<void> _choose() async {

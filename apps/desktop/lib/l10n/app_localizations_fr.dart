@@ -1611,4 +1611,13 @@ class AppLocalizationsFr extends AppLocalizations {
   String phoneFailed(String error) {
     return 'Envoi impossible : $error';
   }
+
+  @override
+  String get phoneAfterImport => 'Envoyer les nouvelles données à votre téléphone ?';
+
+  @override
+  String get phoneAfterImportSend => 'Envoyer';
+
+  @override
+  String get phoneNotNow => 'Plus tard';
 }

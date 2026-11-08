@@ -1595,4 +1595,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String phoneFailed(String error) {
     return 'Could not send: $error';
   }
+
+  @override
+  String get phoneAfterImport => 'Send the new data to your phone?';
+
+  @override
+  String get phoneAfterImportSend => 'Send';
+
+  @override
+  String get phoneNotNow => 'Not now';
 }

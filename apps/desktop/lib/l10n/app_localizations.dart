@@ -2629,6 +2629,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Could not send: {error}'**
   String phoneFailed(String error);
+
+  /// No description provided for @phoneAfterImport.
+  ///
+  /// In en, this message translates to:
+  /// **'Send the new data to your phone?'**
+  String get phoneAfterImport;
+
+  /// No description provided for @phoneAfterImportSend.
+  ///
+  /// In en, this message translates to:
+  /// **'Send'**
+  String get phoneAfterImportSend;
+
+  /// No description provided for @phoneNotNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Not now'**
+  String get phoneNotNow;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
