@@ -98,6 +98,20 @@ unlock (see the backlog in [doc 08](08-roadmap-open-questions.md)).
 
 ## Troubleshooting
 
+- The phone says the desktop is not reachable although both are on the same Wi-Fi (the most common cause):
+  Windows marked the home Wi-Fi as **Public**, so the firewall prompt at the first **Send to phone** created
+  Block rules for the app on public networks. Switch the network to Private: Settings → Network & internet →
+  Wi-Fi → your network → Network profile type → **Private** (only for your own home network; cafés and other
+  shared networks stay Public). Rules for the app already exist, so Windows won't ask again: in an
+  administrator PowerShell, allow it on private networks (keep the Public block rules):
+
+  ```powershell
+  New-NetFirewallRule -DisplayName 'Expense tracker (private)' -Direction Inbound -Action Allow -Profile Private -Program '<folder of the app>\expense_desktop.exe'
+  ```
+
+  The rule follows the program's path: a copy unzipped elsewhere is a new program, and Windows asks again.
+  What Private changes: network discovery is turned on; file sharing stays off unless you enable it. That is
+  fine for a home network with your own devices; put devices you don't trust on a guest network.
 - "Phone not paired with this database" although it is: the phone's clock may be more than 5 minutes off
   (signed requests carry the time). Set the phone to automatic time.
 - Nothing found: same Wi-Fi? Windows firewall allowed on private networks (above)?
