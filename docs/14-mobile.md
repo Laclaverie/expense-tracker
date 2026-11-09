@@ -16,8 +16,8 @@ Desktop                                   Phone (same Wi-Fi)
 "Send to phone" ──▶ VACUUM INTO copy      opens the app
                     (still encrypted)        │ UDP broadcast "find" (port 47821), else the QR's addresses
                     serves it 10 min ◀───────┤ GET /manifest  (size, SHA-256, schema, date)
-                    on port 47820            │ GET /database  → <file>.download
-                                             │ size + SHA-256 checked, then two renames:
+                    on port 47820 (next      │ GET /database  → <file>.download
+                    free one if busy)        │ size + SHA-256 checked, then two renames:
                                              │   current → .previous, download → current
                     "Phone up to date" ◀─────┘ POST /ack
                     copy deleted
@@ -50,8 +50,13 @@ the app and pair again.
 
 ## Pair (once)
 
-1. Desktop: phone icon in the top bar → **Pair a phone**. A QR code shows the desktop's private addresses, the
-   port and a new pairing secret (one phone per database).
+1. Desktop: phone icon in the top bar → **Pair a phone**. The desktop prepares the copy and starts waiting for
+   the phone (10 minutes, as for **Send to phone**), then shows a QR code with its private addresses, the port it
+   actually listens on (47820, or the next free one up to 47830) and a new pairing secret (one phone per
+   database). **Show QR again** on a paired phone does the same. Without a network there is no QR code and no
+   wait ("No network found"); if the wait can't start, its error shows instead of the QR code.
+   Closing the dialog doesn't stop the wait: **Stop**, the phone's confirmation or the end of the 10 minutes
+   does.
 2. Phone: **Scan** the QR code. A QR from anything else: "This QR code is not from Dépenses".
 3. The phone downloads the data, then asks for the **database password** (the desktop's one).
 
@@ -67,7 +72,7 @@ pairing and every copy of the data.
   Download". Settings → **Check for new data** asks again.
 - Desktop shows "Phone up to date" once the phone confirms.
 
-**Windows firewall:** the first **Send to phone** makes Windows ask whether Dépenses may use the network. Allow
+**Windows firewall:** the first pairing or **Send to phone** makes Windows ask whether Dépenses may use the network. Allow
 **private networks** (home Wi-Fi). If nothing arrives after two minutes, the desktop reminds you to check the
 Wi-Fi and this permission.
 
@@ -99,7 +104,7 @@ unlock (see the backlog in [doc 08](08-roadmap-open-questions.md)).
 ## Troubleshooting
 
 - The phone says the desktop is not reachable although both are on the same Wi-Fi (the most common cause):
-  Windows marked the home Wi-Fi as **Public**, so the firewall prompt at the first **Send to phone** created
+  Windows marked the home Wi-Fi as **Public**, so the firewall prompt at the first pairing or **Send to phone** created
   Block rules for the app on public networks. Switch the network to Private: Settings → Network & internet →
   Wi-Fi → your network → Network profile type → **Private** (only for your own home network; cafés and other
   shared networks stay Public). Rules for the app already exist, so Windows won't ask again: in an

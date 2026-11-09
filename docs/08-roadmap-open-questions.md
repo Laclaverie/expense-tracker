@@ -33,7 +33,6 @@ below.
 | **Phone** | | | |
 | B38 | Quick add on the phone (outbox) | CAP-1 | Cash entries typed on the phone kept in a small outbox file of their own (the database copy stays read-only, replaced at each sync) and sent to the desktop at the next sync; the desktop imports them, then sends a new copy. Needs a phone → desktop request in `packages/sync` and duplicate rules for manual vs imported lines |
 | B40 | End-to-end check on a real phone (owner) | — | Demo database on the desktop → pair → install the APK → scan → download → unlock with the demo password → same figures as the desktop for one month. Then a demo CSV import → Send → banner → download → "Phone up to date". Then Wi-Fi cut mid-download → the old data still opens. Closes M3 / M4 |
-| B41 | QR port when 47820 is busy | — | The QR always carries the default port; the server falls back to 47821–47830 and only discovery tells the phone. Fail loudly on a busy port, or put the bound port in the QR |
 | B42 | Sign the request body | — | The HMAC covers method, path, time and nonce, not the body: the ack's SHA-256 is unauthenticated (replay already blocked by the nonce). Add the body's SHA-256 to the signed string |
 | B43 | No pairing secret in the copy sent to the phone | — | The `VACUUM INTO` copy still holds the `paired_phones` row: delete it from the copy before serving |
 | B44 | Own message for a phone clock off by more than 5 minutes | — | Today a 401 from clock skew (and a too-large manifest) shows "Phone not paired with this database"; give it its own problem kind and message |

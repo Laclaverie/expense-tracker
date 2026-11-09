@@ -21,8 +21,8 @@ class PhoneSync extends ChangeNotifier {
     this.hintAfter = const Duration(minutes: 2),
     this.hosts = lanAddresses,
   }) : store = PairingStore(_db) {
-    // A copy left by a session that never ended (the app was quit while serving).
-    _deleteCopy();
+    // Copies left by sessions that never ended (the app was quit while serving).
+    _deleteStaleCopies();
   }
 
   final ExpenseDatabase _db;
@@ -56,7 +56,15 @@ class PhoneSync extends ChangeNotifier {
   DiscoveryResponder? _responder;
   final Stopwatch _elapsed = Stopwatch();
 
-  File get _copy => File('${scratch.path}${Platform.pathSeparator}phone-copy.sqlite');
+  /// The copy of the current (or last) session. Each session has its own file, so a session still being abandoned
+  /// never deletes the file of the one that replaced it.
+  File? _copy;
+
+  File _copyFor(int session) => File('${scratch.path}${Platform.pathSeparator}phone-copy-$session.sqlite');
+
+  /// The current session's copy (tests).
+  @visibleForTesting
+  File? get copy => _copy;
 
   /// The pairing, null when none (or not loaded yet: see [loaded]).
   PairedPhoneRow? get phone => _phone;
@@ -87,10 +95,12 @@ class PhoneSync extends ChangeNotifier {
     _notify();
   }
 
+  /// The QR code's payload. While serving it carries the port the server actually bound (the default one, or the
+  /// next free one when it was busy).
   Future<PairingInfo?> pairingInfo() async {
     final p = _phone ?? await store.current();
     if (p == null) return null;
-    return PairingInfo(databaseId: p.databaseId, hosts: await hosts(), port: defaultPort, secret: p.secret);
+    return PairingInfo(databaseId: p.databaseId, hosts: await hosts(), port: port ?? defaultPort, secret: p.secret);
   }
 
   Future<void> pair() async {
@@ -127,22 +137,25 @@ class PhoneSync extends ChangeNotifier {
     _notify();
     SyncServer? server;
     DiscoveryResponder? responder;
+    final copy = _copyFor(session);
+    _copy = copy;
     try {
       scratch.createSync(recursive: true);
-      _deleteCopy();
-      await _db.customStatement("VACUUM INTO '${_copy.path.replaceAll("'", "''")}'");
+      // Nothing is served now: copies of earlier sessions (not deleted yet on Windows) can go.
+      _deleteStaleCopies();
+      await _db.customStatement("VACUUM INTO '${copy.path.replaceAll("'", "''")}'");
       if (!live()) {
-        await _abandon(null, null);
+        await _abandon(null, null, copy);
         return;
       }
-      final digest = await sha256.bind(_copy.openRead()).first;
+      final digest = await sha256.bind(copy.openRead()).first;
       if (!live()) {
-        await _abandon(null, null);
+        await _abandon(null, null, copy);
         return;
       }
-      final size = await _copy.length();
+      final size = await copy.length();
       if (!live()) {
-        await _abandon(null, null);
+        await _abandon(null, null, copy);
         return;
       }
       final manifest = Manifest(
@@ -153,14 +166,14 @@ class PhoneSync extends ChangeNotifier {
         createdAt: appNow().toUtc(),
       );
       server = await SyncServer.start(
-        file: _copy,
+        file: copy,
         manifest: manifest,
         secret: p.secret,
         window: window,
         address: bindAddress,
       );
       if (!live()) {
-        await _abandon(server, null);
+        await _abandon(server, null, copy);
         return;
       }
       try {
@@ -169,32 +182,31 @@ class PhoneSync extends ChangeNotifier {
         // Discovery is a convenience (the QR holds the addresses): carry on without it.
       }
       if (!live()) {
-        await _abandon(server, responder);
+        await _abandon(server, responder, copy);
         return;
       }
       _server = server;
       _responder = responder;
       unawaited(_finish(server));
     } catch (e) {
-      if (!live()) {
-        await _abandon(server, responder);
-        return;
-      }
+      // A server bound before the failure (or by a session that was stopped) must not stay open.
+      await _abandon(server, responder, copy);
+      if (!live()) return;
       _error = e;
       await _end();
     }
   }
 
-  /// A session stopped (or the object disposed) while it was still being prepared: undo what it made.
-  Future<void> _abandon(SyncServer? server, DiscoveryResponder? responder) async {
+  /// A session stopped, failed or disposed while it was still being prepared: undo what it made (its own copy
+  /// only).
+  Future<void> _abandon(SyncServer? server, DiscoveryResponder? responder, File copy) async {
     responder?.close();
     try {
       await server?.close();
     } catch (_) {
       // Already closed.
     }
-    // Unless a newer session is already serving it.
-    if (!_serving) _deleteCopy();
+    _deleteCopy(copy);
   }
 
   Future<void> _finish(SyncServer server) async {
@@ -232,18 +244,32 @@ class PhoneSync extends ChangeNotifier {
     } catch (_) {
       // Already closed.
     }
-    _deleteCopy();
+    final copy = _copy;
+    if (copy != null) _deleteCopy(copy);
     _serving = false;
     _notify();
   }
 
-  void _deleteCopy() {
-    for (final f in [_copy, File('${_copy.path}-wal'), File('${_copy.path}-shm'), File('${_copy.path}-journal')]) {
-      try {
-        if (f.existsSync()) f.deleteSync();
-      } on FileSystemException {
-        // Still open on Windows for a moment; the next send removes it.
-      }
+  void _deleteCopy(File copy) {
+    for (final f in [copy, File('${copy.path}-wal'), File('${copy.path}-shm'), File('${copy.path}-journal')]) {
+      _delete(f);
+    }
+  }
+
+  /// Every session copy in [scratch] (and their -wal / -shm / -journal files).
+  void _deleteStaleCopies() {
+    if (!scratch.existsSync()) return;
+    for (final f in scratch.listSync().whereType<File>()) {
+      final name = f.uri.pathSegments.last;
+      if (name.startsWith('phone-copy')) _delete(f);
+    }
+  }
+
+  void _delete(File f) {
+    try {
+      if (f.existsSync()) f.deleteSync();
+    } on FileSystemException {
+      // Still open on Windows for a moment; the next send removes it.
     }
   }
 
@@ -259,7 +285,8 @@ class PhoneSync extends ChangeNotifier {
     _responder?.close();
     _server = null;
     _responder = null;
-    _deleteCopy();
+    final copy = _copy;
+    if (copy != null) _deleteCopy(copy);
     super.dispose();
   }
 }

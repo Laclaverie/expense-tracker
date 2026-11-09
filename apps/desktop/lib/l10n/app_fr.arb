@@ -462,5 +462,6 @@
   "@phoneFailed": {"placeholders": {"error": {"type": "String"}}},
   "phoneAfterImport": "Envoyer les nouvelles données à votre téléphone ?",
   "phoneAfterImportSend": "Envoyer",
-  "phoneNotNow": "Plus tard"
+  "phoneNotNow": "Plus tard",
+  "phonePreparing": "Préparation de la copie pour le téléphone…"
 }

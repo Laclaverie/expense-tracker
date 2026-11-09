@@ -38,7 +38,13 @@ void main() {
     hosts: () async => ['127.0.0.1'],
   );
 
-  File copyOf() => File('${scratch.path}/phone-copy.sqlite');
+  /// The current session's copy (each session has its own file).
+  File copyOf(PhoneSync sync) => sync.copy!;
+
+  /// Every session copy in the scratch folder.
+  List<File> copies() => scratch.existsSync()
+      ? scratch.listSync().whereType<File>().where((f) => f.uri.pathSegments.last.startsWith('phone-copy')).toList()
+      : const [];
 
   test('the copy offered to the phone is encrypted with the database password', () async {
     final sync = make();
@@ -46,10 +52,10 @@ void main() {
     await sync.pair();
     await sync.send();
     expect(sync.serving, isTrue);
-    expect(databaseFileState(copyOf()), DatabaseFileState.encrypted);
-    expect(passwordOpens(copyOf(), 'pw-test correct horse battery'), isTrue);
+    expect(databaseFileState(copyOf(sync)), DatabaseFileState.encrypted);
+    expect(passwordOpens(copyOf(sync), 'pw-test correct horse battery'), isTrue);
     await sync.stop();
-    expect(copyOf().existsSync(), isFalse);
+    expect(copies(), isEmpty);
   });
 
   test('stop while the copy is being prepared starts no server and leaves no copy', () async {
@@ -61,18 +67,36 @@ void main() {
     await sending;
     expect(sync.serving, isFalse);
     expect(sync.port, isNull);
-    expect(copyOf().existsSync(), isFalse);
+    expect(copies(), isEmpty);
     // Nothing listens on the default port range any more.
     await Future<void>.delayed(const Duration(milliseconds: 100));
     expect(sync.error, isNull);
   });
 
-  test('a leftover copy is deleted when a PhoneSync is created', () {
+  test('leftover copies are deleted when a PhoneSync is created', () {
     scratch.createSync(recursive: true);
-    copyOf().writeAsStringSync('left by a crash');
+    for (final name in ['phone-copy.sqlite', 'phone-copy-3.sqlite', 'phone-copy-3.sqlite-wal']) {
+      File('${scratch.path}/$name').writeAsStringSync('left by a crash');
+    }
     final sync = make();
     addTearDown(sync.dispose);
-    expect(copyOf().existsSync(), isFalse);
+    expect(copies(), isEmpty);
+  });
+
+  test('a send right after a stop keeps its own copy while the stopped one cleans up', () async {
+    final sync = make();
+    addTearDown(sync.dispose);
+    await sync.pair();
+    final first = sync.send();
+    await sync.stop();
+    await sync.send();
+    await first;
+    expect(sync.serving, isTrue);
+    expect(sync.error, isNull);
+    expect(copyOf(sync).existsSync(), isTrue, reason: 'the stopped session must not delete the new copy');
+    expect(copies().map((f) => f.path), [copyOf(sync).path]);
+    await sync.stop();
+    expect(copies(), isEmpty);
   });
 
   test('the window running out deletes the copy', () async {
@@ -80,12 +104,12 @@ void main() {
     addTearDown(sync.dispose);
     await sync.pair();
     await sync.send();
-    expect(copyOf().existsSync(), isTrue);
+    expect(copyOf(sync).existsSync(), isTrue);
     for (var i = 0; sync.serving && i < 100; i++) {
       await Future<void>.delayed(const Duration(milliseconds: 50));
     }
     expect(sync.serving, isFalse);
     expect(sync.syncedAt, isNull);
-    expect(copyOf().existsSync(), isFalse);
+    expect(copies(), isEmpty);
   });
 }

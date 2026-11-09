@@ -28,6 +28,9 @@ class _PhoneDialogState extends State<_PhoneDialog> {
   PairingInfo? _info;
   bool _noNetwork = false;
 
+  /// Pairing or showing the QR: the session is being prepared (copy, server). Buttons are disabled meanwhile.
+  bool _busy = false;
+
   @override
   void initState() {
     super.initState();
@@ -54,19 +57,43 @@ class _PhoneDialogState extends State<_PhoneDialog> {
     super.dispose();
   }
 
-  Future<void> _pair() async {
-    await _sync.pair();
-    await _revealQr();
+  /// One pairing / QR at a time (a double click must not pair twice).
+  Future<void> _guard(Future<void> Function() action) async {
+    if (_busy) return;
+    setState(() => _busy = true);
+    try {
+      await action();
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
   }
 
-  Future<void> _revealQr() async {
-    final info = await _sync.pairingInfo();
-    if (!mounted) return;
+  Future<void> _pair() => _guard(() async {
+    await _sync.pair();
+    await _serveAndShowQr();
+  });
+
+  Future<void> _revealQr() => _guard(_serveAndShowQr);
+
+  /// Starts serving, then shows the QR code with the port the server bound: the phone downloads right after
+  /// scanning, so the desktop must already be waiting for it (a re-scan of a paired phone too). Without a network
+  /// there is no QR and no session; when the session can't start, its error shows instead of the QR.
+  Future<void> _serveAndShowQr() async {
     setState(() {
-      _info = info;
-      _noNetwork = info == null || info.hosts.isEmpty;
       _showQr = true;
+      _info = null;
+      _noNetwork = false;
     });
+    final hosts = (await _sync.pairingInfo())?.hosts ?? const <String>[];
+    if (!mounted) return;
+    if (hosts.isEmpty) {
+      setState(() => _noNetwork = true);
+      return;
+    }
+    await _sync.send();
+    if (!mounted || !_sync.serving) return;
+    final info = await _sync.pairingInfo();
+    if (mounted) setState(() => _info = info);
   }
 
   Future<void> _forget() async {
@@ -95,6 +122,24 @@ class _PhoneDialogState extends State<_PhoneDialog> {
     return '$m:$s';
   }
 
+  /// Waiting for the phone (countdown, firewall hint), or why the session could not start.
+  List<Widget> _serving(BuildContext context, PhoneSync sync) {
+    final l = AppLocalizations.of(context);
+    final error = TextStyle(color: Theme.of(context).colorScheme.error);
+    if (!sync.serving) {
+      return [
+        if (sync.error != null) ...[const SizedBox(height: 16), Text(l.phoneFailed('${sync.error}'), style: error)],
+      ];
+    }
+    return [
+      const SizedBox(height: 16),
+      const LinearProgressIndicator(),
+      const SizedBox(height: 8),
+      Text(l.phoneWaiting(_left(sync.remaining))),
+      if (sync.showFirewallHint) ...[const SizedBox(height: 8), Text(l.phoneHint, style: error)],
+    ];
+  }
+
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
@@ -107,11 +152,18 @@ class _PhoneDialogState extends State<_PhoneDialog> {
       children.add(const Center(child: CircularProgressIndicator()));
     } else if (phone == null) {
       children.add(Text(l.phoneNotPaired));
-      actions = [FilledButton(onPressed: _pair, child: Text(l.phonePair))];
+      actions = [FilledButton(onPressed: _busy ? null : _pair, child: Text(l.phonePair))];
     } else if (_showQr) {
       children.addAll([
         if (_noNetwork)
           Text(l.phoneNoNetwork)
+        else if (_info == null && _busy) ...[
+          const LinearProgressIndicator(),
+          const SizedBox(height: 8),
+          Text(l.phonePreparing),
+        ] else if (_info == null)
+          // The session could not start: its error, no QR.
+          ..._serving(context, sync)
         else ...[
           Center(
             child: Container(
@@ -122,21 +174,17 @@ class _PhoneDialogState extends State<_PhoneDialog> {
           ),
           const SizedBox(height: 12),
           Text(l.phoneScan),
+          ..._serving(context, sync),
         ],
       ]);
-      actions = [TextButton(onPressed: () => setState(() => _showQr = false), child: Text(l.phoneQrDone))];
+      actions = [
+        TextButton(onPressed: _busy ? null : () => setState(() => _showQr = false), child: Text(l.phoneQrDone)),
+      ];
     } else {
       children.add(Text(l.phonePairedOn(_date(phone.pairedAt))));
       children.add(Text(phone.lastSyncAt == null ? l.phoneLastSyncNever : l.phoneLastSync(_date(phone.lastSyncAt!))));
       if (sync.serving) {
-        children.add(const SizedBox(height: 16));
-        children.add(const LinearProgressIndicator());
-        children.add(const SizedBox(height: 8));
-        children.add(Text(l.phoneWaiting(_left(sync.remaining))));
-        if (sync.showFirewallHint) {
-          children.add(const SizedBox(height: 8));
-          children.add(Text(l.phoneHint, style: TextStyle(color: Theme.of(context).colorScheme.error)));
-        }
+        children.addAll(_serving(context, sync));
         actions = [TextButton(onPressed: sync.stop, child: Text(l.phoneStop))];
       } else {
         if (sync.syncedAt != null) {
@@ -159,8 +207,8 @@ class _PhoneDialogState extends State<_PhoneDialog> {
         }
         actions = [
           TextButton(onPressed: _forget, child: Text(l.phoneForget)),
-          TextButton(onPressed: _revealQr, child: Text(l.phoneShowQr)),
-          FilledButton(onPressed: sync.send, child: Text(l.phoneSend)),
+          TextButton(onPressed: _busy ? null : _revealQr, child: Text(l.phoneShowQr)),
+          FilledButton(onPressed: _busy ? null : sync.send, child: Text(l.phoneSend)),
         ];
       }
     }

@@ -979,5 +979,6 @@
   "@phoneFailed": {"placeholders": {"error": {"type": "String"}}},
   "phoneAfterImport": "Send the new data to your phone?",
   "phoneAfterImportSend": "Send",
-  "phoneNotNow": "Not now"
+  "phoneNotNow": "Not now",
+  "phonePreparing": "Preparing the copy for the phone…"
 }

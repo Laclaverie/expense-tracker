@@ -1604,4 +1604,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get phoneNotNow => 'Not now';
+
+  @override
+  String get phonePreparing => 'Preparing the copy for the phone…';
 }

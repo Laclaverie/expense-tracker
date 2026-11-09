@@ -2647,6 +2647,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Not now'**
   String get phoneNotNow;
+
+  /// No description provided for @phonePreparing.
+  ///
+  /// In en, this message translates to:
+  /// **'Preparing the copy for the phone…'**
+  String get phonePreparing;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

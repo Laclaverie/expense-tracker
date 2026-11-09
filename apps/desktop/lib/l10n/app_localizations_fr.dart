@@ -1620,4 +1620,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get phoneNotNow => 'Plus tard';
+
+  @override
+  String get phonePreparing => 'Préparation de la copie pour le téléphone…';
 }
