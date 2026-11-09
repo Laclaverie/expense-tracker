@@ -67,6 +67,10 @@ class _SyncBannerState extends State<SyncBanner> {
 
   Future<void> _download() async {
     final l = AppLocalizations.of(context);
+    // The banner is replaced by the updating screen during the download: errors go to the app root.
+    final messenger = ScaffoldMessenger.of(context);
+    void fail(String message) =>
+        _disposed ? messenger.showSnackBar(SnackBar(content: Text(message))) : setState(() => _error = message);
     setState(() {
       _busy = true;
       _error = null;
@@ -75,9 +79,9 @@ class _SyncBannerState extends State<SyncBanner> {
       await widget.session.sync();
       if (!_disposed) setState(() => _offer = null);
     } on SyncException catch (e) {
-      if (!_disposed) setState(() => _error = syncMessage(l, e));
+      fail(syncMessage(l, e));
     } on Object {
-      if (!_disposed) setState(() => _error = l.errGeneric);
+      fail(l.errGeneric);
     } finally {
       if (!_disposed) setState(() => _busy = false);
     }

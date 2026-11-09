@@ -16,7 +16,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pairTitle => 'Pair with the desktop';
 
   @override
-  String get pairIntro => 'On the desktop app, open Backups, then Send to phone, and scan the QR code shown there.';
+  String get pairIntro =>
+      'On the computer, click the phone icon in the top bar, then Pair a phone, and scan the QR code shown there.';
 
   @override
   String get pairScan => 'Scan the QR code';
@@ -489,4 +490,17 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get withoutHidden => 'without hidden';
+
+  @override
+  String get forgetDesktop => 'Forget this desktop';
+
+  @override
+  String get forgetDesktopConfirm =>
+      'Remove the pairing and the copy of your data from this phone? You will need to pair again to see your expenses here.';
+
+  @override
+  String get forgetAction => 'Forget';
+
+  @override
+  String get cancel => 'Cancel';
 }

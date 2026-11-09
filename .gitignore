@@ -22,8 +22,18 @@ private/
 *.sqlite-shm
 *.sqlite-journal
 *.sqlite.restore
+*.sqlite.previous
+*.sqlite.download
 *.db
 dev-data/
+# Phone app files (apps/mobile/lib/phone_store.dart): pairing.json holds the pairing secret
+pairing.json
+last.json
+
+# Signing keys (a future release key for the phone app): never committed
+*.jks
+*.keystore
+key.properties
 
 # Personal agent notes of the machine owner
 CLAUDE.local.md
@@ -34,6 +44,8 @@ build/
 
 # Packaged app to share
 dist/
+*.apk
+*.aab
 
 # Editor settings of each machine (SDK paths)
 .vscode/
@@ -42,3 +54,6 @@ dist/
 
 # Claude Code personal settings (machine paths)
 .claude/settings.local.json
+
+# Agent working state (machine paths, review notes)
+.superpowers/

@@ -9,7 +9,8 @@ cd /d "%~dp0apps\mobile"
 
 echo == Building release...
 rem Full icon font, as for the desktop build.
-call flutter build apk --release --no-tree-shake-icons || goto :error
+rem arm64 only: every recent phone; one ABI keeps the APK near 28 MB (three ABIs: 75 MB).
+call flutter build apk --release --no-tree-shake-icons --target-platform android-arm64 || goto :error
 
 if not exist "%~dp0dist" mkdir "%~dp0dist"
 copy /y "build\app\outputs\flutter-apk\app-release.apk" "%~dp0dist\Depenses-android.apk" >nul || goto :error

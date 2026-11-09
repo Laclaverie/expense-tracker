@@ -2,7 +2,7 @@
   "@@locale": "fr",
   "appTitle": "Dépenses",
   "pairTitle": "Associer au bureau",
-  "pairIntro": "Dans l'application de bureau, ouvrez Sauvegardes puis Envoyer au téléphone, et scannez le code QR affiché.",
+  "pairIntro": "Sur l'ordinateur, cliquez sur l'icône du téléphone dans la barre du haut, puis Associer un téléphone, et scannez le code QR affiché.",
   "pairScan": "Scanner le code QR",
   "pairNotOurs": "Ce code QR ne vient pas de Dépenses",
   "scanTitle": "Scanner le code QR",
@@ -136,5 +136,9 @@
   "balancesNone": "Pas de solde à suivre ici : choisissez un compte courant ou d'épargne (ou tous les comptes).",
   "balanceChange": "Variation sur la période : {amount}",
   "balancesFrom": "Soldes connus à partir de {month} : avant, un relevé manque ou le compte n'avait pas encore d'opérations.",
-  "withoutHidden": "hors masqués"
+  "withoutHidden": "hors masqués",
+  "forgetDesktop": "Oublier cet ordinateur",
+  "forgetDesktopConfirm": "Retirer l'association et la copie de vos données de ce téléphone ? Il faudra l'associer à nouveau pour voir vos dépenses ici.",
+  "forgetAction": "Oublier",
+  "cancel": "Annuler"
 }

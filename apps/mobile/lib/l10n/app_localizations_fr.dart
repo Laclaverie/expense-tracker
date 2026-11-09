@@ -17,7 +17,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get pairIntro =>
-      'Dans l\'application de bureau, ouvrez Sauvegardes puis Envoyer au téléphone, et scannez le code QR affiché.';
+      'Sur l\'ordinateur, cliquez sur l\'icône du téléphone dans la barre du haut, puis Associer un téléphone, et scannez le code QR affiché.';
 
   @override
   String get pairScan => 'Scanner le code QR';
@@ -494,4 +494,17 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get withoutHidden => 'hors masqués';
+
+  @override
+  String get forgetDesktop => 'Oublier cet ordinateur';
+
+  @override
+  String get forgetDesktopConfirm =>
+      'Retirer l\'association et la copie de vos données de ce téléphone ? Il faudra l\'associer à nouveau pour voir vos dépenses ici.';
+
+  @override
+  String get forgetAction => 'Oublier';
+
+  @override
+  String get cancel => 'Annuler';
 }

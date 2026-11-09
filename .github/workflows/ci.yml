@@ -1,7 +1,8 @@
 name: checks
 
-# Pushes to main and pull requests: formatting, analysis and tests of every package and of the desktop app
-# (tools/test-all.ps1, the same script as test-all.bat). A pull request is merged only when this is green.
+# Pushes to main and pull requests: formatting, analysis and tests of every package and of the desktop and phone
+# apps (tools/test-all.ps1, the same script as test-all.bat). The phone app's widget tests need no Android SDK:
+# the APK itself is built by hand (build-mobile.bat). A pull request is merged only when this is green.
 # Windows runners are expensive, so:
 # - a push of several commits runs once, on the last one (GitHub's default);
 # - a new push cancels the run still going for the same branch / pull request;

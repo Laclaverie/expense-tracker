@@ -81,7 +81,25 @@ class _SettingsPageState extends State<SettingsPage> {
         ),
         const Divider(),
         ListTile(leading: const Icon(Icons.lock_outline), title: Text(l.lockNow), onTap: _session.lock),
+        if (pairing != null)
+          ListTile(leading: const Icon(Icons.link_off), title: Text(l.forgetDesktop), enabled: !_busy, onTap: _forget),
       ],
     );
+  }
+
+  Future<void> _forget() async {
+    final l = AppLocalizations.of(context);
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(l.forgetDesktop),
+        content: Text(l.forgetDesktopConfirm),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context, false), child: Text(l.cancel)),
+          FilledButton(onPressed: () => Navigator.pop(context, true), child: Text(l.forgetAction)),
+        ],
+      ),
+    );
+    if (ok == true) await _session.forget();
   }
 }

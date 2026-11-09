@@ -36,6 +36,14 @@ android {
             signingConfig = signingConfigs.getByName("debug")
         }
     }
+
+    // arm64 only (docs/14-mobile.md): --target-platform leaves the other ABIs of prebuilt libraries (the QR
+    // scanner's) in the APK.
+    packaging {
+        jniLibs {
+            excludes += listOf("lib/armeabi-v7a/**", "lib/x86/**", "lib/x86_64/**")
+        }
+    }
 }
 
 kotlin {

@@ -153,6 +153,55 @@ void main() {
     expect(await session.unlock('wrong'), UnlockOutcome.wrong);
   });
 
+  test('unlock during a running sync is refused; sync reopens exactly one connection', () async {
+    final f = await makeDatabase('x.sqlite', 'pw');
+    f.copySync('${phoneDir.path}/expenses.sqlite');
+    final store = _SlowStore(phoneDir);
+    final session = sessionFor(store);
+    await session.unlock('pw');
+    final before = session.db;
+
+    final running = session.sync();
+    await Future<void>.delayed(Duration.zero);
+    expect(session.syncing, isTrue);
+    expect(session.unlocked, isFalse);
+    expect(await session.unlock('pw'), UnlockOutcome.wrong, reason: 'the file is being replaced');
+    store.release.complete();
+    await running;
+
+    expect(session.syncing, isFalse);
+    expect(session.unlocked, isTrue);
+    expect(session.db, isNot(same(before)));
+    expect(opened, 2, reason: 'one open before, one after the sync');
+  });
+
+  test('unlocking again closes the connection it replaces', () async {
+    final f = await makeDatabase('x.sqlite', 'pw');
+    f.copySync('${phoneDir.path}/expenses.sqlite');
+    final session = sessionFor(PhoneStore(phoneDir));
+    await session.unlock('pw');
+    final first = session.db!;
+    await session.unlock('pw');
+    expect(session.db, isNot(same(first)));
+    await expectLater(first.customSelect('select 1').get(), throwsA(anything));
+  });
+
+  test('forget locks and deletes the pairing and every copy', () async {
+    final f = await makeDatabase('x.sqlite', 'pw');
+    final store = PhoneStore(phoneDir, find: (_) async => null);
+    final s = await serve(f, DateTime.utc(2026, 11, 1));
+    store.savePairing(pairing(s.port));
+    await store.update();
+    final session = sessionFor(store);
+    await session.unlock('pw');
+
+    await session.forget();
+    expect(session.unlocked, isFalse);
+    expect(store.readPairing(), isNull);
+    expect(store.openable, isNull);
+    expect(store.database.existsSync(), isFalse);
+  });
+
   test('a lock while the password is being checked does not open the database', () async {
     final f = await makeDatabase('x.sqlite', 'pw');
     f.copySync('${phoneDir.path}/expenses.sqlite');

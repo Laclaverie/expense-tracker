@@ -11,6 +11,10 @@ the app, and it sorts every line into categories (groceries, restaurants, rent, 
 Windows app, in French or English. **Everything stays on your computer**: no account, no cloud, nothing sent
 anywhere.
 
+**On your phone too (Android):** a read-only app shows the same figures. The computer sends it your data over
+your home Wi-Fi, still encrypted with your password, never through the internet. How to install and pair it:
+[docs/14-mobile.md](docs/14-mobile.md).
+
 ## See it first
 
 Made-up data (a couple in Montréal, two years of bank files), nothing real:

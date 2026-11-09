@@ -2,16 +2,20 @@
 
 > Design document written before the code (October 2026). What is built: the [README](../README.md) and the
 > [roadmap](08-roadmap-open-questions.md); where the plan changed, its decision log wins.
-> Not started (milestone M3).
+> **Changed 2026-11-08:** the first phone app is a **read-only viewer** of the desktop's data
+> ([doc 14](14-mobile.md)): Home, Transactions, Statistics, Settings. The desktop sends its whole encrypted
+> database file over the home Wi-Fi; there is no snapshot and no outbox. Quick add, share-to-import, the review
+> queue and editing below are not built (quick add would come back as an outbox: backlog in doc 08).
 
-Phone = **capture + glance**. Light app: no PDF engine, small local store (outbox + snapshot from desktop).
-1. Log an expense in seconds (mostly cash).
-2. See this month and target progress at a glance.
+Phone = **capture + glance**. Light app: no PDF engine. Built so far: the glance (read-only).
+1. *(later)* Log an expense in seconds (mostly cash).
+2. See this month and target progress at a glance — **built** (read-only).
 3. *(later)* Confirm review items pushed by desktop; forward a shared PDF to desktop.
 
 ## Navigation
 
-Bottom bar: **Home · Transactions · Settings** (Review tab later). Big `+` floating button everywhere.
+Bottom bar: **Home · Transactions · Statistics · Settings** (built, [doc 14](14-mobile.md)). Later, with quick
+add (B38): a Review tab and a big `+` floating button.
 
 ## Quick add (the key screen)
 

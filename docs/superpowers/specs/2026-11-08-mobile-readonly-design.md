@@ -1,6 +1,6 @@
 # Read-only Android app with desktop → phone sync — design
 
-Date: 2026-11-08. Status: approved in conversation, spec awaiting owner review.
+Date: 2026-11-08. Status: built 2026-11-08 (doc 14 describes what shipped).
 
 ## Goal
 
@@ -19,7 +19,7 @@ same scope and period, and both sides confirm the phone holds exactly the deskto
 | Transport | Same Wi-Fi only. Desktop serves the file for 10 minutes after "Send to phone"; phone fetches when opened | Android can't keep a listening server alive. No cloud, no internet (doc 09) |
 | Trigger | Manual button on desktop; after an import, a dialog offers to send when a phone is paired to this database | Owner's request |
 | Verification | SHA-256 of the file, signed by desktop, checked by phone; phone sends a signed ack, desktop shows "Phone up to date · <date time>" | Byte-identical file = nothing forgotten |
-| Unlock | Same database password typed on each open, kept in memory only, locks after 5 min in background | Respects the "no key on disk / in OS keyring" rule (B11) |
+| Unlock | Same database password typed on each open, kept in memory only, locks on return after 5 min or more in background | Respects the "no key on disk / in OS keyring" rule (B11) |
 | Later | Fingerprint unlock (key wrapped in Android Keystore) — needs a written exception to the key rule; backlog item | Owner wants it eventually, not now |
 
 ## Architecture
@@ -37,7 +37,7 @@ Chart palette (`apps/desktop/lib/style.dart`) is needed by both apps: the plan p
 
 ### Pairing (once per database)
 
-- Desktop: Settings → "Pair a phone" shows a QR code: database id, desktop IPv4 addresses on the LAN, port, a
+- Desktop: phone icon in the top bar → "Pair a phone" shows a QR code: database id, desktop IPv4 addresses on the LAN, port, a
   32-byte random secret, protocol version.
 - The secret is stored in a `paired_phone` table **inside the encrypted database** (schema v10): pairing belongs to
   that database instance; another database file has its own (or none). One phone per database in v1.
@@ -54,7 +54,8 @@ Chart palette (`apps/desktop/lib/style.dart`) is needed by both apps: the plan p
 3. Phone `GET /manifest` → {database id, schema version, size, sha256, created at}, signed with HMAC-SHA256(secret).
    Phone shows "New data from Nov 8 (4.2 MB) — Download?" when the hash differs from its file.
 4. `GET /database` (request signed with HMAC over a timestamp + nonce; desktop refuses stale or replayed requests).
-   Phone streams to a temp file, checks size and SHA-256 against the signed manifest, then swaps atomically.
+   Phone streams to a temp file, checks size and SHA-256 against the signed manifest, then swaps it in (two
+   renames, recovered from `.previous` after a crash).
    The previous file is kept until the new one opens with the password, then deleted.
 5. Phone `POST /ack` {sha256}, signed. Desktop records the time and hash in `paired_phone`, shows
    "Phone up to date · Nov 8 14:02", deletes the temp copy and closes the server.
@@ -96,7 +97,8 @@ Not in v1: compare, splits view, notification bell / anomalies, per-store cards,
 Charts: `fl_chart` (as desktop), dataviz palette shared with desktop. "Today" comes from an `appNow()`-style clock
 so tests and demos can fix it. Strings: `apps/mobile/lib/l10n/app_{en,fr}.arb`.
 
-Size target: release APK under 25 MB (no PDFium, no bank code).
+Size: release APK arm64 only, about 28 MB (no PDFium, no bank code). Was "under 25 MB"; the owner accepted
+~27 MB on 2026-11-08 (doc 08).
 
 ## Errors (fail loud, never partial)
 

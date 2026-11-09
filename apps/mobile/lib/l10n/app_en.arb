@@ -2,7 +2,7 @@
   "@@locale": "en",
   "appTitle": "Dépenses",
   "pairTitle": "Pair with the desktop",
-  "pairIntro": "On the desktop app, open Backups, then Send to phone, and scan the QR code shown there.",
+  "pairIntro": "On the computer, click the phone icon in the top bar, then Pair a phone, and scan the QR code shown there.",
   "pairScan": "Scan the QR code",
   "pairNotOurs": "This QR code is not from Dépenses",
   "scanTitle": "Scan the QR code",
@@ -155,5 +155,9 @@
   "@balanceChange": { "placeholders": { "amount": { "type": "String" } } },
   "balancesFrom": "Balances known from {month}: before, a statement is missing or the account had no transactions yet.",
   "@balancesFrom": { "placeholders": { "month": { "type": "String" } } },
-  "withoutHidden": "without hidden"
+  "withoutHidden": "without hidden",
+  "forgetDesktop": "Forget this desktop",
+  "forgetDesktopConfirm": "Remove the pairing and the copy of your data from this phone? You will need to pair again to see your expenses here.",
+  "forgetAction": "Forget",
+  "cancel": "Cancel"
 }

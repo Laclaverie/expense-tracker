@@ -34,7 +34,12 @@ registered in `packages/banks`. Adding a bank: follow `docs/10-adding-a-bank.md`
   (`database_list.dart`: paths in `databases.json`, never a password; `widgets/database_chooser.dart`).
 - Demo to show the app: two made-up personas (couple, freelancer), `demo.bat`, walkthrough and README images
   (`docs/13-demo.md`).
-- Not started: Android (M3), sync (M4). Roadmap and decision log:
+- Android app (`apps/mobile`, `docs/14-mobile.md`): **read-only** viewer — Home, Transactions, Statistics
+  (categories, trends, merchants, recurring, balances), Settings, FR/EN. Desktop phone icon pairs it (QR) and
+  sends the whole encrypted database over the home Wi-Fi (`packages/sync`, `phone_sync.dart`, offered after
+  an import); the phone opens it read-only (`openReadOnlyDatabase`), password in memory only, locks on return
+  after 5 minutes or more in the background. APK arm64 only (~28 MB). Not yet: quick add (outbox, B38), fingerprint unlock (B39).
+- Roadmap and decision log:
   `docs/08-roadmap-open-questions.md` (backlog: work to do only) — keep it updated; finished items move to
   `docs/12-done.md` with their date.
 
@@ -70,7 +75,9 @@ registered in `packages/banks`. Adding a bank: follow `docs/10-adding-a-bank.md`
 | `packages/banks` | Bank plug-ins: `lib/src/<bank>/` (Desjardins = reference: `pdf/` and `csv/` readers, 14 fixtures in `test/fixtures/desjardins`); contract `BankImporter` / `StatementFormat` / `ExportGuide` / `LineRule` tables + CSV and anonymization helpers (`lib/plugin.dart`); `testing.dart` (`testFixtures`); registry `lib/banks.dart`; CLIs `dump`, `parse`, `anonymize`, `shape` (`--facts`), `check`, `compare` (no data, for cloud agents) |
 | `packages/core` | Domain: `ImportedStatement`, categories (`defaultCategories`, `retiredCategories`), merchants, categorizer, transfers, targets, analysis, coverage, balances, recurring |
 | `packages/demo` | Made-up personas (`persona.dart`: shops and the `Persona` type; `couple.dart` — the fixtures' household —, `freelancer.dart`; seeded, no real data), lived by `household.dart`, written as Desjardins statements and card CSV exports (`desjardins/`): the banks' fixtures (`demo:fixtures`), the demo database (`demo:database`) and the showcase (`demo:showcase`, `demo.bat`) |
-| `packages/storage` | drift/SQLite: `tables.dart`, `database.dart` (schema v9 + migrations), `import_service.dart`, `repository.dart`, `backup.dart` |
+| `packages/storage` | drift/SQLite: `tables.dart`, `database.dart` (schema v10 + migrations; `openReadOnlyDatabase` for the phone), `import_service.dart`, `repository.dart`, `backup.dart` |
+| `packages/sync` | Desktop → phone transfer: `PairingInfo` (QR payload), HMAC request signing, `Manifest` (size, SHA-256, schema), `SyncServer` (desktop, 10-minute window), `SyncClient` (phone: download, check, swap by two renames, ack), UDP discovery, `lanAddresses` |
+| `apps/mobile` | Flutter Android app, read-only: `lib/session.dart` (open database + password in memory), `phone_store.dart` (pairing, copies), `shell.dart`, `screens/` (`stats.dart` + `stats/` one file per view), `lib/l10n/app_{en,fr}.arb`. Depends on `core`, `storage`, `sync` — never `banks` / `pdf_words` (`demo`: dev-only, tests) |
 | `apps/desktop` | Flutter Windows app: `lib/screens/*` (a big screen keeps its entry file and puts its parts in a folder of the same name: `screens/stats.dart` + `screens/stats/` one file per tab, shared `charts.dart` / `widgets.dart`), `lib/widgets/*`, `lib/l10n/app_{en,fr}.arb` |
 | `spikes/` | Early PDF extraction experiments (historical) |
 
@@ -85,7 +92,8 @@ registered in `packages/banks`. Adding a bank: follow `docs/10-adding-a-bank.md`
   (`.github/workflows/ci.yml`) runs the same on pushes to `main` and pull requests (last commit only, older run cancelled, docs-only
   changes skipped). Desktop has a smoke test opening every
   page and Statistics tab on the fixtures (`test/screens_smoke_test.dart`, real Segoe UI font loaded) and unit
-  tests for period rules (`lib/stats_periods.dart`); storage has migration tests from older schemas. Some
+  tests for period rules (`core/stats_periods.dart`); the phone app has the same smoke test at two phone sizes on
+  the demo database; storage has migration tests from older schemas. Some
   desktop tests need env `EXPENSES_STATEMENTS` pointing at real PDFs; they skip otherwise.
 - Demo database: `cd packages/demo && dart run demo:database <folder>\expenses.sqlite` — two years of a made-up
   household (`packages/demo`, no real data) imported through the real Desjardins plug-in, then reviewed
@@ -93,11 +101,12 @@ registered in `packages/banks`. Adding a bank: follow `docs/10-adding-a-bank.md`
   `EXPENSES_DB_DIR`; `tools\ui-probe.ps1` sets it, `-Locked` shows the password screen).
 - Showing the app: `demo.bat [couple|freelancer]` (`docs/13-demo.md`) — `demo:showcase` database without the last
   card statement plus its AccèsD card exports to drop, app clock fixed by `EXPENSES_TODAY` (only with
-  `EXPENSES_DB_DIR`, `lib/clock.dart`: use `appNow()`, never `DateTime.now()` for what the app shows). README
+  `EXPENSES_DB_DIR`, `core/clock.dart`: use `appNow()`, never `DateTime.now()` for what the app shows). README
   images: `tools\demo-shots.ps1` (widget test, no window; look before committing).
 - `build-desktop.bat` — installs tools if needed, closes the running app, builds release, starts it.
   `run-desktop.bat` — starts the last build (builds if none). `package-desktop.bat` — builds + zips
-  `dist\Depenses-windows.zip` to share the app.
+  `dist\Depenses-windows.zip` to share the app. `build-mobile.bat` — release APK to `dist\Depenses-android.apk`
+  (runs `tools\setup.ps1 -Android` first: JDK 17 + Android SDK, opt-in; widget tests need neither).
 - `.claude/settings.json` denies agents reading statement files (pdf/csv/ofx/qfx/qif, `*.dump.txt`, `reveal.txt`) and
   running `banks:dump` / `banks:parse -v`; machine paths (statements folder, real database) go in the git-ignored
   `.claude/settings.local.json`. A future text-export fixture (`*.anon.csv`) needs a narrower csv rule first.

@@ -7,8 +7,8 @@
 | M0 | Design | These docs reviewed, open questions answered | Docs approved |
 | M1 | Parser core | Desjardins account + card parsers, validation, anonymized fixtures, CLI to dump result | All 2026 statements parse and validate — **done 2026-10-17** (`packages/import_desjardins`, 14 anonymized fixtures) |
 | M2 | Desktop MVP | Import, transactions table, categories, merchants, rules, transfers, dashboard by category/merchant | Jan–Sep 2026 imported and categorized — **done 2026-10-17** (`apps/desktop`: import, review, transactions, splits, targets, dashboard, rules, FR/EN). Deferred: DB encryption |
-| M3 | Android MVP | Quick add, share-to-import, review queue, month view | Daily use for 2 weeks |
-| M4 | Sync | Phone ↔ desktop | Entry on phone visible on desktop, no duplicates |
+| M3 | Android MVP | Read-only viewer of the desktop's data: Home, Transactions, Statistics, Settings ([doc 14](14-mobile.md)). Later: quick add (B38), share-to-import, review queue | Same figures as desktop for one month on a real phone — app built 2026-11-08 (`apps/mobile`) |
+| M4 | Sync | Desktop → phone: whole encrypted database over the home Wi-Fi, paired by QR code. Later: phone → desktop entries (B38) | Phone holds the desktop's exact file (hash confirmed both sides) — built 2026-11-08 (`packages/sync`) |
 | M5 | LCL | LCL PDF parser, EUR scope, trips across scopes | One LCL month imported and validated |
 | M6 | Insights | Subscriptions, trends, anomalies, target history, trip reports, export | — (recurring payments done 2026-10-18: Statistics → Recurring, `core/recurring.dart`) |
 
@@ -30,6 +30,14 @@ below.
 | B29 | Generic OFX / QFX importer | IMP-10 | One reader for 1.x (SGML) and 2.x (XML); per-bank quirk list (merchant in `NAME` / `MEMO`, card sign, `FITID` trusted or not); institution id from the OFX bank name, reused by a later PDF plug-in. Check: previous closing balance + lines = closing balance |
 | B32 | Declarative bank formats (later, not planned) | — | Runtime-loaded format files, no rebuild. Only after LCL is written in Dart and with demand from outside the repository. [Doc 11](11-import-sources-onboarding.md) §3 |
 | B10 | Recurring templates + upcoming payments | CAP-9, ANA-15 | Expected payments shown ahead on the dashboard, next-month cash-flow forecast |
+| **Phone** | | | |
+| B38 | Quick add on the phone (outbox) | CAP-1 | Cash entries typed on the phone kept in a small outbox file of their own (the database copy stays read-only, replaced at each sync) and sent to the desktop at the next sync; the desktop imports them, then sends a new copy. Needs a phone → desktop request in `packages/sync` and duplicate rules for manual vs imported lines |
+| B40 | End-to-end check on a real phone (owner) | — | Demo database on the desktop → pair → install the APK → scan → download → unlock with the demo password → same figures as the desktop for one month. Then a demo CSV import → Send → banner → download → "Phone up to date". Then Wi-Fi cut mid-download → the old data still opens. Closes M3 / M4 |
+| B41 | QR port when 47820 is busy | — | The QR always carries the default port; the server falls back to 47821–47830 and only discovery tells the phone. Fail loudly on a busy port, or put the bound port in the QR |
+| B42 | Sign the request body | — | The HMAC covers method, path, time and nonce, not the body: the ack's SHA-256 is unauthenticated (replay already blocked by the nonce). Add the body's SHA-256 to the signed string |
+| B43 | No pairing secret in the copy sent to the phone | — | The `VACUUM INTO` copy still holds the `paired_phones` row: delete it from the copy before serving |
+| B44 | Own message for a phone clock off by more than 5 minutes | — | Today a 401 from clock skew (and a too-large manifest) shows "Phone not paired with this database"; give it its own problem kind and message |
+| B39 | Fingerprint unlock on the phone | — | Needs an exception to the B11 rule "no key stored on the device": the key wrapped by an Android Keystore key that only a fingerprint unlocks. Decide first whether that exception is acceptable (a key in the keystore is tied to the phone and lost with it; the password stays the way back) |
 | **Found while parsing** | | | |
 | B13 | Check the November 2026 card statement | IMP-2 | October 2026 layout dropped the Bonidollars rate per line ("back on the next statement"): the categorizer's reward-rate hint is missing for October. The 2026-10 parser reads the column if it returns; run `banks:parse` on it and add a fixture |
 | B14 | Clear message for an unknown layout | IMP-5 | Import screen: "this statement looks like Desjardins but its layout is new" (first-page bank name found, no layout matched) instead of "not recognized", with the steps to report it |
@@ -54,6 +62,8 @@ _None open right now._
 
 | Date | Decision |
 |------|----------|
+| 2026-11-08 | Phone app v1 is a **read-only viewer**: no quick add, recategorizing or review (one-way sync, no merge rules; quick add later through an outbox, B38). The desktop sends its **whole database file** (`VACUUM INTO` copy, still encrypted with the database password) over the home Wi-Fi: served for 10 minutes after "Send to phone", found by UDP broadcast or the QR's addresses, size + SHA-256 checked from a signed manifest, swapped in by two renames (recovered from `.previous` after a crash), confirmed back. The phone opens it read-only with the same `core` + `storage` code, so figures match the desktop; replaces the planned snapshot of totals (doc 09). Pairing by QR code (addresses, port, secret; one phone per database), every request HMAC-signed. Same password as the desktop, typed on the phone, memory only; locks on return after 5 minutes or more in the background. Schema versions must match. No internet, no Play Store (APK built by `build-mobile.bat`). Fingerprint unlock not in v1: it would store a key on the phone (B39) |
+| 2026-11-08 | Phone APK built for **arm64 only**, about 28 MB (target was under 25 MB). One ABI is Flutter engine ~12 MB + app code ~7.5 MB + bundled QR scanner (ML Kit) ~5 MB + sqlite3mc ~2 MB; three ABIs were 75 MB. The QR scanner's other-ABI libraries are excluded in `build.gradle.kts` (`--target-platform` leaves them in). Dropping the bundled scanner would make Google Play services download it, against "everything local". armv7 phones and x86_64 emulators are not supported |
 | 2026-10-17 | Focus on Desjardins; LCL (PDF statements) later |
 | 2026-10-17 | One currency per account, no currency conversion |
 | 2026-10-17 | Stats per institution only (Desjardins, LCL, Cash); no combined stats for now |

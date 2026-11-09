@@ -178,6 +178,8 @@ class _StartFlowState extends State<StartFlow> {
     return ListenableBuilder(
       listenable: widget.session,
       builder: (context, _) {
+        // The file is being replaced: no password screen (typing it now would open the old file).
+        if (widget.session.syncing) return const UpdatingScreen();
         if (widget.session.unlocked) {
           return MobileProviders(
             key: ObjectKey(widget.session.db),
@@ -194,4 +196,23 @@ class _StartFlowState extends State<StartFlow> {
       },
     );
   }
+}
+
+/// Shown while newer data replaces the file.
+class UpdatingScreen extends StatelessWidget {
+  const UpdatingScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) => Scaffold(
+    body: Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const CircularProgressIndicator(),
+          const SizedBox(height: 16),
+          Text(AppLocalizations.of(context).updating),
+        ],
+      ),
+    ),
+  );
 }

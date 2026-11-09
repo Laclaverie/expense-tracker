@@ -107,7 +107,7 @@ abstract class AppLocalizations {
   /// No description provided for @pairIntro.
   ///
   /// In en, this message translates to:
-  /// **'On the desktop app, open Backups, then Send to phone, and scan the QR code shown there.'**
+  /// **'On the computer, click the phone icon in the top bar, then Pair a phone, and scan the QR code shown there.'**
   String get pairIntro;
 
   /// No description provided for @pairScan.
@@ -901,6 +901,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'without hidden'**
   String get withoutHidden;
+
+  /// No description provided for @forgetDesktop.
+  ///
+  /// In en, this message translates to:
+  /// **'Forget this desktop'**
+  String get forgetDesktop;
+
+  /// No description provided for @forgetDesktopConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove the pairing and the copy of your data from this phone? You will need to pair again to see your expenses here.'**
+  String get forgetDesktopConfirm;
+
+  /// No description provided for @forgetAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Forget'**
+  String get forgetAction;
+
+  /// No description provided for @cancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get cancel;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

@@ -76,6 +76,34 @@ void main() {
     await closeApp(tester);
   });
 
+  testWidgets('Forget this desktop in Settings asks, then deletes everything and shows pairing', (tester) async {
+    await tester.runAsync(() => makeDatabase(store.database, 'right-pass'));
+    store.savePairing(
+      PairingInfo(databaseId: 'db-1', hosts: ['192.0.2.10'], port: 47820, secret: List<int>.filled(32, 7)),
+    );
+    final session = newSession();
+    await start(tester, session);
+    await typeAndUnlock(tester, 'right-pass');
+    await tester.tap(find.text('Settings').last);
+    await settle(tester);
+
+    await tester.tap(find.text('Forget this desktop'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Cancel'));
+    await tester.pumpAndSettle();
+    expect(session.unlocked, isTrue, reason: 'cancel keeps everything');
+
+    await tester.tap(find.text('Forget this desktop'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Forget'));
+    await settle(tester);
+    expect(session.unlocked, isFalse);
+    expect(store.readPairing(), isNull);
+    expect(store.database.existsSync(), isFalse);
+    expect(find.byType(PairScreen), findsOneWidget);
+    await closeApp(tester);
+  });
+
   testWidgets('locks after 5 minutes in background', (tester) async {
     await tester.runAsync(() => makeDatabase(store.database, 'right-pass'));
     final session = newSession();

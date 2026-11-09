@@ -1,5 +1,5 @@
 ﻿# Runs every check a pull request must pass: formatting, analysis and tests of every package and of the
-# desktop app. Used by test-all.bat (double-click) and by GitHub Actions (.github/workflows/ci.yml).
+# desktop and phone apps. Used by test-all.bat (double-click) and by GitHub Actions (.github/workflows/ci.yml).
 # Exit code 0 = everything passed.
 #
 # Usage: powershell -ExecutionPolicy Bypass -File tools\test-all.ps1
