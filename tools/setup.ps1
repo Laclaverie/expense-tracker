@@ -95,9 +95,11 @@ if ($ownFlutter -and (& git -C $flutterDir describe --tags --exact-match 2>$null
     & (Join-Path $flutterBin 'flutter.bat') precache --windows
   }
 } elseif (-not $ownFlutter -and (Has flutter)) {
-  # Someone's own Flutter, on PATH: never changed here, only flagged when it isn't the pinned version.
+  # Someone's own Flutter, on PATH: never changed here, only flagged when it isn't the pinned version
+  # and no pinned one is further down PATH (tools\env.bat puts that one first).
   $other = Flutter-Version (Split-Path (Get-Command flutter).Source)
-  if ($other -and $other -ne $version) {
+  $pinned = & (Join-Path $PSScriptRoot 'find-flutter.ps1')
+  if ($other -and $other -ne $version -and -not $pinned) {
     Write-Warning ("Flutter $other est sur le PATH, le projet utilise $version : la construction peut échouer. / " +
       "Flutter $other is on PATH, the project uses ${version}: building may fail.")
   }

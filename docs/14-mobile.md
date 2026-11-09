@@ -48,6 +48,18 @@ The APK is built for **arm64** phones only (every recent phone; about 28 MB). It
 computer's own debug key: an update must be built on the same computer, otherwise Android refuses it — uninstall
 the app and pair again.
 
+**Update the app:** `deploy-mobile.bat` builds the APK and installs it with adb on every connected phone (USB
+debugging, or a phone already connected over Wi-Fi), then starts it. `install -r` keeps the phone's data and
+pairing. The installed app must have been built on the same computer; otherwise the script says so (uninstall
+it on the phone and pair again).
+
+- `deploy-mobile.bat` — build, then install on every connected phone.
+- `deploy-mobile.bat 192.168.1.20:41234` — `adb connect` to the address shown under Developer options →
+  Wireless debugging first, then build and install.
+- `deploy-mobile.bat pair 192.168.1.20:37000 123456` — once per phone (Android 11+): Wireless debugging →
+  **Pair device with pairing code**, give its address and code, then stop.
+- `deploy-mobile.bat nobuild [address]` — skip the build and install the existing `dist\Depenses-android.apk`.
+
 ## Pair (once)
 
 1. Desktop: phone icon in the top bar → **Pair a phone**. The desktop prepares the copy and starts waiting for

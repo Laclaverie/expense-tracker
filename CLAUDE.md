@@ -88,7 +88,7 @@ registered in `packages/banks`. Adding a bank: follow `docs/10-adding-a-bank.md`
   (`%LOCALAPPDATA%\expense-tracker\flutter`, only on machines without Flutter) follows `.flutter-version` when it
   changes; a Flutter already on PATH is left alone, with a warning if its version differs. Never hardcode a machine path
   in a tracked file. Dart pub **workspace** — `dart pub get` at the root.
-- Tests: `test-all.bat` / `tools	est-all.ps1` runs format check, `analyze --fatal-infos` and every test; CI
+- Tests: `test-all.bat` / `tools\test-all.ps1` runs format check, `analyze --fatal-infos` and every test; CI
   (`.github/workflows/ci.yml`) runs the same on pushes to `main` and pull requests (last commit only, older run cancelled, docs-only
   changes skipped). Desktop has a smoke test opening every
   page and Statistics tab on the fixtures (`test/screens_smoke_test.dart`, real Segoe UI font loaded) and unit
@@ -107,6 +107,9 @@ registered in `packages/banks`. Adding a bank: follow `docs/10-adding-a-bank.md`
   `run-desktop.bat` — starts the last build (builds if none). `package-desktop.bat` — builds + zips
   `dist\Depenses-windows.zip` to share the app. `build-mobile.bat` — release APK to `dist\Depenses-android.apk`
   (runs `tools\setup.ps1 -Android` first: JDK 17 + Android SDK, opt-in; widget tests need neither).
+  `deploy-mobile.bat [pair <addr> <code> | nobuild] [addr]` — builds, then `adb install -r` on every phone connected by USB or wireless debugging (keeps data; same build
+  machine only: debug-key signed). `tools\env.bat` puts the Flutter matching `.flutter-version` first on PATH, even
+  when an older one comes earlier (`tools\find-flutter.ps1`).
 - `.claude/settings.json` denies agents reading statement files (pdf/csv/ofx/qfx/qif, `*.dump.txt`, `reveal.txt`) and
   running `banks:dump` / `banks:parse -v`; machine paths (statements folder, real database) go in the git-ignored
   `.claude/settings.local.json`. A future text-export fixture (`*.anon.csv`) needs a narrower csv rule first.
