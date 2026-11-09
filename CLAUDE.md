@@ -90,7 +90,8 @@ registered in `packages/banks`. Adding a bank: follow `docs/10-adding-a-bank.md`
   in a tracked file. Dart pub **workspace** — `dart pub get` at the root.
 - Tests: `test-all.bat` / `tools\test-all.ps1` runs format check, `analyze --fatal-infos` and every test; CI
   (`.github/workflows/ci.yml`) runs the same on pushes to `main` and pull requests (last commit only, older run cancelled, docs-only
-  changes skipped). Desktop has a smoke test opening every
+  pushes to `main` skipped). `main` is protected (ruleset): changes go through a pull request whose `test` check
+  passes, no force-push or deletion; the owner can bypass in an emergency. Work on a branch, open a PR. Desktop has a smoke test opening every
   page and Statistics tab on the fixtures (`test/screens_smoke_test.dart`, real Segoe UI font loaded) and unit
   tests for period rules (`core/stats_periods.dart`); the phone app has the same smoke test at two phone sizes on
   the demo database; storage has migration tests from older schemas. Some

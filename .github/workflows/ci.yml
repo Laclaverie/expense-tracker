@@ -6,14 +6,14 @@ name: checks
 # Windows runners are expensive, so:
 # - a push of several commits runs once, on the last one (GitHub's default);
 # - a new push cancels the run still going for the same branch / pull request;
-# - changes touching only documentation don't run it;
+# - pushes to main touching only documentation don't run it; pull requests always do, because main's ruleset
+#   requires this check (`test`) and a skipped run would leave the pull request blocked;
 # - "Run workflow" (Actions tab) starts it by hand.
 on:
   push:
     branches: [main]
     paths-ignore: ['**.md', 'docs/**', 'LICENSE', '.gitignore']
   pull_request:
-    paths-ignore: ['**.md', 'docs/**', 'LICENSE', '.gitignore']
   workflow_dispatch:
 
 concurrency:
