@@ -49,6 +49,7 @@ dist/
 
 # Editor settings of each machine (SDK paths)
 .vscode/
+.idea/
 # Widget Preview related
 .widget_preview/
 

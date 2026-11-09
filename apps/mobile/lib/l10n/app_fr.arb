@@ -140,5 +140,10 @@
   "forgetDesktop": "Oublier cet ordinateur",
   "forgetDesktopConfirm": "Retirer l'association et la copie de vos données de ce téléphone ? Il faudra l'associer à nouveau pour voir vos dépenses ici.",
   "forgetAction": "Oublier",
-  "cancel": "Annuler"
+  "cancel": "Annuler",
+  "averageShort": "moy. {amount}",
+  "noBills": "Aucune opération ici.",
+  "allGroups": "Tous les groupes",
+  "perMonthShort": "{amount}/mois",
+  "peopleAndOther": "Personnes et autres"
 }

@@ -24,7 +24,8 @@ class TrendsView extends StatelessWidget {
     final index = context.watch<CategoryIndex>();
     final monthly = monthlyTotals(d.lines, d.from, d.to);
     final total = monthly.fold(0, (s, v) => s + v);
-    final average = d.averageOf(monthly);
+    // No complete month: no average (core's would fall back to incomplete months, which look cheap).
+    final int? average = d.completeMonths == 0 ? null : d.averageOf(monthly);
     // One series per chart group (others merged), largest first.
     final bySeries = <String, List<int>>{};
     for (final g in breakdown(d.lines, d.from, d.to, keyOf: (x) => groupKey(x.categoryId), labelOf: (k) => k)) {
@@ -50,7 +51,7 @@ class TrendsView extends StatelessWidget {
           Kpi(l.statTotal, money(context, total, d.currency)),
           Kpi(
             l.statAverage,
-            money(context, average, d.currency),
+            average == null ? '—' : money(context, average, d.currency),
             sub: partial ? l.overCompleteMonths(d.completeMonths) : null,
           ),
         ),
@@ -101,7 +102,9 @@ class _StackedBars extends StatelessWidget {
 
   final List<DateTime> months;
   final List<(String, Color, List<int>)> series;
-  final int average;
+
+  /// Null: no complete month, no line.
+  final int? average;
   final String currency;
   final List<bool> complete;
 
@@ -114,7 +117,7 @@ class _StackedBars extends StatelessWidget {
     final top = totals.isEmpty ? 0 : totals.reduce(max) / 100;
     return BarChart(
       BarChartData(
-        maxY: max(top, average / 100) * 1.12 + 1,
+        maxY: max(top, (average ?? 0) / 100) * 1.12 + 1,
         barGroups: [
           for (final (i, _) in months.indexed)
             () {
@@ -149,7 +152,21 @@ class _StackedBars extends StatelessWidget {
         ],
         extraLinesData: ExtraLinesData(
           horizontalLines: [
-            HorizontalLine(y: average / 100, color: scheme.onSurfaceVariant, strokeWidth: 1, dashArray: [6, 4]),
+            if (average != null)
+              HorizontalLine(
+                y: average! / 100,
+                color: scheme.onSurfaceVariant,
+                strokeWidth: 1.5,
+                dashArray: [6, 4],
+                label: HorizontalLineLabel(
+                  show: true,
+                  alignment: Alignment.topRight,
+                  padding: const EdgeInsets.only(right: 4, bottom: 2),
+                  style: Theme.of(context).textTheme.labelSmall
+                      ?.copyWith(color: scheme.onSurface, backgroundColor: scheme.surface.withValues(alpha: 0.8)),
+                  labelResolver: (_) => AppLocalizations.of(context).averageShort(money(context, average!, currency)),
+                ),
+              ),
           ],
         ),
         gridData: FlGridData(

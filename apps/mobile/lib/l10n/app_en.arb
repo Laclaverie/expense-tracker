@@ -159,5 +159,12 @@
   "forgetDesktop": "Forget this desktop",
   "forgetDesktopConfirm": "Remove the pairing and the copy of your data from this phone? You will need to pair again to see your expenses here.",
   "forgetAction": "Forget",
-  "cancel": "Cancel"
+  "cancel": "Cancel",
+  "averageShort": "avg {amount}",
+  "@averageShort": { "placeholders": { "amount": { "type": "String" } } },
+  "noBills": "No transaction here.",
+  "allGroups": "All groups",
+  "perMonthShort": "{amount}/mo",
+  "@perMonthShort": { "placeholders": { "amount": { "type": "String" } } },
+  "peopleAndOther": "People & other"
 }

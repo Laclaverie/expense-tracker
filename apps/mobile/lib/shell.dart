@@ -12,7 +12,7 @@ import 'session.dart';
 import 'state.dart';
 import 'style.dart';
 
-/// Bottom bar (Home, Transactions, Statistics, Settings) and the scope switcher on top.
+/// Bottom bar (Home, Statistics, Transactions, Settings) and the scope switcher on top.
 class Shell extends StatefulWidget {
   const Shell({super.key, required this.session, required this.check, this.initialTab = 0});
 
@@ -41,9 +41,10 @@ class _ShellState extends State<Shell> {
         state.ensureScope(scopes);
         final scope = state.scope;
         final page = switch (_tab) {
-          0 => HomePage(session: widget.session, check: widget.check, onSeeAll: () => setState(() => _tab = 1)),
-          1 => const TransactionsPage(),
-          2 => const StatisticsPage(),
+          // Statistics right after Home: the owner looks at the whole picture more than at single lines.
+          0 => HomePage(session: widget.session, check: widget.check, onSeeAll: () => setState(() => _tab = 2)),
+          1 => const StatisticsPage(),
+          2 => const TransactionsPage(),
           _ => SettingsPage(session: widget.session),
         };
         return Scaffold(
@@ -56,8 +57,8 @@ class _ShellState extends State<Shell> {
             onDestinationSelected: (i) => setState(() => _tab = i),
             destinations: [
               NavigationDestination(icon: const Icon(Icons.home_outlined), label: l.navHome),
-              NavigationDestination(icon: const Icon(Icons.receipt_long_outlined), label: l.navTransactions),
               NavigationDestination(icon: const Icon(Icons.bar_chart_outlined), label: l.navStatistics),
+              NavigationDestination(icon: const Icon(Icons.receipt_long_outlined), label: l.navTransactions),
               NavigationDestination(icon: const Icon(Icons.settings_outlined), label: l.navSettings),
             ],
           ),

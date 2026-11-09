@@ -503,4 +503,23 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get cancel => 'Cancel';
+
+  @override
+  String averageShort(String amount) {
+    return 'avg $amount';
+  }
+
+  @override
+  String get noBills => 'No transaction here.';
+
+  @override
+  String get allGroups => 'All groups';
+
+  @override
+  String perMonthShort(String amount) {
+    return '$amount/mo';
+  }
+
+  @override
+  String get peopleAndOther => 'People & other';
 }

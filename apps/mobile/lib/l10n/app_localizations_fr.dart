@@ -507,4 +507,23 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get cancel => 'Annuler';
+
+  @override
+  String averageShort(String amount) {
+    return 'moy. $amount';
+  }
+
+  @override
+  String get noBills => 'Aucune opération ici.';
+
+  @override
+  String get allGroups => 'Tous les groupes';
+
+  @override
+  String perMonthShort(String amount) {
+    return '$amount/mois';
+  }
+
+  @override
+  String get peopleAndOther => 'Personnes et autres';
 }

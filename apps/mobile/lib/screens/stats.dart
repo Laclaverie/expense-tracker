@@ -31,10 +31,19 @@ class _StatisticsPageState extends State<StatisticsPage> {
   late StatsView _view = widget.initialView;
   StatsRange _range = StatsRange.twelve;
 
+  /// The group Categories is narrowed to ('' = uncategorized). Kept here so it survives a range change; another
+  /// scope starts from every group.
+  String? _focus;
+  Scope? _focusScope;
+
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
     final scope = context.watch<PhoneState>().scope;
+    if (scope != _focusScope) {
+      _focus = null;
+      _focusScope = scope;
+    }
     if (scope == null) return Center(child: Text(l.noData));
     final repo = context.read<ExpenseRepository>();
     final labels = {
@@ -103,7 +112,14 @@ class _StatisticsPageState extends State<StatisticsPage> {
                       ),
                   ];
                   return switch (_view) {
-                    StatsView.categories => CategoriesView(d, notices: notices),
+                    StatsView.categories => CategoriesView(
+                      d,
+                      notices: notices,
+                      focus: _focus,
+                      onFocus: (key) {
+                        if (mounted && key != _focus) setState(() => _focus = key);
+                      },
+                    ),
                     StatsView.trends => TrendsView(d, notices: notices),
                     StatsView.merchants => MerchantsView(d, notices: notices),
                     _ => RecurringView(d),

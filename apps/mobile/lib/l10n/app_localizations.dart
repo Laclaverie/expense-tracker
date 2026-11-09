@@ -925,6 +925,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Cancel'**
   String get cancel;
+
+  /// No description provided for @averageShort.
+  ///
+  /// In en, this message translates to:
+  /// **'avg {amount}'**
+  String averageShort(String amount);
+
+  /// No description provided for @noBills.
+  ///
+  /// In en, this message translates to:
+  /// **'No transaction here.'**
+  String get noBills;
+
+  /// No description provided for @allGroups.
+  ///
+  /// In en, this message translates to:
+  /// **'All groups'**
+  String get allGroups;
+
+  /// No description provided for @perMonthShort.
+  ///
+  /// In en, this message translates to:
+  /// **'{amount}/mo'**
+  String perMonthShort(String amount);
+
+  /// No description provided for @peopleAndOther.
+  ///
+  /// In en, this message translates to:
+  /// **'People & other'**
+  String get peopleAndOther;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

@@ -225,10 +225,13 @@ Future<(T,)?> _pick<T>(BuildContext context, String title, List<(String, T)> opt
 
 /// One transaction: merchant, account and category, amount. Tap opens the read-only details.
 class TransactionTile extends StatelessWidget {
-  const TransactionTile(this.view, {super.key, this.showDate = false});
+  const TransactionTile(this.view, {super.key, this.showDate = false, this.part});
 
   final TxnView view;
   final bool showDate;
+
+  /// One part of a split transaction (its category and amount) instead of the whole.
+  final (String categoryId, int amount)? part;
 
   @override
   Widget build(BuildContext context) {
@@ -237,17 +240,21 @@ class TransactionTile extends StatelessWidget {
     final index = context.watch<CategoryIndex>();
     final kind = TransactionKind.values.byName(view.txn.kind);
     final counted = kind.countsAsSpending || kind.countsAsIncome;
-    final category = view.isSplit ? AppLocalizations.of(context).splitParts : index.name(context, view.txn.categoryId);
+    final category = part != null
+        ? index.name(context, part!.$1)
+        : view.isSplit
+        ? AppLocalizations.of(context).splitParts
+        : index.name(context, view.txn.categoryId);
     return ListTile(
       dense: true,
-      leading: CircleAvatar(radius: 6, backgroundColor: groupColor(context, view.txn.categoryId)),
+      leading: CircleAvatar(radius: 6, backgroundColor: groupColor(context, part?.$1 ?? view.txn.categoryId)),
       title: Text(view.displayName, overflow: TextOverflow.ellipsis),
       subtitle: Text(
         [if (showDate) shortDate(context, view.txn.date), category, accountName(view.account)].join(' · '),
         overflow: TextOverflow.ellipsis,
       ),
       trailing: Text(
-        money(context, view.txn.amount, view.account.currency),
+        money(context, part?.$2 ?? view.txn.amount, view.account.currency),
         style: t.bodyMedium?.copyWith(
           color: counted ? null : muted,
           fontFeatures: const [FontFeature.tabularFigures()],
